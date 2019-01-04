@@ -233,7 +233,7 @@
 <h4 id="2-修改article-ejs文件"><a href="#2-修改article-ejs文件" class="headerlink" title="2.修改article.ejs文件"></a>2.修改article.ejs文件</h4><ul>
 <li>显示文章目录使用的是Hexo的toc函数</li>
 <li>打开<code>themes\yilia\layout\_partial</code>文件夹下的<code>article.ejs</code>文件</li>
-<li>在<code>&lt;/header&gt; &lt;% } %&gt;</code>下面加入如下内容（注意位置）<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 目录内容 --&gt;</span><br><span class="line">&lt;% <span class="keyword">if</span> (!index &amp;&amp; post.toc)&#123; %&gt;</span><br><span class="line">    &lt;p <span class="class"><span class="keyword">class</span></span>=<span class="string">"show-toc-btn"</span> id=<span class="string">"show-toc-btn"</span> onclick=<span class="string">"showToc();"</span> style=<span class="string">"display:none"</span>&gt;</span><br><span class="line">          &lt;span <span class="class"><span class="keyword">class</span></span>=<span class="string">"btn-bg"</span>&gt;&lt;/span&gt;</span><br><span class="line">          &lt;span <span class="class"><span class="keyword">class</span></span>=<span class="string">"btn-text"</span>&gt;文章导航&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">          &lt;/</span>p&gt;</span><br><span class="line">	&lt;div id=<span class="string">"toc-article"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"toc-article"</span>&gt;</span><br><span class="line">	    &lt;span id=<span class="string">"toc-close"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"toc-close"</span> title=<span class="string">"隐藏导航"</span> onclick=<span class="string">"showBtn();"</span>&gt;×&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">		&lt;strong class="toc-title"&gt;文章目录&lt;/</span>strong&gt;</span><br><span class="line">           &lt;%- toc(post.content) %&gt;</span><br><span class="line">         &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">   &lt;script type="text/</span>javascript<span class="string">"&gt;</span></span><br><span class="line"><span class="string">	function showToc()&#123;</span></span><br><span class="line"><span class="string">		var toc_article = document.getElementById("</span>toc-article<span class="string">");</span></span><br><span class="line"><span class="string">		var show_toc_btn = document.getElementById("</span>show-toc-btn<span class="string">");</span></span><br><span class="line"><span class="string">		toc_article.setAttribute("</span>style<span class="string">","</span>display:block<span class="string">");</span></span><br><span class="line"><span class="string">		show_toc_btn.setAttribute("</span>style<span class="string">","</span>display:none<span class="string">");</span></span><br><span class="line"><span class="string">		&#125;;</span></span><br><span class="line"><span class="string">	function showBtn()&#123;</span></span><br><span class="line"><span class="string">		var toc_article = document.getElementById("</span>toc-article<span class="string">");</span></span><br><span class="line"><span class="string">		var show_toc_btn = document.getElementById("</span>show-toc-btn<span class="string">");</span></span><br><span class="line"><span class="string">		toc_article.setAttribute("</span>style<span class="string">","</span>display:none<span class="string">");</span></span><br><span class="line"><span class="string">		show_toc_btn.setAttribute("</span>style<span class="string">","</span>display:block<span class="string">");</span></span><br><span class="line"><span class="string">		&#125;;</span></span><br><span class="line"><span class="string">   &lt;/script&gt;</span></span><br><span class="line"><span class="string">      &lt;% &#125; %&gt;		</span></span><br><span class="line"><span class="string">&lt;!-- 目录内容结束 --&gt;</span></span><br></pre></td></tr></table></figure>
+<li>在<code>&lt;/header&gt; &lt;% } %&gt;</code>下面加入如下内容（注意位置）<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 目录内容 --&gt;</span><br><span class="line">&lt;% <span class="keyword">if</span> (!index &amp;&amp; post.toc)&#123; %&gt;</span><br><span class="line">    &lt;p <span class="class"><span class="keyword">class</span></span>=<span class="string">"show-toc-btn"</span> id=<span class="string">"show-toc-btn"</span> onclick=<span class="string">"showToc();"</span> style=<span class="string">"display:none"</span>&gt;</span><br><span class="line">          &lt;span <span class="class"><span class="keyword">class</span></span>=<span class="string">"btn-bg"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line">          &lt;span <span class="class"><span class="keyword">class</span></span>=<span class="string">"btn-text"</span>&gt;文章导航&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">          &lt;/</span>p&gt;</span><br><span class="line">	&lt;div id=<span class="string">"toc-article"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"toc-article"</span>&gt;</span><br><span class="line">	    &lt;span id=<span class="string">"toc-close"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"toc-close"</span> title=<span class="string">"隐藏导航"</span> onclick=<span class="string">"showBtn();"</span>&gt;×&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">		&lt;strong class="toc-title"&gt;文章目录&lt;/</span>strong&gt;</span><br><span class="line">           &lt;%- toc(post.content) %&gt;</span><br><span class="line">         &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">   &lt;script type="text/</span>javascript<span class="string">"&gt;</span></span><br><span class="line"><span class="string">	function showToc()&#123;</span></span><br><span class="line"><span class="string">		var toc_article = document.getElementById("</span>toc-article<span class="string">");</span></span><br><span class="line"><span class="string">		var show_toc_btn = document.getElementById("</span>show-toc-btn<span class="string">");</span></span><br><span class="line"><span class="string">		toc_article.setAttribute("</span>style<span class="string">","</span>display:block<span class="string">");</span></span><br><span class="line"><span class="string">		show_toc_btn.setAttribute("</span>style<span class="string">","</span>display:none<span class="string">");</span></span><br><span class="line"><span class="string">		&#125;;</span></span><br><span class="line"><span class="string">	function showBtn()&#123;</span></span><br><span class="line"><span class="string">		var toc_article = document.getElementById("</span>toc-article<span class="string">");</span></span><br><span class="line"><span class="string">		var show_toc_btn = document.getElementById("</span>show-toc-btn<span class="string">");</span></span><br><span class="line"><span class="string">		toc_article.setAttribute("</span>style<span class="string">","</span>display:none<span class="string">");</span></span><br><span class="line"><span class="string">		show_toc_btn.setAttribute("</span>style<span class="string">","</span>display:block<span class="string">");</span></span><br><span class="line"><span class="string">		&#125;;</span></span><br><span class="line"><span class="string">   &lt;/script&gt;</span></span><br><span class="line"><span class="string">      &lt;% &#125; %&gt;		</span></span><br><span class="line"><span class="string">&lt;!-- 目录内容结束 --&gt;</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <h4 id="3-显示文章目录"><a href="#3-显示文章目录" class="headerlink" title="3.显示文章目录"></a>3.显示文章目录</h4><p>有两种方式，推荐第一种。</p>
@@ -581,14 +581,6 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
@@ -617,7 +609,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -625,7 +621,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -633,7 +637,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color1">redis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,6 +654,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">域名</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">多线程</a>
               </li>
              
               <li class="article-tag-list-item">
