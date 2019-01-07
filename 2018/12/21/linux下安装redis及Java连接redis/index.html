@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/4.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/5.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/6.png">
-<meta property="og:updated_time" content="2019-01-04T02:51:50.212Z">
+<meta property="og:updated_time" content="2019-01-07T00:53:50.930Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux下安装redis及Java连接redis">
 <meta name="twitter:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/7.png">
@@ -201,7 +201,7 @@
 		<div id="toc-article" class="toc-article">
 			<span id="toc-close" class="toc-close" title="隐藏导航" onclick="showBtn();">×</span>
 			<strong class="toc-title">文章目录</strong>
-			   <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux安装redis"><span class="toc-number">1.</span> <span class="toc-text">linux安装redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装gcc编译软件"><span class="toc-number">1.1.</span> <span class="toc-text">安装gcc编译软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载redis安装包，并解压编译"><span class="toc-number">1.2.</span> <span class="toc-text">下载redis安装包，并解压编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装redis"><span class="toc-number">1.3.</span> <span class="toc-text">安装redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置redis后台启动"><span class="toc-number">1.4.</span> <span class="toc-text">设置redis后台启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通过jedis远程访问redis"><span class="toc-number">2.</span> <span class="toc-text">通过jedis远程访问redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis简介"><span class="toc-number">2.1.</span> <span class="toc-text">jedis简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis访问redis服务器代码实现"><span class="toc-number">2.2.</span> <span class="toc-text">jedis访问redis服务器代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring整合redis及redis工具类"><span class="toc-number">2.3.</span> <span class="toc-text">Spring整合redis及redis工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#导入maven依赖"><span class="toc-number">2.3.1.</span> <span class="toc-text">导入maven依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关文件配置"><span class="toc-number">2.3.2.</span> <span class="toc-text">相关文件配置</span></a></li></ol></li></ol></li></ol>
+			   <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux安装redis"><span class="toc-number">1.</span> <span class="toc-text">linux安装redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装gcc编译软件"><span class="toc-number">1.1.</span> <span class="toc-text">安装gcc编译软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载redis安装包，并解压编译"><span class="toc-number">1.2.</span> <span class="toc-text">下载redis安装包，并解压编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装redis"><span class="toc-number">1.3.</span> <span class="toc-text">安装redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置redis后台启动"><span class="toc-number">1.4.</span> <span class="toc-text">设置redis后台启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通过jedis远程访问redis"><span class="toc-number">2.</span> <span class="toc-text">通过jedis远程访问redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis简介"><span class="toc-number">2.1.</span> <span class="toc-text">jedis简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis访问redis服务器代码实现"><span class="toc-number">2.2.</span> <span class="toc-text">jedis访问redis服务器代码实现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring整合redis及redis工具类"><span class="toc-number">3.</span> <span class="toc-text">Spring整合redis及redis工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#导入maven依赖"><span class="toc-number">3.0.1.</span> <span class="toc-text">导入maven依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关文件配置"><span class="toc-number">3.0.2.</span> <span class="toc-text">相关文件配置</span></a></li></ol></li></ol>
 			 </div>
 		<script type="text/javascript">
 		function showToc(){
@@ -262,7 +262,7 @@
 </ol>
 <p>代码处需要认证密码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">"192.168.2.221"</span>,<span class="number">6327</span>);</span><br><span class="line">jedis.auth(<span class="string">"123456"</span>);</span><br><span class="line">jedis.set(<span class="string">"name"</span>,<span class="string">"goxcheer"</span>);</span><br><span class="line">System.out.println(jedis.get(<span class="string">"name"</span>));</span><br></pre></td></tr></table></figure></p>
 <p>重新运行访问成功。</p>
-<h2 id="Spring整合redis及redis工具类"><a href="#Spring整合redis及redis工具类" class="headerlink" title="Spring整合redis及redis工具类"></a>Spring整合redis及redis工具类</h2><blockquote>
+<h1 id="Spring整合redis及redis工具类"><a href="#Spring整合redis及redis工具类" class="headerlink" title="Spring整合redis及redis工具类"></a>Spring整合redis及redis工具类</h1><blockquote>
 <p><code>redis</code>作为一个高性能的<code>redis</code>数据库，在用作缓存时有非常不错的性能，一般<code>redis</code>都需要与<code>spring</code>来整合使用。对于不经常修改的数据，只做查询使用时，使用<code>redis</code>作缓存能提升查询性能。</p>
 </blockquote>
 <h3 id="导入maven依赖"><a href="#导入maven依赖" class="headerlink" title="导入maven依赖"></a>导入maven依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -426,7 +426,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux安装redis"><span class="toc-number">1.</span> <span class="toc-text">linux安装redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装gcc编译软件"><span class="toc-number">1.1.</span> <span class="toc-text">安装gcc编译软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载redis安装包，并解压编译"><span class="toc-number">1.2.</span> <span class="toc-text">下载redis安装包，并解压编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装redis"><span class="toc-number">1.3.</span> <span class="toc-text">安装redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置redis后台启动"><span class="toc-number">1.4.</span> <span class="toc-text">设置redis后台启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通过jedis远程访问redis"><span class="toc-number">2.</span> <span class="toc-text">通过jedis远程访问redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis简介"><span class="toc-number">2.1.</span> <span class="toc-text">jedis简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis访问redis服务器代码实现"><span class="toc-number">2.2.</span> <span class="toc-text">jedis访问redis服务器代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring整合redis及redis工具类"><span class="toc-number">2.3.</span> <span class="toc-text">Spring整合redis及redis工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#导入maven依赖"><span class="toc-number">2.3.1.</span> <span class="toc-text">导入maven依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关文件配置"><span class="toc-number">2.3.2.</span> <span class="toc-text">相关文件配置</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux安装redis"><span class="toc-number">1.</span> <span class="toc-text">linux安装redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装gcc编译软件"><span class="toc-number">1.1.</span> <span class="toc-text">安装gcc编译软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载redis安装包，并解压编译"><span class="toc-number">1.2.</span> <span class="toc-text">下载redis安装包，并解压编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装redis"><span class="toc-number">1.3.</span> <span class="toc-text">安装redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置redis后台启动"><span class="toc-number">1.4.</span> <span class="toc-text">设置redis后台启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通过jedis远程访问redis"><span class="toc-number">2.</span> <span class="toc-text">通过jedis远程访问redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis简介"><span class="toc-number">2.1.</span> <span class="toc-text">jedis简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jedis访问redis服务器代码实现"><span class="toc-number">2.2.</span> <span class="toc-text">jedis访问redis服务器代码实现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring整合redis及redis工具类"><span class="toc-number">3.</span> <span class="toc-text">Spring整合redis及redis工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#导入maven依赖"><span class="toc-number">3.0.1.</span> <span class="toc-text">导入maven依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关文件配置"><span class="toc-number">3.0.2.</span> <span class="toc-text">相关文件配置</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -575,19 +575,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">选择</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">github</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">博客</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">选择</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -599,11 +599,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -639,11 +639,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">多线程</a>
+                <a href="javascript:void(0)" class="js-tag color1">vue-router</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">vue-router</a>
+                <a href="javascript:void(0)" class="js-tag color4">多线程</a>
               </li>
             
             <div class="clearfix"></div>
