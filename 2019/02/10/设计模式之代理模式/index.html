@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="goxcheer个人小栈">
 <meta property="og:description" content="最近研究Spring源码,Spring框架用到了很多的设计模式，其中重要编程思想AOP就是用到了动态代理…">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-06T10:12:52.274Z">
+<meta property="og:updated_time" content="2019-03-07T03:27:22.139Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="设计模式之代理模式">
 <meta name="twitter:description" content="最近研究Spring源码,Spring框架用到了很多的设计模式，其中重要编程思想AOP就是用到了动态代理…">
@@ -227,7 +227,7 @@
 <li>注重过程，必须要做，被代理对象没时间做，不想做或者不专业</li>
 <li>执行者必须拿到被代理对象的个人资料（执行者持有被代理对象的引用）</li>
 </ol>
-<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>静态代理是代理对象持有真实对象，直接对真实对象进行封装，实现扩展。</p>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>静态代理是代理对象持有真实对象的引用，直接对真实对象进行封装，实现扩展。</p>
 <p>例如我们有一个玩家接口，开放一个上分的功能：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:9:06 2019/2/10</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 游戏玩家接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Player</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 上分</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shangfen</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>有一个菜鸟玩家想要上分：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:9:11 2019/2/10</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 玩家菜鸟</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Noob</span> <span class="keyword">implements</span> <span class="title">Player</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shangfen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">        System.out.println(<span class="string">"我是玩家菜鸟，我上不去分，找代练，我要上分"</span>);</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>但是他自己太菜，所以他想找人上分。</p>
@@ -236,7 +236,7 @@
 <p>可以看到已经扩展了原对象的方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">--------------------</span><br><span class="line">我是玩家菜鸟，我上不去分，找代练，我要上分</span><br><span class="line">--------------------</span><br><span class="line">我是王者玩家，我帮你上到钻石</span><br></pre></td></tr></table></figure></p>
 <p><strong>优点：扩展原功能，不侵入原代码，简洁。</strong><br><strong>缺点：如果原对象是N个，需要代理的方法也是N个，代理类就会很繁琐，要改进N个方法。</strong></p>
 <h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><blockquote>
-<p>动态代理，及在jvm运行时根据原对象的方法不同，动态的对原对象的方法进行扩展，并更换到jvm中，有两种实现，<code>jdk</code>动态代理和<code>cglib</code>动态代理。</p>
+<p>动态代理，在jvm运行时根据调用方法不同，动态的对原对象的方法进行扩展，进行字节码重组，生成新的代理对象类，并更换加载到jvm中，有两种实现，<code>jdk</code>动态代理和<code>cglib</code>动态代理。</p>
 </blockquote>
 <h3 id="基于JDK"><a href="#基于JDK" class="headerlink" title="基于JDK"></a>基于JDK</h3><p>同样我们现在有一个玩家接口，有两个方法，上分和陪玩：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:9:26 2019/2/10</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 玩家接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Player</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 上分</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shangfen</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 陪玩</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">peiwan</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>有一个菜鸟玩家，偶尔想上分，偶尔找人陪玩：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:9:28 2019/2/10</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>:一名菜鸟玩家</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Noob</span> <span class="keyword">implements</span> <span class="title">Player</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shangfen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">        System.out.println(<span class="string">"我是玩家菜鸟，我上不去分，找代练，我要上分"</span>);</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">peiwan</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">        System.out.println(<span class="string">"我是玩家菜鸟，一个人玩无聊，找人陪玩"</span>);</span><br><span class="line">        System.out.println(<span class="string">"--------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -594,10 +594,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
@@ -607,6 +603,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,6 +630,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">目录</a>
               </li>
              
@@ -639,10 +643,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">域名</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
