@@ -6,21 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>linux配置java环境 | goxcheer个人小栈</title>
+  <title>goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="linux,java">
-<meta property="og:type" content="article">
-<meta property="og:title" content="linux配置java环境">
-<meta property="og:url" content="http://yoursite.com/2018/11/12/linux配置java环境/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="goxcheer个人小栈">
+<meta property="og:url" content="http://yoursite.com/page/5/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/1.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/2.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/3.png">
-<meta property="og:updated_time" content="2018-11-12T14:56:38.679Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="linux配置java环境">
-<meta name="twitter:image" content="http://yoursite.com/img/linux配置java环境/1.png">
+<meta name="twitter:title" content="goxcheer个人小栈">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
   
@@ -170,102 +164,37 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-linux配置java环境" class="article article-type-post " itemscope="" itemprop="blogPost">
+            
+  
+    <article id="post-hexo-我最终的决定" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      linux配置java环境
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/10/hexo-我最终的决定/">hexo,我最终的决定</a>
     </h1>
   
 
         
-        <a href="/2018/11/12/linux配置java环境/" class="archive-article-date">
-  	<time datetime="2018-11-12T14:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-12</time>
+        <a href="/2018/11/10/hexo-我最终的决定/" class="archive-article-date">
+  	<time datetime="2018-11-10T01:19:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-10</time>
 </a>
         
       </header>
     
     <!-- 目录内容 -->
-		
-		<p class="show-toc-btn" id="show-toc-btn" onclick="showToc();" style="display:none">
-			  <span class="btn-bg"></span>
-			  <span class="btn-text">文章导航</span>
-			  </p>
-		<div id="toc-article" class="toc-article">
-			<span id="toc-close" class="toc-close" title="隐藏导航" onclick="showBtn();">×</span>
-			<strong class="toc-title">文章目录</strong>
-			   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前提"><span class="toc-number">1.</span> <span class="toc-text">一.前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-配置环境"><span class="toc-number">2.</span> <span class="toc-text">二.配置环境</span></a></li></ol>
-			 </div>
-		<script type="text/javascript">
-		function showToc(){
-			var toc_article = document.getElementById("toc-article");
-			var show_toc_btn = document.getElementById("show-toc-btn");
-			toc_article.setAttribute("style","display:block");
-			show_toc_btn.setAttribute("style","display:none");
-			};
-		function showBtn(){
-			var toc_article = document.getElementById("toc-article");
-			var show_toc_btn = document.getElementById("show-toc-btn");
-			toc_article.setAttribute("style","display:none");
-			show_toc_btn.setAttribute("style","display:block");
-			};
-		</script>
-		  		
+				
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="/img/linux配置java环境/1.png" alt="Alt text"></p>
-<a id="more"></a>
-<h2 id="一-前提"><a href="#一-前提" class="headerlink" title="一.前提"></a>一.前提</h2><ul>
-<li><strong>jdklinux</strong>版本压缩文件。<code>oracle</code>官网下载。<a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">链接</a> </li>
-<li>工具<strong>FileZilla</strong>+<strong>XShell</strong><blockquote>
-<p><strong>FileZilla</strong>是一款图形化界面的linux服务器上操作文件工具,<strong>XShell</strong>是第三方的服务器连接工具，可以方便的执行Bash命令。</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="二-配置环境"><a href="#二-配置环境" class="headerlink" title="二.配置环境"></a>二.配置环境</h2><blockquote>
-<p>实际上在部署的时候只需要jre环境就行，但是本人还是推荐安装JDK，因为jdk也包含了很多维护的命令，比如jstack追踪线程栈。</p>
-</blockquote>
-<p>通过<code>FileZilla</code>在<code>linux</code>服务器的<code>/usr/local</code>下新建<code>java</code>目录，然后将jdk压缩文件上传到该文件下解压缩。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf jdk-8u77-linux-x64.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p><img src="/img/linux配置java环境/2.png" alt="Alt text"></p>
-<p>然后需要配置jdk的环境变量。<br>首先 <code>vi /etc/profile</code> 后输入字母a或i即可进入编辑状态<br>在文件的最下面输入如下，<br><figure class="highlight profile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/JDK/jdk1.8.0_77</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME			/lib/tools.jar</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>然后退出保存。<br>输入命令显示的使环境变量配置生效。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>最后验证配置。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<p>成功的效果<br><img src="/img/linux配置java环境/3.png" alt="Alt text"></p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=554191378&auto=1&height=66"></iframe>
-
+        <p>  <img src="/img/最终我还是选择了hexo/hexo.jpg" alt="Alt text"></p>
+        
+          <a class="article-more-a" href="/2018/11/10/hexo-我最终的决定/#more">more >></a>
+        
       
 
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/img/weixin.png">
-                      <span class="reward-type">微信</span>
-                    </div>
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -276,11 +205,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">选择</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -289,84 +222,16 @@
       
 
       
-
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/10/hexo-我最终的决定/">展开全文 >></a>
+        </p>
       
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
-        </div>
-      </div>
-    </span>
-  </div>
-</div>
 
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/11/12/linux配置java环境/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2018/11/22/vue-js入门一/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          vue.js入门 （一）
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2018/11/11/yilia主题-目录-访问统计-域名绑定/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">yilia主题+目录+访问统计+域名绑定</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -381,32 +246,17 @@
         </div>
         
         
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前提"><span class="toc-number">1.</span> <span class="toc-text">一.前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-配置环境"><span class="toc-number">2.</span> <span class="toc-text">二.配置环境</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
     </div>
 </aside>
 
 
 
-  
-  
-  
 
   
-
   
-
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    </nav>
   
 
 
@@ -431,8 +281,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: false,
-		isPost: true,
+		isHome: true,
+		isPost: false,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

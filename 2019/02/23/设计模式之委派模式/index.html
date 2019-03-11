@@ -6,21 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>linux配置java环境 | goxcheer个人小栈</title>
+  <title>设计模式之委派模式 | goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="linux,java">
+  <meta name="description" content="委派模式相对来说比较简单，也容易理解，只是需要于代理模式加以区分……">
+<meta name="keywords" content="设计模式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="linux配置java环境">
-<meta property="og:url" content="http://yoursite.com/2018/11/12/linux配置java环境/index.html">
+<meta property="og:title" content="设计模式之委派模式">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/设计模式之委派模式/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="委派模式相对来说比较简单，也容易理解，只是需要于代理模式加以区分……">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/1.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/2.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/3.png">
-<meta property="og:updated_time" content="2018-11-12T14:56:38.679Z">
+<meta property="og:updated_time" content="2019-03-11T01:26:13.685Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="linux配置java环境">
-<meta name="twitter:image" content="http://yoursite.com/img/linux配置java环境/1.png">
+<meta name="twitter:title" content="设计模式之委派模式">
+<meta name="twitter:description" content="委派模式相对来说比较简单，也容易理解，只是需要于代理模式加以区分……">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
   
@@ -170,20 +169,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-linux配置java环境" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-设计模式之委派模式" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      linux配置java环境
+      设计模式之委派模式
     </h1>
   
 
         
-        <a href="/2018/11/12/linux配置java环境/" class="archive-article-date">
-  	<time datetime="2018-11-12T14:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-12</time>
+        <a href="/2019/02/23/设计模式之委派模式/" class="archive-article-date">
+  	<time datetime="2019-02-23T08:56:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-23</time>
 </a>
         
       </header>
@@ -197,7 +196,7 @@
 		<div id="toc-article" class="toc-article">
 			<span id="toc-close" class="toc-close" title="隐藏导航" onclick="showBtn();">×</span>
 			<strong class="toc-title">文章目录</strong>
-			   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前提"><span class="toc-number">1.</span> <span class="toc-text">一.前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-配置环境"><span class="toc-number">2.</span> <span class="toc-text">二.配置环境</span></a></li></ol>
+			   <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设计模式之委派模式"><span class="toc-number">1.</span> <span class="toc-text">设计模式之委派模式</span></a></li></ol>
 			 </div>
 		<script type="text/javascript">
 		function showToc(){
@@ -217,26 +216,27 @@
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="/img/linux配置java环境/1.png" alt="Alt text"></p>
+        <p>委派模式相对来说比较简单，也容易理解，只是需要于代理模式加以区分……</p>
 <a id="more"></a>
-<h2 id="一-前提"><a href="#一-前提" class="headerlink" title="一.前提"></a>一.前提</h2><ul>
-<li><strong>jdklinux</strong>版本压缩文件。<code>oracle</code>官网下载。<a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">链接</a> </li>
-<li>工具<strong>FileZilla</strong>+<strong>XShell</strong><blockquote>
-<p><strong>FileZilla</strong>是一款图形化界面的linux服务器上操作文件工具,<strong>XShell</strong>是第三方的服务器连接工具，可以方便的执行Bash命令。</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="二-配置环境"><a href="#二-配置环境" class="headerlink" title="二.配置环境"></a>二.配置环境</h2><blockquote>
-<p>实际上在部署的时候只需要jre环境就行，但是本人还是推荐安装JDK，因为jdk也包含了很多维护的命令，比如jstack追踪线程栈。</p>
-</blockquote>
-<p>通过<code>FileZilla</code>在<code>linux</code>服务器的<code>/usr/local</code>下新建<code>java</code>目录，然后将jdk压缩文件上传到该文件下解压缩。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf jdk-8u77-linux-x64.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p><img src="/img/linux配置java环境/2.png" alt="Alt text"></p>
-<p>然后需要配置jdk的环境变量。<br>首先 <code>vi /etc/profile</code> 后输入字母a或i即可进入编辑状态<br>在文件的最下面输入如下，<br><figure class="highlight profile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/JDK/jdk1.8.0_77</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME			/lib/tools.jar</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>然后退出保存。<br>输入命令显示的使环境变量配置生效。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>最后验证配置。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<p>成功的效果<br><img src="/img/linux配置java环境/3.png" alt="Alt text"></p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=554191378&auto=1&height=66"></iframe>
+<h1 id="设计模式之委派模式"><a href="#设计模式之委派模式" class="headerlink" title="设计模式之委派模式"></a>设计模式之委派模式</h1><p>委派模式特点：</p>
+<ol>
+<li>类似于中介的功能（委托机制）.</li>
+<li>持有被委托人的引用。</li>
+<li>不关心过程，只关心结果。</li>
+</ol>
+<p><strong>实现demo</strong><br>首先我们有一个工作Job接口：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:15:40 2019/2/23</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 工作接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 工作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">doing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>有两个普通员工A,B，都可以工作干活.<br>员工A：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:15:45 2019/2/25</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 普通员工A</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeA</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       System.out.println(<span class="string">"员工A进行工作"</span>);</span><br><span class="line">        System.out.println(<span class="string">"员工A完成工作"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>员工B：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:15:45 2019/2/25</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 普通员工B</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeB</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"员工B进行工作"</span>);</span><br><span class="line">        System.out.println(<span class="string">"员工B完成工作"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后项目经理就是我们委派模式的具体实现了：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Author</span>: Goxcheer</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Date</span>:15:45 2019/2/25</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@Email</span>:604721660@qq.com</span></span><br><span class="line"><span class="comment"> *<span class="doctag">@decription</span>: 分配任务的经理</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> <span class="keyword">implements</span> <span class="title">Job</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Job target = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Manager</span><span class="params">(Job job)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.target = job;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 经理将要做的事情委托给员工去做</span></span><br><span class="line"><span class="comment">     * 做事情的是员工</span></span><br><span class="line"><span class="comment">     * 功劳归经理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.target.doing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>委派模式实现的类需要持有可以委派对象的引用。<br>测试:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Manager manager = <span class="keyword">new</span> Manager(<span class="keyword">new</span> EmployeeA());</span><br><span class="line">        manager.doing();</span><br><span class="line">        manager = <span class="keyword">new</span> Manager(<span class="keyword">new</span> EmployeeB());</span><br><span class="line">        manager.doing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">员工A进行工作</span><br><span class="line">员工A完成工作</span><br><span class="line">员工B进行工作</span><br><span class="line">员工B完成工作</span><br></pre></td></tr></table></figure></p>
+<p>总结：</p>
+<ol>
+<li>委派模式类似于一种中介委托机制</li>
+<li>需要持有委托对象的引用</li>
+<li>不关心过程只关心结果</li>
+<li>和代理模式区分，代理模式是增强原对象的功能，而委托是用别人的功能，实现自己的功劳。</li>
+</ol>
 
       
 
@@ -276,11 +276,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
         		</li>
       		
 		</ul>
@@ -336,7 +332,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/11/12/linux配置java环境/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/02/23/设计模式之委派模式/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -350,18 +346,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/11/22/vue-js入门一/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          vue.js入门 （一）
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/11/11/yilia主题-目录-访问统计-域名绑定/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">yilia主题+目录+访问统计+域名绑定</div>
+    <a href="/2019/02/20/设计模式之单例模式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">设计模式之单例模式</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -388,7 +375,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前提"><span class="toc-number">1.</span> <span class="toc-text">一.前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-配置环境"><span class="toc-number">2.</span> <span class="toc-text">二.配置环境</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设计模式之委派模式"><span class="toc-number">1.</span> <span class="toc-text">设计模式之委派模式</span></a></li></ol>
                     </div>
                 </span>
             </div>
