@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/3.png">
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/4.png">
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/5.png">
-<meta property="og:updated_time" content="2019-04-22T07:35:57.528Z">
+<meta property="og:updated_time" content="2019-04-22T07:46:02.033Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="虚拟dom原理探究及在vue中的实现">
 <meta name="twitter:description" content="虚拟dom在页面渲染性能方面有着很大的作用，最近抽空研究了一下虚拟dom在vue2.0中的实现。。。">
@@ -225,35 +225,23 @@
         <p>虚拟dom在页面渲染性能方面有着很大的作用，最近抽空研究了一下虚拟dom在vue2.0中的实现。。。</p>
 <a id="more"></a>
 <h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><h2 id="浏览器解析html绘制页面的过程"><a href="#浏览器解析html绘制页面的过程" class="headerlink" title="浏览器解析html绘制页面的过程"></a>浏览器解析html绘制页面的过程</h2><p><img src="/img/虚拟dom原理探究及在vue中的实现/1.png" alt="Alt text"><br>上图为webkit引擎浏览器的处理流程，如上图大致分为4大步：</p>
-<ol>
-<li><p>HTML解析器分析html，构建一颗DOM树；</p>
-</li>
-<li><p>CSS解析器会分析外联的css文件和内联的一些样式，创建一个页面的样式表；</p>
-</li>
-<li><p>将DOM树和样式表关联起来，创建一颗Render树。这一过程又被称为Attachment，每个DOM节点上都有一个attach方法，会接收对应的样式表，返回一个render对象。这些render对象最终会结合成一个render tree；</p>
-</li>
-<li><p>有了render tree后，浏览器就可以为render tree上的每个节点在屏幕上分配一个精确的位置坐标，然后各个节点会调用自身的paint方法结合坐标信息，在浏览器中绘制中整个页面了。</p>
-<h2 id="回流（reflow）和重绘"><a href="#回流（reflow）和重绘" class="headerlink" title="回流（reflow）和重绘"></a>回流（reflow）和重绘</h2></li>
-</ol>
-<p>回流和重绘都是浏览器自身的行为</p>
+<p>1.HTML解析器分析html，构建一颗DOM树；</p>
+<p>2.CSS解析器会分析外联的css文件和内联的一些样式，创建一个页面的样式表；</p>
+<p>3.将DOM树和样式表关联起来，创建一颗Render树。这一过程又被称为Attachment，每个DOM节点上都有一个attach方法，会接收对应的样式表，返回一个render对象。这些render对象最终会结合成一个render tree；</p>
+<p>4.有了render tree后，浏览器就可以为render tree上的每个节点在屏幕上分配一个精确的位置坐标，然后各个节点会调用自身的paint方法结合坐标信息，在浏览器中绘制中整个页面了。</p>
+<h2 id="回流（reflow）和重绘"><a href="#回流（reflow）和重绘" class="headerlink" title="回流（reflow）和重绘"></a>回流（reflow）和重绘</h2><p>回流和重绘都是浏览器自身的行为</p>
 <p><strong>回流</strong>：当render tree中的一部分(或全部)因为元素的规模尺寸，布局，隐藏等改变而需要重新构建。这就称为回流(reflow)。每个页面至少需要一次回流，就是在页面第一次加载的时候。在回流的时候，浏览器会使渲染树中受到影响的部分失效，并重新构造这部分渲染树，完成回流后，浏览器会重新绘制受影响的部分到屏幕中，该过程成为重绘。</p>
 <p><strong>重绘</strong>：当render tree中的一些元素需要更新属性，而这些属性只是影响元素的外观，风格，而不会影响布局的，比如background-color。则就叫称为重绘。</p>
 <p>减少回流的办法（不是这次讨论重点）：比如cssText、避免使用会强制reflush队列的属性等等。</p>
 <h2 id="手动操作DOM性能问题"><a href="#手动操作DOM性能问题" class="headerlink" title="手动操作DOM性能问题"></a>手动操作DOM性能问题</h2><p>在使用原生的js api或者jquery等一些方法直接去操作dom的时候，可能会引起页面的reflow，而页面的回流所带来的代价是非常昂贵的。频繁的去操作dom，会引起页面的卡顿，影响用户的体验。<br>这里打印一个最简单的真实DOM节点里面的属性<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">"div"</span>)</span><br><span class="line"><span class="keyword">var</span> str = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> div)&#123;</span><br><span class="line">str = str + key + <span class="string">" "</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(str)</span><br></pre></td></tr></table></figure></p>
 <p>结果：<br><img src="/img/虚拟dom原理探究及在vue中的实现/2.png" alt="Alt text"></p>
 <p><strong>虚拟DOM就是为了解决频繁操作DOM的性能问题创造出来的。</strong><br>例如：<br>如果使用原生api去操作一个会导致回流的DOM操作10次，那么浏览器会每次都会重新走一次上面的全流程，包括一些没变化的位置计算。<br>而虚拟DOM不会立即去操作DOM，而是将这10次更新的diff内容保存到本地的一个js对象中，最终将这个js对象一次性attach到DOM树上，通知浏览器去执行绘制工作，这样可以避免大量的无谓的计算量。</p>
-<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>goxcheer<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;</span><br><span class="line">    &lt;p&gt;goxcheer&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
 <p>虚拟dom：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Vnode = &#123;</span><br><span class="line">    tag: <span class="string">'div'</span>,</span><br><span class="line">    children: [</span><br><span class="line">        &#123; <span class="attr">tag</span>: <span class="string">'p'</span>, <span class="attr">text</span>: <span class="string">'goxcheer'</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>这样的好处，避免了因直接去修改真实的dom而带来的性能隐患。可以先把页面的一些改动反应到这个虚拟dom对象上，等更新完后再一次统一去把变化同步到真实的dom中。</p>
-<h2 id="vue2-0中是如何使用虚拟dom来绑定和渲染模板的"><a href="#vue2-0中是如何使用虚拟dom来绑定和渲染模板的" class="headerlink" title="vue2.0中是如何使用虚拟dom来绑定和渲染模板的"></a>vue2.0中是如何使用虚拟dom来绑定和渲染模板的</h2><ol>
-<li><p>监听数据的变化<br>vue内部是通过数据劫持的方式来做到数据绑定的，其中最核心的方法就是通过Object.defineProperty()的getter和setter来实现对数据劫持，达到监听数据变动的目的。<a href="https://blog.goxcheer.com/2019/04/13/Vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/" target="_blank" rel="noopener">vue数据绑定</a>。</p>
-</li>
-<li><p>vue中虚拟DOM生成DOM的过程<br><img src="/img/虚拟dom原理探究及在vue中的实现/3.png" alt="Alt text"></p>
-</li>
-<li><p>DocumentFragment和vue异步更新队列<br>DocumentFragment是容许把一些DOM操作先应用到一个dom片段里，然后再将这个片段append到DOM树里，从而来减少页面的reflow次数。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fragment = <span class="built_in">document</span>.createDocumentFragment();</span><br><span class="line"></span><br><span class="line"><span class="comment">//add DOM to fragment</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> spanNode = <span class="built_in">document</span>.createElement(<span class="string">"span"</span>);</span><br><span class="line">    spanNode.innerHTML = <span class="string">"number:"</span> + i;</span><br><span class="line">    fragment.appendChild(spanNode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+<h2 id="vue2-0中是如何使用虚拟dom来绑定和渲染模板的"><a href="#vue2-0中是如何使用虚拟dom来绑定和渲染模板的" class="headerlink" title="vue2.0中是如何使用虚拟dom来绑定和渲染模板的"></a>vue2.0中是如何使用虚拟dom来绑定和渲染模板的</h2><p>1.监听数据的变化<br>vue内部是通过数据劫持的方式来做到数据绑定的，其中最核心的方法就是通过Object.defineProperty()的getter和setter来实现对数据劫持，达到监听数据变动的目的。<a href="https://blog.goxcheer.com/2019/04/13/Vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/" target="_blank" rel="noopener">vue数据绑定</a>。</p>
+<p>2.vue中虚拟DOM生成DOM的过程<br><img src="/img/虚拟dom原理探究及在vue中的实现/3.png" alt="Alt text"></p>
+<p>3.DocumentFragment和vue异步更新队列<br>DocumentFragment是容许把一些DOM操作先应用到一个dom片段里，然后再将这个片段append到DOM树里，从而来减少页面的reflow次数。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fragment = <span class="built_in">document</span>.createDocumentFragment();</span><br><span class="line"></span><br><span class="line"><span class="comment">//add DOM to fragment</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> spanNode = <span class="built_in">document</span>.createElement(<span class="string">"span"</span>);</span><br><span class="line">    spanNode.innerHTML = <span class="string">"number:"</span> + i;</span><br><span class="line">    fragment.appendChild(spanNode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>vue里面的一些dom的一些变化，都是在DocumentFragment容器中去操作的，最后将这个更新片段append到el的根dom中。</p>
 <p>走到这里，你会发现还有一个问题。就算vue使用了虚拟dom，将一些改动先同步到虚拟对象上，然后去改动真实DOM。这其中，去改动真实DOM还是使用了原生的api去操作DOM，还是会不可避免的去reflow整个页面，如果不能把这些更新操作打包起来集中去更新真实DOM，那其实完全散失了虚拟DOM的作用性，反而变得更加冗余。</p>
 <p>这时候框架的价值就体现出来了，vue中，如果在同一次事件循环中如果观察到有多个数据变化，vue会开启一个异步更新队列，并缓冲在同一事件循环中发生的所有数据改变。然后在下一个的事件循环‘tick’中，vue刷新队列并执行实际工作。这样就可以批量的去更新多次数据变化到虚拟dom对象中，diff差异，同步到页面中的真实dom里。</p>
@@ -582,10 +570,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
@@ -595,6 +579,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">博客</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -610,19 +598,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
               </li>
              
               <li class="article-tag-list-item">
