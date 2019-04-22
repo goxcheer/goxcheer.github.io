@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/3.png">
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/4.png">
 <meta property="og:image" content="http://yoursite.com/img/虚拟dom原理探究及在vue中的实现/5.png">
-<meta property="og:updated_time" content="2019-04-22T07:34:33.949Z">
+<meta property="og:updated_time" content="2019-04-22T07:35:57.528Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="虚拟dom原理探究及在vue中的实现">
 <meta name="twitter:description" content="虚拟dom在页面渲染性能方面有着很大的作用，最近抽空研究了一下虚拟dom在vue2.0中的实现。。。">
@@ -194,7 +194,31 @@
       </header>
     
     <!-- 目录内容 -->
-				
+		
+		<p class="show-toc-btn" id="show-toc-btn" onclick="showToc();" style="display:none">
+			  <span class="btn-bg"></span>
+			  <span class="btn-text">文章导航</span>
+			  </p>
+		<div id="toc-article" class="toc-article">
+			<span id="toc-close" class="toc-close" title="隐藏导航" onclick="showBtn();">×</span>
+			<strong class="toc-title">文章目录</strong>
+			   <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">1.</span> <span class="toc-text">前提</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#浏览器解析html绘制页面的过程"><span class="toc-number">1.1.</span> <span class="toc-text">浏览器解析html绘制页面的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回流（reflow）和重绘"><span class="toc-number">1.2.</span> <span class="toc-text">回流（reflow）和重绘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手动操作DOM性能问题"><span class="toc-number">1.3.</span> <span class="toc-text">手动操作DOM性能问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟dom正题"><span class="toc-number">2.</span> <span class="toc-text">虚拟dom正题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是虚拟dom"><span class="toc-number">2.1.</span> <span class="toc-text">什么是虚拟dom</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vue2-0中是如何使用虚拟dom来绑定和渲染模板的"><span class="toc-number">2.2.</span> <span class="toc-text">vue2.0中是如何使用虚拟dom来绑定和渲染模板的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#diff算法"><span class="toc-number">2.3.</span> <span class="toc-text">diff算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#diff流程图"><span class="toc-number">2.3.1.</span> <span class="toc-text">diff流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具体实现（代码保留核心）"><span class="toc-number">2.3.2.</span> <span class="toc-text">具体实现（代码保留核心）</span></a></li></ol></li></ol></li></ol>
+			 </div>
+		<script type="text/javascript">
+		function showToc(){
+			var toc_article = document.getElementById("toc-article");
+			var show_toc_btn = document.getElementById("show-toc-btn");
+			toc_article.setAttribute("style","display:block");
+			show_toc_btn.setAttribute("style","display:none");
+			};
+		function showBtn(){
+			var toc_article = document.getElementById("toc-article");
+			var show_toc_btn = document.getElementById("show-toc-btn");
+			toc_article.setAttribute("style","display:none");
+			show_toc_btn.setAttribute("style","display:block");
+			};
+		</script>
+		  		
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
@@ -218,7 +242,7 @@
 <h2 id="手动操作DOM性能问题"><a href="#手动操作DOM性能问题" class="headerlink" title="手动操作DOM性能问题"></a>手动操作DOM性能问题</h2><p>在使用原生的js api或者jquery等一些方法直接去操作dom的时候，可能会引起页面的reflow，而页面的回流所带来的代价是非常昂贵的。频繁的去操作dom，会引起页面的卡顿，影响用户的体验。<br>这里打印一个最简单的真实DOM节点里面的属性<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">"div"</span>)</span><br><span class="line"><span class="keyword">var</span> str = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> div)&#123;</span><br><span class="line">str = str + key + <span class="string">" "</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(str)</span><br></pre></td></tr></table></figure></p>
 <p>结果：<br><img src="/img/虚拟dom原理探究及在vue中的实现/2.png" alt="Alt text"></p>
 <p><strong>虚拟DOM就是为了解决频繁操作DOM的性能问题创造出来的。</strong><br>例如：<br>如果使用原生api去操作一个会导致回流的DOM操作10次，那么浏览器会每次都会重新走一次上面的全流程，包括一些没变化的位置计算。<br>而虚拟DOM不会立即去操作DOM，而是将这10次更新的diff内容保存到本地的一个js对象中，最终将这个js对象一次性attach到DOM树上，通知浏览器去执行绘制工作，这样可以避免大量的无谓的计算量。</p>
-<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;</span><br><span class="line">    &lt;p&gt;goxcheer&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>goxcheer<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
 <p>虚拟dom：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Vnode = &#123;</span><br><span class="line">    tag: <span class="string">'div'</span>,</span><br><span class="line">    children: [</span><br><span class="line">        &#123; <span class="attr">tag</span>: <span class="string">'p'</span>, <span class="attr">text</span>: <span class="string">'goxcheer'</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>这样的好处，避免了因直接去修改真实的dom而带来的性能隐患。可以先把页面的一些改动反应到这个虚拟dom对象上，等更新完后再一次统一去把变化同步到真实的dom中。</p>
 <h2 id="vue2-0中是如何使用虚拟dom来绑定和渲染模板的"><a href="#vue2-0中是如何使用虚拟dom来绑定和渲染模板的" class="headerlink" title="vue2.0中是如何使用虚拟dom来绑定和渲染模板的"></a>vue2.0中是如何使用虚拟dom来绑定和渲染模板的</h2><ol>
@@ -550,10 +574,6 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
@@ -562,7 +582,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">github</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">博客</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -582,11 +614,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -595,14 +627,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">github</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">博客</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -638,15 +662,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">jdk</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">虚拟dom</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jdk</a>
               </li>
              
               <li class="article-tag-list-item">
