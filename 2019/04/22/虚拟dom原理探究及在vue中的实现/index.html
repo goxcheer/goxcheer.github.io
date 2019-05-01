@@ -236,7 +236,7 @@
 <h2 id="手动操作DOM性能问题"><a href="#手动操作DOM性能问题" class="headerlink" title="手动操作DOM性能问题"></a>手动操作DOM性能问题</h2><p>在使用原生的js api或者jquery等一些方法直接去操作dom的时候，可能会引起页面的reflow，而页面的回流所带来的代价是非常昂贵的。频繁的去操作dom，会引起页面的卡顿，影响用户的体验。<br>这里打印一个最简单的真实DOM节点里面的属性<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">"div"</span>)</span><br><span class="line"><span class="keyword">var</span> str = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> div)&#123;</span><br><span class="line">str = str + key + <span class="string">" "</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(str)</span><br></pre></td></tr></table></figure></p>
 <p>结果：<br><img src="/img/虚拟dom原理探究及在vue中的实现/2.png" alt="Alt text"></p>
 <p><strong>虚拟DOM就是为了解决频繁操作DOM的性能问题创造出来的。</strong><br>例如：<br>如果使用原生api去操作一个会导致回流的DOM操作10次，那么浏览器会每次都会重新走一次上面的全流程，包括一些没变化的位置计算。<br>而虚拟DOM不会立即去操作DOM，而是将这10次更新的diff内容保存到本地的一个js对象中，最终将这个js对象一次性attach到DOM树上，通知浏览器去执行绘制工作，这样可以避免大量的无谓的计算量。</p>
-<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;</span><br><span class="line">    &lt;p&gt;goxcheer&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<h1 id="虚拟dom正题"><a href="#虚拟dom正题" class="headerlink" title="虚拟dom正题"></a>虚拟dom正题</h1><h2 id="什么是虚拟dom"><a href="#什么是虚拟dom" class="headerlink" title="什么是虚拟dom"></a>什么是虚拟dom</h2><p><strong>virtual DOM是将真实的DOM的数据抽取出来，以对象的形式模拟树形结构。</strong><br>真实dom：<br><figure class="highlight htmlbars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>goxcheer<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
 <p>虚拟dom：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Vnode = &#123;</span><br><span class="line">    tag: <span class="string">'div'</span>,</span><br><span class="line">    children: [</span><br><span class="line">        &#123; <span class="attr">tag</span>: <span class="string">'p'</span>, <span class="attr">text</span>: <span class="string">'goxcheer'</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>这样的好处，避免了因直接去修改真实的dom而带来的性能隐患。可以先把页面的一些改动反应到这个虚拟dom对象上，等更新完后再一次统一去把变化同步到真实的dom中。</p>
 <h2 id="vue2-0中是如何使用虚拟dom来绑定和渲染模板的"><a href="#vue2-0中是如何使用虚拟dom来绑定和渲染模板的" class="headerlink" title="vue2.0中是如何使用虚拟dom来绑定和渲染模板的"></a>vue2.0中是如何使用虚拟dom来绑定和渲染模板的</h2><p>1.监听数据的变化<br>vue内部是通过数据劫持的方式来做到数据绑定的，其中最核心的方法就是通过Object.defineProperty()的getter和setter来实现对数据劫持，达到监听数据变动的目的。<a href="https://blog.goxcheer.com/2019/04/13/Vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/" target="_blank" rel="noopener">vue数据绑定</a>。</p>
@@ -395,6 +395,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2019/04/25/分布式通信协议分析/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          分布式通信协议分析
+        
+      </div>
+    </a>
   
   
     <a href="/2019/04/13/Vue双向绑定原理探究/" id="article-nav-older" class="article-nav-link-wrap">
@@ -570,6 +579,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
@@ -579,10 +592,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">博客</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -598,19 +607,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">maven</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">mysql</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">maven</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,11 +631,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -647,6 +656,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">域名</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">协议</a>
               </li>
              
               <li class="article-tag-list-item">
