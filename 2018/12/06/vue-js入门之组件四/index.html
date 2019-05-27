@@ -8,17 +8,18 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>vue.js入门（四） | goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="vue,组件">
+  <meta name="description" content="组件化是现在流行的前端js框架共有的思想，本文介绍了Vue的组件基础……">
+<meta name="keywords" content="vue,组件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="vue.js入门（四）">
 <meta property="og:url" content="http://yoursite.com/2018/12/06/vue-js入门之组件四/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="组件化是现在流行的前端js框架共有的思想，本文介绍了Vue的组件基础……">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/vue-js入门基础/5.png">
-<meta property="og:updated_time" content="2018-12-06T03:37:58.279Z">
+<meta property="og:updated_time" content="2019-05-27T12:55:05.911Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="vue.js入门（四）">
-<meta name="twitter:image" content="http://yoursite.com/img/vue-js入门基础/5.png">
+<meta name="twitter:description" content="组件化是现在流行的前端js框架共有的思想，本文介绍了Vue的组件基础……">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
   
@@ -215,7 +216,7 @@
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="/img/vue-js入门基础/5.png" alt="Alt text"></p>
+        <p>组件化是现在流行的前端js框架共有的思想，本文介绍了Vue的组件基础……</p>
 <a id="more"></a>
 <h2 id="组件的基本示例"><a href="#组件的基本示例" class="headerlink" title="组件的基本示例"></a>组件的基本示例</h2><h3 id="创建一个组件"><a href="#创建一个组件" class="headerlink" title="创建一个组件"></a>创建一个组件</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个名为 button-counter 的新组件</span></span><br><span class="line">Vue.component(<span class="string">'button-counter'</span>, &#123;</span><br><span class="line">  data: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      count: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  template: <span class="string">'&lt;button v-on:click="count++"&gt;You clicked me &#123;&#123; count &#125;&#125; times.&lt;/button&gt;'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <h4 id="组件的data必须是一个函数"><a href="#组件的data必须是一个函数" class="headerlink" title="组件的data必须是一个函数"></a>组件的<code>data</code>必须是一个函数</h4><p>一个组件的 <code>data</code>选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝：<br>从而在多处复用的时候<code>data</code>不会相互影响<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    count: <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -560,19 +561,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">springboot</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">整合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -681,6 +682,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">协议</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">架构杂谈</a>
               </li>
              
               <li class="article-tag-list-item">

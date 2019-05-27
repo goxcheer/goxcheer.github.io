@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>SpringBoot整合篇 | goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.整合jdbcspring中的jdbc连接和事务是配置中的重要一环，在SpringBoot中该如何处理呢？ 答案是不需要处理，我们只要找到SpringBoot提供的启动器即可： 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;spring-">
+  <meta name="description" content="以前Spring对于一些第三方的技术整合都是jar包+xml,但是SpringBoot却是jar包+java类……">
 <meta name="keywords" content="springboot,整合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpringBoot整合篇">
 <meta property="og:url" content="http://yoursite.com/2019/01/22/SpringBoot整合篇/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
-<meta property="og:description" content="1.整合jdbcspring中的jdbc连接和事务是配置中的重要一环，在SpringBoot中该如何处理呢？ 答案是不需要处理，我们只要找到SpringBoot提供的启动器即可： 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;spring-">
+<meta property="og:description" content="以前Spring对于一些第三方的技术整合都是jar包+xml,但是SpringBoot却是jar包+java类……">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/img/SpringBoot整合篇/1.png">
-<meta property="og:updated_time" content="2019-01-22T12:19:34.013Z">
+<meta property="og:updated_time" content="2019-05-27T13:01:55.771Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpringBoot整合篇">
-<meta name="twitter:description" content="1.整合jdbcspring中的jdbc连接和事务是配置中的重要一环，在SpringBoot中该如何处理呢？ 答案是不需要处理，我们只要找到SpringBoot提供的启动器即可： 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;spring-">
+<meta name="twitter:description" content="以前Spring对于一些第三方的技术整合都是jar包+xml,但是SpringBoot却是jar包+java类……">
 <meta name="twitter:image" content="http://yoursite.com/img/SpringBoot整合篇/1.png">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
@@ -218,7 +218,9 @@
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="1-整合jdbc"><a href="#1-整合jdbc" class="headerlink" title="1.整合jdbc"></a>1.整合jdbc</h1><p>spring中的jdbc连接和事务是配置中的重要一环，在SpringBoot中该如何处理呢？</p>
+        <p>以前Spring对于一些第三方的技术整合都是jar包+xml,但是SpringBoot却是jar包+java类……</p>
+<a id="more"></a>
+<h1 id="1-整合jdbc"><a href="#1-整合jdbc" class="headerlink" title="1.整合jdbc"></a>1.整合jdbc</h1><p>spring中的jdbc连接和事务是配置中的重要一环，在SpringBoot中该如何处理呢？</p>
 <p>答案是不需要处理，我们只要找到SpringBoot提供的启动器即可：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>当然，不要忘了数据库驱动，SpringBoot并不知道我们用的什么数据库，这里我们选择MySQL：</p>
@@ -528,19 +530,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">springboot</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">整合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -649,6 +651,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">协议</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">架构杂谈</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -8,19 +8,21 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Vue.js进阶之Vuex | goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="Vue,vuex">
+  <meta name="description" content="Vuex作为一个公共的状态管理，它在父子组件的通信方面，给我们带来了很大的方便……">
+<meta name="keywords" content="Vue,vuex">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vue.js进阶之Vuex">
 <meta property="og:url" content="http://yoursite.com/2018/12/07/Vue-js进阶之Vuex/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Vuex作为一个公共的状态管理，它在父子组件的通信方面，给我们带来了很大的方便……">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/vue-js入门基础/9.png">
 <meta property="og:image" content="http://yoursite.com/img/vue-js入门基础/7.png">
 <meta property="og:image" content="http://yoursite.com/img/vue-js入门基础/8.png">
-<meta property="og:updated_time" content="2018-12-07T02:38:05.554Z">
+<meta property="og:updated_time" content="2019-05-27T12:59:13.799Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vue.js进阶之Vuex">
-<meta name="twitter:image" content="http://yoursite.com/img/vue-js入门基础/9.png">
+<meta name="twitter:description" content="Vuex作为一个公共的状态管理，它在父子组件的通信方面，给我们带来了很大的方便……">
+<meta name="twitter:image" content="http://yoursite.com/img/vue-js入门基础/7.png">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
   
@@ -217,7 +219,7 @@
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="/img/vue-js入门基础/9.png" alt="Alt text"></p>
+        <p>Vuex作为一个公共的状态管理，它在父子组件的通信方面，给我们带来了很大的方便……</p>
 <a id="more"></a>
 <h2 id="Vuex简介"><a href="#Vuex简介" class="headerlink" title="Vuex简介"></a>Vuex简介</h2><p><code>Vuex</code> 是一个专为<code>Vue.js</code> 应用程序开发的<strong>状态管理模式</strong>。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。<code>Vuex</code> 也集成到 <code>Vue</code> 的官方调试工具 <code>devtools extension</code>，提供了诸如零配置的 <code>time-travel</code> 调试、状态快照导入导出等高级调试功能。</p>
 <h3 id="状态管理模式"><a href="#状态管理模式" class="headerlink" title="状态管理模式"></a>状态管理模式</h3><p>让我们从一个简单的 Vue 计数应用开始：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  <span class="comment">// state</span></span><br><span class="line">  data () &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      count: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// view</span></span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;div&gt;&#123;&#123; count &#125;&#125;&lt;/div&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">  <span class="comment">// actions</span></span><br><span class="line">  methods: &#123;</span><br><span class="line">    increment () &#123;</span><br><span class="line">      <span class="keyword">this</span>.count++</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
@@ -579,19 +581,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">springboot</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">整合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -700,6 +702,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">协议</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">架构杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
