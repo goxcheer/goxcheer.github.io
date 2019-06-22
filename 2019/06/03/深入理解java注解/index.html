@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="goxcheer个人小栈">
 <meta property="og:description" content="java注解是在JDK5时引入的新特性，鉴于目前大部分框架(如Spring)都使用了注解简化代码并提高编码的效率，因此掌握并深入理解注解对于一个Java工程师是来说是很有必要的事。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-13T13:23:36.233Z">
+<meta property="og:updated_time" content="2019-06-22T10:53:24.393Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解java注解">
 <meta name="twitter:description" content="java注解是在JDK5时引入的新特性，鉴于目前大部分框架(如Spring)都使用了注解简化代码并提高编码的效率，因此掌握并深入理解注解对于一个Java工程师是来说是很有必要的事。">
@@ -249,7 +249,38 @@
 <li>Method：代表类的方法定义 　 </li>
 <li>Package：代表类的包定义</li>
 </ul>
-<p>下面是AnnotatedElement中相关的API方法，以上5个类都实现以下的方法：<br>|返回值    |方法名称    |说明|<br>| —— | —— | —— |<br>|A extends Annotation|getAnnotation(Class<a> annotationClass)|    该元素如果存在指定类型的注解，则返回这些注解，否则返回 null。|<br>|Annotation[]|    getAnnotations()|    返回此元素上存在的所有注解，包括从父类继承的|<br>|boolean|    isAnnotationPresent(Class&lt;? extends Annotation&gt;  annotationClass)|    如果指定类型的注解存在于此元素上，则返回 true，否则返回 false。|<br>|Annotation[]|    getDeclaredAnnotations()|    返回直接存在于此元素上的所有注解，注意，不包括父类的注解，调用者可以随意修改返回的数组；这不会对其他调用者返回的数组产生任何影响，没有则返回长度为0的数组|</a></p>
+<p>下面是AnnotatedElement中相关的API方法，以上5个类都实现以下的方法：</p>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>方法名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A extends Annotation</td>
+<td>getAnnotation(Class<a> annotationClass)</a></td>
+<td>该元素如果存在指定类型的注解，则返回这些注解，否则返回 null。</td>
+</tr>
+<tr>
+<td>Annotation[]</td>
+<td>getAnnotations()</td>
+<td>返回此元素上存在的所有注解，包括从父类继承的</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>isAnnotationPresent(Class&lt;? extends Annotation&gt;  annotationClass)</td>
+<td>如果指定类型的注解存在于此元素上，则返回 true，否则返回 false。</td>
+</tr>
+<tr>
+<td>Annotation[]</td>
+<td>getDeclaredAnnotations()</td>
+<td>返回直接存在于此元素上的所有注解，注意，不包括父类的注解，调用者可以随意修改返回的数组；这不会对其他调用者返回的数组产生任何影响，没有则返回长度为0的数组</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <ul>
 <li>@Inherited 可以让注解被继承，但这并不是真的继承，只是通过使用@Inherited，可以让子类Class对象使用getAnnotations()获取父类被@Inherited修饰的注解</li>
@@ -571,19 +602,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">github</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">博客</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -592,6 +611,18 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">github</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">博客</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -643,11 +674,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -691,15 +722,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">注解</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">枚举</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">序列化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">注解</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -711,11 +742,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
+                <a href="javascript:void(0)" class="js-tag color5">SpringMVC</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">SpringMVC</a>
+                <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
               </li>
              
               <li class="article-tag-list-item">
