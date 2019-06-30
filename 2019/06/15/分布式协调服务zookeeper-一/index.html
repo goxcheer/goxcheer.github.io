@@ -20,7 +20,7 @@
 <meta property="og:image" content="http://yoursite.com/img/分布式协调服务zookeeper-一/2.png">
 <meta property="og:image" content="http://yoursite.com/img/分布式协调服务zookeeper-一/3.png">
 <meta property="og:image" content="http://yoursite.com/img/分布式协调服务zookeeper-一/4.png">
-<meta property="og:updated_time" content="2019-06-24T12:42:13.104Z">
+<meta property="og:updated_time" content="2019-06-30T00:38:25.453Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式协调服务zookeeper(一)">
 <meta name="twitter:description" content="zookeeper是一个开源的分布式协调服务,在学习分布式知识的时候，zookeeper是必须的……">
@@ -290,8 +290,8 @@
 <p>2.创建myid</p>
 <p>在每一个服务器的dataDir目录下创建一个myid的文件，文件就一行数据，数据内容是每台机器对应的server ID的数字。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp/zookeeper</span><br><span class="line">vim myid</span><br></pre></td></tr></table></figure></p>
 <p>在里面添加server的id，即1，2，3，4.</p>
-<p>3.启动zookeeper<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/zookeeper/zookeeper-<span class="number">3.4</span>.<span class="number">10</span>/bin/</span><br><span class="line">/img/分布式协调服务zookeeper-一/zkServer.sh start</span><br></pre></td></tr></table></figure></p>
-<p>查看Zookeeper集群的状态：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/img/分布式协调服务zookeeper-一/zkServer.sh status</span><br></pre></td></tr></table></figure></p>
+<p>3.启动zookeeper<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/zookeeper/zookeeper-<span class="number">3.4</span>.<span class="number">10</span>/bin/</span><br><span class="line">./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
+<p>查看Zookeeper集群的状态：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./zkServer.sh status</span><br></pre></td></tr></table></figure></p>
 <p>我这边的四台机器分别是:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">192.168</span>.2.231 follower</span><br><span class="line"><span class="number">192.168</span>.2.232 follower</span><br><span class="line"><span class="number">192.168</span>.2.233 leader</span><br><span class="line"><span class="number">192.168</span>.2.234 follower</span><br></pre></td></tr></table></figure></p>
 <p>可见将192.168.2.233选举为leader节点。</p>
 <p>图示理解集群下zookeeper的特点：<br><img src="/img/分布式协调服务zookeeper-一/4.png" alt="Alt text"></p>
@@ -406,6 +406,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2019/06/18/分布式协调服务zookeeper-二/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          分布式协调服务zookeeper(二)
+        
+      </div>
+    </a>
   
   
     <a href="/2019/06/12/我是喜欢安静的/" id="article-nav-older" class="article-nav-link-wrap">
@@ -581,6 +590,18 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">WebService</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
@@ -593,19 +614,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">WebService</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">github</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">博客</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -621,23 +638,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">mysql</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -653,6 +662,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Aop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
@@ -661,19 +674,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Aop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color5">vuex</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -685,11 +694,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">协议</a>
+                <a href="javascript:void(0)" class="js-tag color3">组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -709,6 +714,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">jdk</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">注解</a>
               </li>
              
@@ -717,7 +726,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jdk</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">序列化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -729,11 +742,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">序列化</a>
+                <a href="javascript:void(0)" class="js-tag color3">协议</a>
               </li>
              
               <li class="article-tag-list-item">
