@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yoursite.com/2018/12/21/linux%E4%B8%8B%E5%AE%89%E8%A3%85redis%E5%8F%8AJava%E8%BF%9E%E6%8E%A5redis/</loc>
+    <lastmod>2019-07-24T13:24:48.152Z</lastmod>
+  </url>  <url>
+    <loc>http://yoursite.com/2018/12/15/linux%E5%AE%89%E8%A3%85%E5%92%8C%E5%8D%B8%E8%BD%BDmysql/</loc>
+    <lastmod>2019-07-24T13:24:07.137Z</lastmod>
+  </url>  <url>
+    <loc>http://yoursite.com/2018/12/10/linux%E9%85%8D%E7%BD%AEtomcat/</loc>
+    <lastmod>2019-07-24T13:22:09.307Z</lastmod>
+  </url>  <url>
+    <loc>http://yoursite.com/2019/01/25/css%E5%AE%9A%E4%BD%8D%E6%9C%BA%E5%88%B6%E5%8F%8A%E6%B8%85%E9%99%A4%E6%B5%AE%E5%8A%A8/</loc>
+    <lastmod>2019-07-24T13:18:59.332Z</lastmod>
+  </url>  <url>
     <loc>http://yoursite.com/2018/12/11/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E9%9B%86%E5%90%88%E4%B9%8BArrayList-and-LinkedList/</loc>
     <lastmod>2019-07-24T13:11:15.719Z</lastmod>
   </url>  <url>
@@ -141,18 +153,6 @@
   </url>  <url>
     <loc>http://yoursite.com/2019/01/29/maven%E7%94%9F%E6%88%90%E5%8F%AF%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E7%9A%84jar%E5%8C%85/</loc>
     <lastmod>2019-03-06T10:12:13.396Z</lastmod>
-  </url>  <url>
-    <loc>http://yoursite.com/2019/01/25/css%E5%AE%9A%E4%BD%8D%E6%9C%BA%E5%88%B6%E5%8F%8A%E6%B8%85%E9%99%A4%E6%B5%AE%E5%8A%A8/</loc>
-    <lastmod>2019-03-06T01:23:42.247Z</lastmod>
-  </url>  <url>
-    <loc>http://yoursite.com/2018/12/21/linux%E4%B8%8B%E5%AE%89%E8%A3%85redis%E5%8F%8AJava%E8%BF%9E%E6%8E%A5redis/</loc>
-    <lastmod>2019-01-07T00:53:50.930Z</lastmod>
-  </url>  <url>
-    <loc>http://yoursite.com/2018/12/15/linux%E5%AE%89%E8%A3%85%E5%92%8C%E5%8D%B8%E8%BD%BDmysql/</loc>
-    <lastmod>2019-01-03T10:34:23.629Z</lastmod>
-  </url>  <url>
-    <loc>http://yoursite.com/2018/12/10/linux%E9%85%8D%E7%BD%AEtomcat/</loc>
-    <lastmod>2019-01-03T09:31:37.194Z</lastmod>
   </url>  <url>
     <loc>http://yoursite.com/2018/11/12/linux%E9%85%8D%E7%BD%AEjava%E7%8E%AF%E5%A2%83/</loc>
     <lastmod>2018-11-12T14:56:38.679Z</lastmod>

@@ -8,23 +8,25 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>linux下安装redis及Java连接redis | goxcheer个人小栈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="linux,java,redis">
+  <meta name="description" content="linux安装配置redis，并通过java建立连接……">
+<meta name="keywords" content="linux,java,redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux下安装redis及Java连接redis">
 <meta property="og:url" content="http://yoursite.com/2018/12/21/linux下安装redis及Java连接redis/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="linux安装配置redis，并通过java建立连接……">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/7.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/1.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/2.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/3.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/4.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/5.png">
 <meta property="og:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/6.png">
-<meta property="og:updated_time" content="2019-01-07T00:53:50.930Z">
+<meta property="og:updated_time" content="2019-07-24T13:24:48.152Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux下安装redis及Java连接redis">
-<meta name="twitter:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/7.png">
+<meta name="twitter:description" content="linux安装配置redis，并通过java建立连接……">
+<meta name="twitter:image" content="http://yoursite.com/img/linux下安装redis及Java连接redis/1.png">
   
     <link rel="alternative" href="/atom.xml" title="goxcheer个人小栈" type="application/atom+xml">
   
@@ -221,7 +223,7 @@
 <!-- 目录内容结束 -->
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="/img/linux下安装redis及Java连接redis/7.png" alt="Alt text"></p>
+        <p>linux安装配置redis，并通过java建立连接……</p>
 <a id="more"></a>
 <h1 id="linux安装redis"><a href="#linux安装redis" class="headerlink" title="linux安装redis"></a>linux安装redis</h1><h2 id="安装gcc编译软件"><a href="#安装gcc编译软件" class="headerlink" title="安装gcc编译软件"></a>安装gcc编译软件</h2><p>　<code>redis</code>是用<code>c</code>编写的，在下载之后需要使用<code>gcc</code>编译之后才能安装，首先需要下载<code>gcc</code>。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc-c++</span><br></pre></td></tr></table></figure></p>
 <h2 id="下载redis安装包，并解压编译"><a href="#下载redis安装包，并解压编译" class="headerlink" title="下载redis安装包，并解压编译"></a>下载redis安装包，并解压编译</h2><p>进入<code>redis</code>官网,<a href="https://redis.io/" target="_blank" rel="noopener">传送门</a><br>复制下载链接地址  <code>http://download.redis.io/releases/redis-4.0.11.tar.gz</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget  http://download.redis.io/releases/redis-4.0.11.tar.gz <span class="comment">#下载</span></span><br><span class="line">tar -zxvf   redis-4.0.11.tar.gz <span class="comment">#解压</span></span><br></pre></td></tr></table></figure></p>
@@ -588,6 +590,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">WebService</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
@@ -600,15 +610,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">WebService</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">选择</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">rmi</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -620,10 +630,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">rmi</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
@@ -632,19 +638,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">多线程</a>
+                <a href="javascript:void(0)" class="js-tag color1">dubbo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">dubbo</a>
+                <a href="javascript:void(0)" class="js-tag color4">多线程</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -664,15 +666,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Aop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">aop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Aop</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -692,6 +694,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">组件</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">zookeeper</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">目录</a>
               </li>
              
@@ -701,14 +711,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">域名</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">zookeeper</a>
               </li>
              
               <li class="article-tag-list-item">
