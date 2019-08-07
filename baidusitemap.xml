@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yoursite.com/2019/07/05/SpringBoot-Aop%E5%AE%9E%E7%8E%B0%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE/</loc>
+    <lastmod>2019-08-07T09:51:31.225Z</lastmod>
+  </url>  <url>
+    <loc>http://yoursite.com/2018/12/13/java%E4%B8%AD%E4%BD%8D%E8%BF%90%E7%AE%97%E5%B0%8F%E7%BB%93/</loc>
+    <lastmod>2019-08-07T02:02:00.641Z</lastmod>
+  </url>  <url>
     <loc>http://yoursite.com/2018/12/21/linux%E4%B8%8B%E5%AE%89%E8%A3%85redis%E5%8F%8AJava%E8%BF%9E%E6%8E%A5redis/</loc>
     <lastmod>2019-07-24T13:24:48.152Z</lastmod>
   </url>  <url>
