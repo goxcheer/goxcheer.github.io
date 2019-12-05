@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NIO,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇文章主要从概念的角度去理解IO模型，NIO的优势……">
+<meta name="keywords" content="NIO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO三种通信模型概述及NIO基本概念">
+<meta property="og:url" content="http://yoursite.com/2019/07/20/IO三种通信模型概述及NIO基本概念/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="这篇文章主要从概念的角度去理解IO模型，NIO的优势……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/1.png">
+<meta property="og:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/2.png">
+<meta property="og:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/3.png">
+<meta property="og:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/5.png">
+<meta property="og:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/4.png">
+<meta property="og:updated_time" content="2019-12-05T03:22:49.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IO三种通信模型概述及NIO基本概念">
+<meta name="twitter:description" content="这篇文章主要从概念的角度去理解IO模型，NIO的优势……">
+<meta name="twitter:image" content="http://yoursite.com/img/IO三种通信模型概述及NIO基本概念/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/20/IO三种通信模型概述及NIO基本概念/">
+
+
+
+
+
+  <title>IO三种通信模型概述及NIO基本概念 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/IO三种通信模型概述及NIO基本概念/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IO三种通信模型概述及NIO基本概念</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-20T09:29:37+08:00">
+                2019-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/NIO/" itemprop="url" rel="index">
+                    <span itemprop="name">NIO</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章主要从概念的角度去理解IO模型，NIO的优势……</p>
+<a id="more"></a>
+<h1 id="必须明白的几个概念"><a href="#必须明白的几个概念" class="headerlink" title="必须明白的几个概念"></a>必须明白的几个概念</h1><h2 id="阻塞-Block-和非阻塞-Non-Block"><a href="#阻塞-Block-和非阻塞-Non-Block" class="headerlink" title="阻塞(Block)和非阻塞(Non-Block)"></a>阻塞(Block)和非阻塞(Non-Block)</h2><p>阻塞和非阻塞是进程在访问数据的时候，数据是否准备就绪的一种处理方式,当数据没有准备的时候。</p>
+<p>阻塞：往往需要等待缓冲区中的数据准备好过后才处理其他的事情，否则一直等待在那里。</p>
+<p>非阻塞:当我们的进程访问我们的数据缓冲区的时候，如果数据没有准备好则直接返回，不会等待。如果数据已经准备好，也直接返回。</p>
+<h2 id="同步-Synchronization-和异步-Asynchronous"><a href="#同步-Synchronization-和异步-Asynchronous" class="headerlink" title="同步(Synchronization)和异步(Asynchronous)"></a>同步(Synchronization)和异步(Asynchronous)</h2><p>同步和异步都是基于应用程序和操作系统处理IO 事件所采用的方式。比如同步：是应用程序要直接参与IO 读写的操作。异步：所有的IO 读写交给操作系统去处理，应用程序只需要等待通知。</p>
+<p>同步方式在处理IO 事件的时候，必须阻塞在某个方法上面等待我们的IO 事件完成(阻塞IO 事件或者通过轮询IO 事件的方式),对于异步来说，所有的IO 读写都交给了操作系统。</p>
+<p>这个时候，我们可以去做其他的事情，并不需要去完成真正的IO 操作，当操作完成IO 后，会给我们的应用程序一个通知。<br>同步:1)阻塞到IO 事件，阻塞到read 或则write。这个时候我们就完全不能做自己的事情。让读写方法加入到线程里面，然后阻塞线程来实现，对线程的性能开销比较大。</p>
+<h2 id="面向流与面向缓冲"><a href="#面向流与面向缓冲" class="headerlink" title="面向流与面向缓冲"></a>面向流与面向缓冲</h2><p>Java NIO 和IO 之间第一个最大的区别是，IO 是面向流的，NIO 是面向缓冲区的。Java IO面向流意味着每次从流中读一个或多个字节，直至读取所有字节，它们没有被缓存在任何地方。此外，它不能前后移动流中的数据。如果需要前后移动从流中读取的数据，需要先将它缓存到一个缓冲区。</p>
+<p>Java NIO 的缓冲导向方法略有不同。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动。这就增加了处理过程中的灵活性。但是，还需要检查是否该缓冲区中包含所有您需要处理的数据。而且，需确保当更多的数据读入缓冲区时，不要覆盖缓冲区里尚未处理的数据。</p>
+<h1 id="三种通信模型概述"><a href="#三种通信模型概述" class="headerlink" title="三种通信模型概述"></a>三种通信模型概述</h1><h2 id="阻塞的I-O通信模型-BIO"><a href="#阻塞的I-O通信模型-BIO" class="headerlink" title="阻塞的I/O通信模型(BIO)"></a>阻塞的I/O通信模型(BIO)</h2><p>我们知道阻塞I/O 在调用InputStream.read()方法时是阻塞的， 它会一直等到数据到来时（ 或超时） 才会返回； 同样， 在调用<br>ServerSocket.accept()方法时，也会一直阻塞到有客户端连接才会返回，每个客户端连接过来后，服务端都会启动一个线程去处理该客户端的请求。阻塞I/O 的通信模型示意图如下：<br><img src="/img/IO三种通信模型概述及NIO基本概念/1.png" alt="Alt text"></p>
+<h3 id="Acceptor"><a href="#Acceptor" class="headerlink" title="Acceptor"></a>Acceptor</h3><p>传统的IO模型的网络服务的设计模式中有俩种比较经典的设计模式：一个是多线程， 一种是依靠线程池来进行处理。</p>
+<p>如果是基于多线程的模式来的话，就是这样的模式，这种也是Acceptor线程模型。</p>
+<p><img src="/img/IO三种通信模型概述及NIO基本概念/2.png" alt="Alt text"></p>
+<p>这种传统的I/O模型我们很容易发现2个缺点：</p>
+<ol>
+<li>当客户端多时，会创建大量的处理线程。且每个线程都要占用栈空间和一些CPU 时间</li>
+<li>阻塞可能带来频繁的上下文切换，且大部分上下文切换可能是无意义的。在这种情况下<br>非阻塞式I/O 就有了它的应用前景。</li>
+</ol>
+<h2 id="非阻塞的I-O通信模型-NIO"><a href="#非阻塞的I-O通信模型-NIO" class="headerlink" title="非阻塞的I/O通信模型(NIO)"></a>非阻塞的I/O通信模型(NIO)</h2><p>NIO是一种同步非阻塞IO, 基于Reactor模型来实现的。</p>
+<ol>
+<li>由一个专门的线程来处理所有的IO 事件，并负责分发。</li>
+<li>事件驱动机制：事件到的时候触发，而不是同步的去监视事件。</li>
+<li>线程通讯：线程之间通过wait,notify 等方式通讯。保证每次上下文切换都是有意义的。<br>减少无谓的线程切换。</li>
+</ol>
+<p>原理图:<br><img src="/img/IO三种通信模型概述及NIO基本概念/3.png" alt="Alt text"></p>
+<p>这里的核心就是非阻塞，就那个selector一个线程就可以不停轮询channel，所有客户端请求都不会阻塞，直接就会进来，大不了就是等待一下排着队而已。</p>
+<p><img src="/img/IO三种通信模型概述及NIO基本概念/5.png" alt="Alt text"></p>
+<p>这里面优化BIO的核心就是，一个客户端并不是时时刻刻都有数据进行交互，没有必要死耗着一个线程不放，所以客户端选择了让线程歇一歇，只有客户端有相应的操作的时候才发起通知，创建一个线程来处理请求。</p>
+<h2 id="异步非阻塞I-O通信模型-AIO"><a href="#异步非阻塞I-O通信模型-AIO" class="headerlink" title="异步非阻塞I/O通信模型(AIO)"></a>异步非阻塞I/O通信模型(AIO)</h2><p>每个连接发送过来的请求，都会绑定一个Buffer，然后通知操作系统去完成异步的读，这个时间你就可以去做其他的事情<br>等到操作系统完成读之后，就会调用你的接口，给你操作系统异步读完的数据。这个时候你就可以拿到数据进行处理，将数据往回写在往回写的过程，同样是给操作系统一个Buffer，让操作系统去完成写，写完了来通知你。这俩个过程都有buffer存在，数据都是通过buffer来完成读写。这里面的主要的区别在于将数据写入的缓冲区后，就不去管它，剩下的去交给操作系统去完成。操作系统写回数据也是一样，写到Buffer里面，写完后通知客户端来进行读取数据。</p>
+<p>AIO模型图:<br><img src="/img/IO三种通信模型概述及NIO基本概念/4.png" alt="Alt text"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NIO/" rel="tag"># NIO</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/15/java实现API接口的封装/" rel="next" title="java实现API接口的封装">
+                <i class="fa fa-chevron-left"></i> java实现API接口的封装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/15/深入理解AQS原理/" rel="prev" title="深入理解AQS原理">
+                深入理解AQS原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">81</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#必须明白的几个概念"><span class="nav-number">1.</span> <span class="nav-text">必须明白的几个概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞-Block-和非阻塞-Non-Block"><span class="nav-number">1.1.</span> <span class="nav-text">阻塞(Block)和非阻塞(Non-Block)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步-Synchronization-和异步-Asynchronous"><span class="nav-number">1.2.</span> <span class="nav-text">同步(Synchronization)和异步(Asynchronous)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面向流与面向缓冲"><span class="nav-number">1.3.</span> <span class="nav-text">面向流与面向缓冲</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三种通信模型概述"><span class="nav-number">2.</span> <span class="nav-text">三种通信模型概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞的I-O通信模型-BIO"><span class="nav-number">2.1.</span> <span class="nav-text">阻塞的I/O通信模型(BIO)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Acceptor"><span class="nav-number">2.1.1.</span> <span class="nav-text">Acceptor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞的I-O通信模型-NIO"><span class="nav-number">2.2.</span> <span class="nav-text">非阻塞的I/O通信模型(NIO)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步非阻塞I-O通信模型-AIO"><span class="nav-number">2.3.</span> <span class="nav-text">异步非阻塞I/O通信模型(AIO)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
