@@ -82,7 +82,7 @@
 <meta name="description" content="这篇从java编程的角度去理解NIO，以及一些相关实现……">
 <meta name="keywords" content="NIO">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NIO具体实践">
+<meta property="og:title" content="NIO原理及具体实践">
 <meta property="og:url" content="http://yoursite.com/2019/12/01/NIO原理具体实践/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
 <meta property="og:description" content="这篇从java编程的角度去理解NIO，以及一些相关实现……">
@@ -95,9 +95,9 @@
 <meta property="og:image" content="http://yoursite.com/img/NIO原理具体实践/6.png">
 <meta property="og:image" content="http://yoursite.com/img/NIO原理具体实践/7.png">
 <meta property="og:image" content="http://yoursite.com/img/NIO原理具体实践/8.png">
-<meta property="og:updated_time" content="2019-12-05T09:49:52.772Z">
+<meta property="og:updated_time" content="2019-12-06T01:32:12.014Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NIO具体实践">
+<meta name="twitter:title" content="NIO原理及具体实践">
 <meta name="twitter:description" content="这篇从java编程的角度去理解NIO，以及一些相关实现……">
 <meta name="twitter:image" content="http://yoursite.com/img/NIO原理具体实践/1.png">
 
@@ -135,7 +135,7 @@
 
 
 
-  <title>NIO具体实践 | goxcheer个人小栈</title>
+  <title>NIO原理及具体实践 | goxcheer个人小栈</title>
   
 
 
@@ -279,7 +279,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">NIO具体实践</h1>
+          <h1 class="post-title" itemprop="name headline">NIO原理及具体实践</h1>
         
 
         <div class="post-meta">
@@ -367,7 +367,7 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们并不是说一定NIO有优势就一定需要用它，选择IO 或NIO 工具箱，还是要结合实际的业务场景来。</p>
 <p>NIO 可让您只使用一个（或几个）单线程管理多个通道（网络连接或文件），但付出的代价是解析数据可能会比从一个阻塞流中读取数据更复杂。</p>
 <p>如果需要管理同时打开的成千上万个连接，这些连接每次只是发送少量的数据，例如聊天服<br>务器，实现NIO 的服务器可能是一个优势。</p>
-<p>NIO理论知识可以参考这篇文章。<a href="">IO三种通信模型概述及NIO基本概念</a></p>
+<p>NIO理论知识可以参考这篇文章。<a href="https://blog.goxcheer.com/2019/07/20/IO%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B%E6%A6%82%E8%BF%B0%E5%8F%8ANIO%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" target="_blank" rel="noopener">IO三种通信模型概述及NIO基本概念</a></p>
 <p>同样，如果你需要维持许多打开的连接到其他计算机上，如P2P 网络中，使用一个单独的线程来管理你所有出站连接，可能是一个优势。</p>
 <h1 id="java-NIO"><a href="#java-NIO" class="headerlink" title="java NIO"></a>java NIO</h1><p>在Java1.4 之前的I/O 系统中，提供的都是面向流的I/O 系统，系统一次一个字节地处理数据，一个输入流产生一个字节的数据，一个输出流消费一个字节的数据，面向流的I/O 速度非常慢，而在Java 1.4 中推出了NIO，这是一个<strong>面向块</strong>的I/O 系统，系统以块的方式处理处理，每一个操作在一步中产生或者消费一个数据库，按块处理要比按字节处理数据快的多。</p>
 <p>在NIO 中有几个核心对象需要掌握：<strong>缓冲区（Buffer）</strong>、<strong>通道（Channel）</strong>、<strong>选择器（Selector）</strong>。</p>
@@ -454,6 +454,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/12/05/docker安装及基本使用/" rel="prev" title="docker安装及基本使用">
+                docker安装及基本使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -529,7 +533,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">81</span>
+                  <span class="site-state-item-count">82</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -540,7 +544,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -551,7 +555,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-count">66</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -604,7 +608,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
