@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="jvm,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="jvm内存分配和回收……">
+<meta name="keywords" content="jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解jvm之对象存活判断及垃圾回收算法">
+<meta property="og:url" content="http://yoursite.com/2019/09/10/深入理解jvm之对象存活判断及垃圾回收算法/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="jvm内存分配和回收……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/深入理解jvm之对象存活判断及垃圾回收算法/1.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解jvm之对象存活判断及垃圾回收算法/2.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解jvm之对象存活判断及垃圾回收算法/3.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解jvm之对象存活判断及垃圾回收算法/4.png">
+<meta property="og:updated_time" content="2020-01-07T02:50:47.527Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解jvm之对象存活判断及垃圾回收算法">
+<meta name="twitter:description" content="jvm内存分配和回收……">
+<meta name="twitter:image" content="http://yoursite.com/img/深入理解jvm之对象存活判断及垃圾回收算法/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/10/深入理解jvm之对象存活判断及垃圾回收算法/">
+
+
+
+
+
+  <title>深入理解jvm之对象存活判断及垃圾回收算法 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/10/深入理解jvm之对象存活判断及垃圾回收算法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解jvm之对象存活判断及垃圾回收算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-10T14:59:04+08:00">
+                2019-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/jvm/" itemprop="url" rel="index">
+                    <span itemprop="name">jvm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>jvm内存分配和回收……</p>
+<a id="more"></a>
+<h1 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a>内存分配与回收策略</h1><p>对象的内存分配是在堆区进行，而细分来说，根据对象的存活时间，堆区又分为新生代和老年代。</p>
+<p>对象主要分配在新生代，但是也有可能分配在老年代，细节取决于是哪种垃圾收集器。</p>
+<blockquote>
+<p>新生代GC（Minor GC）: 指发生在新生代的垃圾收集动作,因为大多数对象都是朝生夕死的，所以Minor GC的非常频繁，回收的速度也很快。<br>老年代GC（Major GC/Full GC）: 指发生在老年代的垃圾收集，通常会伴随着一次Minor GC操作，Major GC的效率比Minor GC至少慢10倍以上。</p>
+</blockquote>
+<h2 id="对象优先在新生代的Eden分配内存"><a href="#对象优先在新生代的Eden分配内存" class="headerlink" title="对象优先在新生代的Eden分配内存"></a>对象优先在新生代的Eden分配内存</h2><p>大多数情况，对象在新生代分配内存，当Eden区内存不足时，需要进行一次Minor GC操作。</p>
+<h2 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h2><p>所谓大对象， 需要大量连续内存空间的对象，最典型的就是长字符串和数组。</p>
+<p>虚拟机提供一个参数： -xx:pretenureSizeThreshold,令大于这个设置值的对象直接在老年代分配内存。</p>
+<h2 id="长期存活的对象进入老年代"><a href="#长期存活的对象进入老年代" class="headerlink" title="长期存活的对象进入老年代"></a>长期存活的对象进入老年代</h2><p>虚拟机给每一个对象定义了一个年龄计数器(Age)，如果对象在Eden出生并且经历过一次Minor GC之后进入Survivor区，则Age+1,默认达到年龄15岁时，进入老年代。</p>
+<p>对象晋升老年代的阈值，通过参数：-XX：MaxTenuringThreShold来设置。</p>
+<h2 id="动态年龄判断"><a href="#动态年龄判断" class="headerlink" title="动态年龄判断"></a>动态年龄判断</h2><p>虚拟机不总是要求年龄达到MaxTenuringThreShold的值时才将对象从新生代进入老年代，当Survivor空间中相同年龄所有对象总和大于内存的一半，则大于此年龄的对象直接进入老年代。</p>
+<h1 id="判断对象是否存活"><a href="#判断对象是否存活" class="headerlink" title="判断对象是否存活"></a>判断对象是否存活</h1><h2 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h2><p>给对象添加一个引用计数器，每当有一个引用指向它，计数器就+1;当引用失效的时候，计数器就-1；当计数器为0时，表示对象不可用，可以被回收。</p>
+<p>引用计数算法实现简单，判定效率高。但JVM并没有采用这个算法，因为它很难解决对象之间相互循环引用的问题。</p>
+<p>下面以一段代码为例来验证JVM并不是采用这种方式：<br>首先我们在Idea中配置jvm参数打印虚拟机GC信息： -XX:+PrintGCDetails。<br>JVM参数配置参考：<a href="https://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html" target="_blank" rel="noopener">传送门</a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceCountGC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object instance = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span>*<span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 便于查看GC是否回收该对象.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">byte</span>[] bigSize = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span>*_1MB];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ReferenceCountGC objA = <span class="keyword">new</span> ReferenceCountGC();</span><br><span class="line">        ReferenceCountGC objB = <span class="keyword">new</span> ReferenceCountGC();</span><br><span class="line"></span><br><span class="line">        objA.instance = objB;</span><br><span class="line">        objB.instance = objA;</span><br><span class="line"></span><br><span class="line">        objA = <span class="keyword">null</span>;</span><br><span class="line">        objB = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们实例化2个对象，然后对象的变量分别引用对方的实例，然后我们将对象置为空。<br>按引用计数算法的话对象是不会被回收的，因为还有实例被其它地方引用。<br><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[GC (System.gc()) [PSYoungGen: 9339K-&gt;987K(76288K)] 9339K-&gt;995K(251392K), 0.0071439 secs] [Times: user=0.00 sys=0.01, real=0.01 secs]</span><br></pre></td></tr></table></figure></p>
+<p>但是结果却是新生代9339K-&gt;987K，对象被回收。</p>
+<h2 id="根搜索算法"><a href="#根搜索算法" class="headerlink" title="根搜索算法"></a>根搜索算法</h2><p>在主流的商用程序语言中，都是采用根搜索算法（GC Roots Tracing）判定对象是否存活。</p>
+<p>基本思路就是通过一系列名为”GC Roots”的起始点，从这个节点向下搜索，搜索所走过的路径为引用链(Reference Chain)，当一个对象到GC Roots没有任何引用链相连，即GC Roots到这个对象不可达，则对象不可用。</p>
+<p>在java中，可作为GC Roots对象的有：</p>
+<ul>
+<li>虚拟机栈(栈帧中的本地变量表)中引用的对象</li>
+<li>方法区中的类静态属性引用的对象</li>
+<li>方法区中的常量引用的对象</li>
+<li>本地方法栈中的引用的对象</li>
+</ul>
+<p><img src="/img/深入理解jvm之对象存活判断及垃圾回收算法/1.png" alt="Alt text"></p>
+<p>如图，红色节点对象在GC ROOTS中已经不可达，所以被判定为可以回收。</p>
+<p>在根搜索算法中不可达的对象，也并非是非死不可。<strong>要真正宣告一个对象的死亡，至少需要经历两次标记过程</strong>。</p>
+<p>在对象再GC Roots中已经不可达了，那它将会被第一次标记并且进行筛选，判断此对象是否有必要执行finalize()方法，当对象没有覆盖finalize()方法或者已经执行过了finalize()，都判定为没有必要执行。</p>
+<p>如果这个对象被判定为有必要执行finalize()方法，它将会放置在F-Queue的队列中，并由虚拟机自动去创建低优先级的Finalizer线程去执行。<br>这里虚拟机会触发这个方法，但是不会去等待它执行结束，这样避免一个对象在finalize()方法中执行缓慢或者发生死循环的时候，导致整个F-Queue的队列处于等待状态。</p>
+<p>finalize(）方法是对象逃脱死亡的最后的机会,此时如果对象被引用链上的对象重新关联上,就可以存活，否则稍后GC会对F-Queue中的对象进行第二次标记，进行回收。</p>
+<p>下面这段代码展示对象在调用GC的时候拯救自己：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalizeEscapeGC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> FinalizeEscapeGC SAVE_HOOK = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">isAlive</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"yes, I am still alive"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.finalize();</span><br><span class="line">        System.out.println(<span class="string">"finalize method execute!"</span>);</span><br><span class="line">        <span class="comment">//调用GC之后拯救自己</span></span><br><span class="line">        SAVE_HOOK = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        SAVE_HOOK = <span class="keyword">new</span> FinalizeEscapeGC();</span><br><span class="line"></span><br><span class="line">        SAVE_HOOK = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (SAVE_HOOK != <span class="keyword">null</span>)&#123;</span><br><span class="line">            SAVE_HOOK.isAlive();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="引用分类"><a href="#引用分类" class="headerlink" title="引用分类"></a>引用分类</h2><p>在jdk1.2之前，java中的引用定义很传统，如果reference类型的数据存储的数值是另外一块内存地址的开始，则代表是一个引用。一个对象只有被引用和没有被引用两种状态。我们需要引用也和内存关联起来，当内存空间还足够的时候，留在内存中，<br>如果内存在垃圾收集之后还很紧张，则抛弃这些对象。</p>
+<p>在JDK1.2之后，引用分为<strong>强引用（Strong Reference）</strong>，<strong>软引用(Soft Reference)</strong>，<strong>弱引用（Weak Reference）</strong>，<br><strong>虚引用(Phantom Referece)</strong>，四种引用强度依次降低。</p>
+<h3 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h3><p>普遍存在的引用，类似”Object obj = new Object()”，只要强引用存在，垃圾收集器永远不会回收对象。</p>
+<h3 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h3><p>软引用用来描述一些有用，但非必须的对象。系统在将要发生内存溢出的时候，把这些对象列进回收之列并进行二次回收。</p>
+<h3 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h3><p>弱引用用来描述一些非必须的对象，它的引用强度比软引用还要弱，它只会存活在下一次垃圾回收操作之前。</p>
+<h3 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h3><p>虚引用也称为幽灵引用，一个对象是否有虚引用存在，完全不会对其生命时间构成影响，也无法通过虚引用获取一个对象的实例，为对象设置虚引用的唯一目的是为了希望对象再被回收时收到系统的一个通知。</p>
+<h1 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h1><h2 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h2><p>最基础的收集算法是”标记-清除（Mark-Sweep）”算法，首先标记出所需回收的对象，在标记完成后统一回收掉所有被标记的对象，它的标记过程其实就是前面的根搜索算法中判定垃圾对象的标记过程。</p>
+<p>之所以说它是最基础的算法，后序的算法都是基于这种思路及改进。</p>
+<p><img src="/img/深入理解jvm之对象存活判断及垃圾回收算法/2.png" alt="Alt text"></p>
+<p>缺点： </p>
+<ul>
+<li>效率问题： 标记和清除的效率都不高。</li>
+<li>空间问题： 标记和清除过程会产生大量不连续的内存碎片。</li>
+</ul>
+<h2 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h2><p>为了解决效率及内存碎片的问题，“复制”的收集算法出现了。</p>
+<p>将可用的内存分为大小相等的两块，每次使用其中一块，用完之后将存活的对象复制到另一块上，然后把已使用的内存一次清理掉。<br><img src="/img/深入理解jvm之对象存活判断及垃圾回收算法/3.png" alt="Alt text"></p>
+<p>缺点：<br>每次可用内存为整个内存的一半，这样代价太高了。</p>
+<p>现在商业虚拟机都采用这种复制算法来回收新生代。</p>
+<p><strong>新生代中的对象98%是朝生夕死的，所以将新生代的内存分为一块较大的Eden和两块较小的Survivor空间，HotSpot虚拟机这三块空间默认的比例是8:1:1</strong>.</p>
+<p>回收的时候，将Eden和一块Survivor空间中还存活的对象一次拷贝到另一块Survivor空间中，然后清理掉Eden和Survivor空间.<br>也就是每次新生代的可用空间大小为(10%+80%)=90%.只有10%的内存会浪费掉。</p>
+<p>我们没有办法保证每次存活的对象的内存空间大小小于10%，当Survivor空间内存大小不足时，新生代需要向老年代进行内存分配担保。</p>
+<h2 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h2><p>当对象存活率较高，不像新生代那样朝生夕死，此时如果用复制-收集算法，会进行较多的复制操作，效率就会降低。更关键的是，如果对象较多占用内存较多，所以必须要向老年代进行内存担保，这样很不合理。</p>
+<p>所以针对老年代这种特点，提出了标记-整理算法。</p>
+<p>标记过程和<strong>标记-清除算法</strong>一样，但后续不是对标记的对象直接清理，而是将存活的对象向一端移动，然后直接清理端边界以外的内存。</p>
+<p><img src="/img/深入理解jvm之对象存活判断及垃圾回收算法/4.png" alt="Alt text"></p>
+<h2 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h2><p>分带收集算法实际就是根据对象的存货周期不同，将内存划分为不同的部分，各部门之间选择不同的收集算法进行收集，<br>实际使用的还是上述算法。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/25/深入理解jvm之运行时的数据区/" rel="next" title="深入理解jvm之运行时的数据区">
+                <i class="fa fa-chevron-left"></i> 深入理解jvm之运行时的数据区
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/19/深入理解mysql索引原理/" rel="prev" title="深入理解mysql索引原理">
+                深入理解mysql索引原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存分配与回收策略"><span class="nav-number">1.</span> <span class="nav-text">内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象优先在新生代的Eden分配内存"><span class="nav-number">1.1.</span> <span class="nav-text">对象优先在新生代的Eden分配内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大对象直接进入老年代"><span class="nav-number">1.2.</span> <span class="nav-text">大对象直接进入老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#长期存活的对象进入老年代"><span class="nav-number">1.3.</span> <span class="nav-text">长期存活的对象进入老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态年龄判断"><span class="nav-number">1.4.</span> <span class="nav-text">动态年龄判断</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#判断对象是否存活"><span class="nav-number">2.</span> <span class="nav-text">判断对象是否存活</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引用计数算法"><span class="nav-number">2.1.</span> <span class="nav-text">引用计数算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#根搜索算法"><span class="nav-number">2.2.</span> <span class="nav-text">根搜索算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用分类"><span class="nav-number">2.3.</span> <span class="nav-text">引用分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用"><span class="nav-number">2.3.1.</span> <span class="nav-text">强引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软引用"><span class="nav-number">2.3.2.</span> <span class="nav-text">软引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#弱引用"><span class="nav-number">2.3.3.</span> <span class="nav-text">弱引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚引用"><span class="nav-number">2.3.4.</span> <span class="nav-text">虚引用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾收集算法"><span class="nav-number">3.</span> <span class="nav-text">垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标记-清除算法"><span class="nav-number">3.1.</span> <span class="nav-text">标记-清除算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复制算法"><span class="nav-number">3.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标记-整理算法"><span class="nav-number">3.3.</span> <span class="nav-text">标记-整理算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代收集算法"><span class="nav-number">3.4.</span> <span class="nav-text">分代收集算法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
