@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="java,linux,">
+  <meta name="keywords" content="springboot,">
 
 
 
@@ -79,19 +79,18 @@
 
 
 
-<meta name="keywords" content="java,linux">
+<meta name="description" content="Api接口的统一处理……">
+<meta name="keywords" content="springboot">
 <meta property="og:type" content="article">
-<meta property="og:title" content="linux配置java环境">
-<meta property="og:url" content="http://yoursite.com/2018/01/12/linux配置java环境/index.html">
+<meta property="og:title" content="SpringBoot实现统一异常处理">
+<meta property="og:url" content="http://yoursite.com/2019/09/20/SpringBoot项目实现统一异常处理/index.html">
 <meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Api接口的统一处理……">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/1.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/2.png">
-<meta property="og:image" content="http://yoursite.com/img/linux配置java环境/3.png">
-<meta property="og:updated_time" content="2019-10-08T12:53:59.491Z">
+<meta property="og:updated_time" content="2020-01-08T03:44:41.832Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="linux配置java环境">
-<meta name="twitter:image" content="http://yoursite.com/img/linux配置java环境/1.png">
+<meta name="twitter:title" content="SpringBoot实现统一异常处理">
+<meta name="twitter:description" content="Api接口的统一处理……">
 
 
 
@@ -121,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/01/12/linux配置java环境/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/20/SpringBoot项目实现统一异常处理/">
 
 
 
 
 
-  <title>linux配置java环境 | goxcheer个人小栈</title>
+  <title>SpringBoot实现统一异常处理 | goxcheer个人小栈</title>
   
 
 
@@ -254,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/12/linux配置java环境/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/20/SpringBoot项目实现统一异常处理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="goxcheer">
@@ -271,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">linux配置java环境</h1>
+          <h1 class="post-title" itemprop="name headline">SpringBoot实现统一异常处理</h1>
         
 
         <div class="post-meta">
@@ -283,8 +282,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-12T22:17:29+08:00">
-                2018-01-12
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-20T14:59:02+08:00">
+                2019-09-20
               </time>
             
 
@@ -306,8 +305,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
+                  <a href="/categories/springboot/" itemprop="url" rel="index">
+                    <span itemprop="name">springboot</span>
                   </a>
                 </span>
 
@@ -343,26 +342,10 @@
       
 
       
-        <p><img src="/img/linux配置java环境/1.png" alt="Alt text"></p>
-<a id="more"></a>
-<h2 id="一-前提"><a href="#一-前提" class="headerlink" title="一.前提"></a>一.前提</h2><ul>
-<li><strong>jdklinux</strong>版本压缩文件。<code>oracle</code>官网下载。<a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">链接</a> </li>
-<li>工具<strong>FileZilla</strong>+<strong>XShell</strong><blockquote>
-<p><strong>FileZilla</strong>是一款图形化界面的linux服务器上操作文件工具,<strong>XShell</strong>是第三方的服务器连接工具，可以方便的执行Bash命令。</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="二-配置环境"><a href="#二-配置环境" class="headerlink" title="二.配置环境"></a>二.配置环境</h2><blockquote>
-<p>实际上在部署的时候只需要jre环境就行，但是本人还是推荐安装JDK，因为jdk也包含了很多维护的命令，比如jstack追踪线程栈。</p>
-</blockquote>
-<p>通过<code>FileZilla</code>在<code>linux</code>服务器的<code>/usr/local</code>下新建<code>java</code>目录，然后将jdk压缩文件上传到该文件下解压缩。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf jdk-8u77-linux-x64.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p><img src="/img/linux配置java环境/2.png" alt="Alt text"></p>
-<p>然后需要配置jdk的环境变量。<br>首先 <code>vi /etc/profile</code> 后输入字母a或i即可进入编辑状态<br>在文件的最下面输入如下，<br><figure class="highlight profile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/JDK/jdk1.8.0_77</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME			/lib/tools.jar</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>然后退出保存。<br>输入命令显示的使环境变量配置生效。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>最后验证配置。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<p>成功的效果<br><img src="/img/linux配置java环境/3.png" alt="Alt text"></p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=554191378&auto=1&height=66"></iframe>
+        <p>Api接口的统一处理……<br><a id="more"></a><br>如何实现Api接口的封装，可以参考这篇文章，<a href="https://blog.goxcheer.com/2019/07/15/java%E5%AE%9E%E7%8E%B0API%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B0%81%E8%A3%85/" target="_blank" rel="noopener">传送门</a></p>
+<p>当我们定义了一个自定义返回参数格式时，希望得到统一的返回，如果在运行时发现了异常，也希望将异常统一返回,这时候就需要对异常做一些处理。</p>
+<p>在spring 3.2中，新增了@ControllerAdvice 注解，可以用于定义@ExceptionHandler、@InitBinder、@ModelAttribute，并应用到所有@RequestMapping中。<br>在SpringBoot中，新增的@RestControllerAdvice注解也能起到这个作用，我们的实现就是依赖于这些注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalExceptionHandler</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 带有<span class="doctag">@ResponseStatus</span>注解的异常类会被ResponseStatusExceptionResolver 解析</span></span><br><span class="line"><span class="comment">     * Bad Request</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(HttpStatus.BAD_REQUEST)</span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(&#123;HttpMessageNotReadableException.class, MissingServletRequestParameterException.class,</span><br><span class="line">            ServletRequestBindingException.class, MethodArgumentNotValidException.class, ConstraintViolationException.class&#125;)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">handleParamsErrorException</span><span class="params">(Exception e)</span></span>&#123;</span><br><span class="line">        log.error(<span class="string">"bad request"</span>, e);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(ResultCode.BAD_REQUEST.code(), e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *method not allow</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(HttpStatus.METHOD_NOT_ALLOWED)</span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(HttpRequestMethodNotSupportedException.class)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">handleMethodNotAllowException</span> <span class="params">(HttpRequestMethodNotSupportedException e)</span></span>&#123;</span><br><span class="line">        log.error(<span class="string">"method not allow"</span>, e);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(ResultCode.METHOD_NOT_ALLOWED.code(), e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 404 not found</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> e</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(HttpStatus.NOT_FOUND)</span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(NoHandlerFoundException.class)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">handleNoHandleFoundException</span><span class="params">(NoHandlerFoundException e)</span></span>&#123;</span><br><span class="line">        log.error(<span class="string">"no handle found"</span>, e);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(ResultCode.REQUEST_NOT_FOUND.code(), e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *500 server exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(HttpStatus.INTERNAL_SERVER_ERROR)</span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(Throwable.class)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">handleException</span><span class="params">(Throwable e)</span> </span>&#123;</span><br><span class="line">        log.error(<span class="string">"服务运行异常"</span>, e);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(ResultCode.SYSTEM_ERR.code(), e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -380,9 +363,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/java/" rel="tag"># java</a>
-          
-            <a href="/tags/linux/" rel="tag"># linux</a>
+            <a href="/tags/springboot/" rel="tag"># springboot</a>
           
         </div>
       
@@ -395,8 +376,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/10/八大排序算法总结及java实现/" rel="next" title="八大排序算法总结及java实现">
-                <i class="fa fa-chevron-left"></i> 八大排序算法总结及java实现
+              <a href="/2019/09/10/深入理解jvm之对象存活判断及垃圾回收算法/" rel="next" title="深入理解jvm之对象存活判断及垃圾回收算法">
+                <i class="fa fa-chevron-left"></i> 深入理解jvm之对象存活判断及垃圾回收算法
               </a>
             
           </div>
@@ -405,8 +386,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/20/linux配置tomcat/" rel="prev" title="linux配置tomcat">
-                linux配置tomcat <i class="fa fa-chevron-right"></i>
+              <a href="/2019/11/19/深入理解mysql索引原理/" rel="prev" title="深入理解mysql索引原理">
+                深入理解mysql索引原理 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -459,17 +440,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -529,22 +501,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-前提"><span class="nav-number">1.</span> <span class="nav-text">一.前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-配置环境"><span class="nav-number">2.</span> <span class="nav-text">二.配置环境</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
