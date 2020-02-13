@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="单点登录,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基于session的跨域单点登录原理……">
+<meta name="keywords" content="单点登录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于session的跨域单点登录原理">
+<meta property="og:url" content="http://yoursite.com/2019/12/10/基于session的跨域单点登录原理/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="基于session的跨域单点登录原理……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/基于session的跨域单点登录原理/1.png">
+<meta property="og:image" content="http://yoursite.com/img/基于session的跨域单点登录原理/2.png">
+<meta property="og:updated_time" content="2020-02-13T01:11:22.153Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于session的跨域单点登录原理">
+<meta name="twitter:description" content="基于session的跨域单点登录原理……">
+<meta name="twitter:image" content="http://yoursite.com/img/基于session的跨域单点登录原理/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/10/基于session的跨域单点登录原理/">
+
+
+
+
+
+  <title>基于session的跨域单点登录原理 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/10/基于session的跨域单点登录原理/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于session的跨域单点登录原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-10T09:06:00+08:00">
+                2019-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/单点登录/" itemprop="url" rel="index">
+                    <span itemprop="name">单点登录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>基于session的跨域单点登录原理……<br><a id="more"></a></p>
+<h1 id="背景前提"><a href="#背景前提" class="headerlink" title="背景前提"></a>背景前提</h1><h2 id="http协议是无状态的"><a href="#http协议是无状态的" class="headerlink" title="http协议是无状态的"></a>http协议是无状态的</h2><p>web应用采用browser/server架构，http作为通信协议。<br>http是无状态协议，浏览器的每一次请求，服务器会独立处理，不与之前或之后的请求产生关联。<br>但是如果服务器端存在受保护的资源，不让任何用户都可以访问呢？</p>
+<p>所以我们必须提供某一种会话机制，鉴别浏览器请求，让服务器和浏览器共同维护一个状态！</p>
+<h2 id="会话机制"><a href="#会话机制" class="headerlink" title="会话机制"></a>会话机制</h2><p>浏览器第一次请求服务器，服务器创建一个会话，并将会话的id作为响应的一部分发送给浏览器，浏览器存储会话id，并在后续第二次和第三次请求中带上会话id，服务器取得请求中的会话id就知道是不是同一个用户了.</p>
+<p>这种方法的实现是有两种方式：</p>
+<ol>
+<li>通过使用HTTP请求参数传递，这种方式对应用侵入性较大，一般不使用。</li>
+<li>通过cookie</li>
+</ol>
+<p>cookie是浏览器用来存储少量数据的一种机制，数据以”key/value“形式存储，浏览器发送http请求时自动附带cookie信息<br>tomcat会话机制当然也实现了cookie，访问tomcat服务器时，浏览器中可以看到一个名为“JSESSIONID”的cookie，这就是tomcat会话机制维护的会话id.</p>
+<h2 id="登录状态"><a href="#登录状态" class="headerlink" title="登录状态"></a>登录状态</h2><p>有了会话机制，我们就可以在某次请求的时候去获取本次请求的会话信息，服务器拿到输入的用户名与密码验证身份，正确的话说明当前持有这个会话的用户是合法用户，应该将这个会话标记为“已授权”或者“已登录”等等之类的状态，既然是会话的状态，自然要保存在会话对象中，在java中我们可以利用如下代码去实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HttpSession session = request.getSession();</span><br><span class="line">session.setAttribute(<span class="string">"isLogin"</span>, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">HttpSession session = request.getSession();</span><br><span class="line">session.getAttribute(<span class="string">"isLogin"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>每次请求受保护资源时都会检查会话对象中的登录状态，只有 isLogin=true 的会话才能访问，登录机制因此而实现。</p>
+<p>当然这种实现方式是有局限性的，因为Cookie是基于某一个域下的。</p>
+<h2 id="多系统"><a href="#多系统" class="headerlink" title="多系统"></a>多系统</h2><p>在当今这个分布式，微服务遍行的时代，往往一个公司会存在很多很多的应用系统，大一点的互联网公司可能又将一个系统拆分为多个模块子系统。</p>
+<p>单系统登录解决方案的核心是cookie，cookie携带会话id在浏览器与服务器之间维护会话状态。但cookie是有限制的，这个限制就是cookie的域（通常对应网站的域名），浏览器发送http请求时会自动携带与该域匹配的cookie，而不是所有cookie。</p>
+<p>早期，不同域下统一登录有采用的一种解决方案是：顶级域名，类似于CSDN，所有的子系统都在CSDN.com下。</p>
+<p>　然而，可行并不代表好，共享cookie的方式存在众多局限。首先，应用群域名得统一；其次，应用群各系统使用的技术（至少是web服务器）要相同，不然cookie的key值（tomcat为JSESSIONID）不同，无法维持会话，共享cookie的方式是无法实现跨语言技术平台登录的，比如java、php、.net系统之间；第三，cookie本身不安全。</p>
+<p>因此我们需要一个统一的认证中心来管理多系统的登录状态，这就是单点登录。</p>
+<h1 id="单点登录"><a href="#单点登录" class="headerlink" title="单点登录"></a>单点登录</h1><p>单点登录全称Single Sign On（以下简称SSO），是指在多系统应用群中登录一个系统，便可在其他所有系统中得到授权而无需再次登录，包括单点登录与单点注销两部分。</p>
+<h2 id="登录原理解析"><a href="#登录原理解析" class="headerlink" title="登录原理解析"></a>登录原理解析</h2><p>sso需要一个独立的认证中心，只有认证中心能接受用户的用户名密码等安全信息，其他系统不提供登录入口，只接受认证中心的间接授权。间接授权通过令牌实现，sso认证中心验证用户的用户名密码没问题，创建授权令牌，在接下来的跳转过程中，授权令牌作为参数发送给各个子系统，子系统拿到令牌，即得到了授权，可以借此创建局部会话，局部会话登录方式与单系统的登录方式相同。这个过程，也就是单点登录的原理，下面以一个图示来说明。<br><img src="/img/基于session的跨域单点登录原理/1.png" alt="Alt text"><br>假设我们有两个业务子系统A,B,域名分别为aaa.com,bbb.com，一个认证中心sso.com.</p>
+<p>1.用户在浏览器访问aaa.com下受保护的资源，请求aaa.com/a。<br>2.子系统A服务器的拦截器拦截请求验证用户为未登录状态，直接重定向到sso认证中心，并保留用户的请求地址。sso认证中心也验证用户为未登录状态，跳转到登录认证页面.<br>3.用户在输入用户名，密码等信息提交，sso验证用户信息，创建用户与sso系统的全局会话(Session),同时创建授权令牌，用来后续颁发给各个业务子系统。<br>4.sso再次跳转到系统A的服务器并带上令牌，系统A再次访问sso认证中心，去校验令牌的有效性。<br>5.令牌如果有效，系统A可以创建系统A和用户的局部会话(局部的Session对象)，返回A系统受保护的资源给用户。<br>6.用户访问系统B受保护的资源，请求为bbb.com/b。<br>7.系统B发现用户未登录，重定向到sso认证中心，但sso已经存在全局会话对象，跳转回B系统，并带上授权令牌。<br>8.系统B再次访问认证中心sso，验证令牌的有效性。<br>9.令牌有效，系统B创建和用户的局部会话，并返回系统B受保护的资源。</p>
+<p>用户登录成功之后，会与sso认证中心及各个子系统建立会话，用户与sso认证中心建立的会话称为全局会话，用户与各个子系统建立的会话称为局部会话，局部会话建立之后，用户访问子系统受保护资源将不再通过sso认证中心，全局会话与局部会话有如下约束关系。</p>
+<ul>
+<li>局部会话存在，全局会话一定存在</li>
+<li>全局会话存在，局部会话不一定存在</li>
+<li>全局会话销毁，局部会话必须销毁</li>
+</ul>
+<h2 id="登出原理解析"><a href="#登出原理解析" class="headerlink" title="登出原理解析"></a>登出原理解析</h2><p>有了登录，自然有登出，登出是登入的一个逆向过程，比较好理解了。<br>下面还是以一张图为例去解释：<br><img src="/img/基于session的跨域单点登录原理/2.png" alt="Alt text"></p>
+<p>1.用户在A系统中发起注销登录的请求。<br>2.系统A取出自己创建局部会话的有效令牌，向sso认证中心发起注销请求。<br>3.sso认证中心校验令牌的有效性，验证有效，摧毁全局的会话对象，并且取出所有根据此令牌创建局部会话的所有子系统，依此摧毁局部会话。<br>4.退出到登录页面。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/单点登录/" rel="tag"># 单点登录</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/05/docker安装及基本使用/" rel="next" title="docker安装及基本使用">
+                <i class="fa fa-chevron-left"></i> docker安装及基本使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">90</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景前提"><span class="nav-number">1.</span> <span class="nav-text">背景前提</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#http协议是无状态的"><span class="nav-number">1.1.</span> <span class="nav-text">http协议是无状态的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#会话机制"><span class="nav-number">1.2.</span> <span class="nav-text">会话机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录状态"><span class="nav-number">1.3.</span> <span class="nav-text">登录状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多系统"><span class="nav-number">1.4.</span> <span class="nav-text">多系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单点登录"><span class="nav-number">2.</span> <span class="nav-text">单点登录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#登录原理解析"><span class="nav-number">2.1.</span> <span class="nav-text">登录原理解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登出原理解析"><span class="nav-number">2.2.</span> <span class="nav-text">登出原理解析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
