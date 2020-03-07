@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="新生代，老年代，吞吐率，停顿时间区分收集器……">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解JVM之垃圾收集器">
+<meta property="og:url" content="http://yoursite.com/2020/01/08/深入理解JVM之垃圾收集器/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="新生代，老年代，吞吐率，停顿时间区分收集器……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/深入理解JVM之垃圾收集器/1.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解JVM之垃圾收集器/2.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解JVM之垃圾收集器/3.png">
+<meta property="og:image" content="http://yoursite.com/img/深入理解JVM之垃圾收集器/4.png">
+<meta property="og:updated_time" content="2020-03-07T07:57:07.582Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解JVM之垃圾收集器">
+<meta name="twitter:description" content="新生代，老年代，吞吐率，停顿时间区分收集器……">
+<meta name="twitter:image" content="http://yoursite.com/img/深入理解JVM之垃圾收集器/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/08/深入理解JVM之垃圾收集器/">
+
+
+
+
+
+  <title>深入理解JVM之垃圾收集器 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/08/深入理解JVM之垃圾收集器/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解JVM之垃圾收集器</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-08T15:47:02+08:00">
+                2020-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>新生代，老年代，吞吐率，停顿时间区分收集器……</p>
+<a id="more"></a>
+<h1 id="Serial收集器"><a href="#Serial收集器" class="headerlink" title="Serial收集器"></a>Serial收集器</h1><p>Serial收集器是最基本、发展历史最悠久的收集器，曾经（在JDK1.3.1之前）是虚拟机新生代收集的唯一选择。<br>它是一种单线程收集器，不仅仅意味着它只会使用一个CPU或者一条收集线程去完成垃圾收集工作，更重要的是其在进行垃圾收集的时候需要暂停其他线程。</p>
+<p><img src="/img/深入理解JVM之垃圾收集器/1.png" alt="Alt text"></p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">优点：简单高效，拥有很高的单线程收集效率</span><br><span class="line">缺点：收集过程需要暂停所有线程</span><br><span class="line">算法：复制算法</span><br><span class="line">适用范围：新生代</span><br><span class="line">应用：Client模式下的默认新生代收集器</span><br></pre></td></tr></table></figure>
+<h1 id="ParNew收集器"><a href="#ParNew收集器" class="headerlink" title="ParNew收集器"></a>ParNew收集器</h1><p>可以把这个收集器理解为Serial收集器的多线程版本。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">优点：在多CPU时，比Serial效率高。</span><br><span class="line">缺点：收集过程暂停所有应用程序线程，单CPU时比Serial效率差。</span><br><span class="line">算法：复制算法</span><br><span class="line">适用范围：新生代</span><br><span class="line">应用：运行在Server模式下的虚拟机中首选的新生代收集器</span><br></pre></td></tr></table></figure>
+<p><img src="/img/深入理解JVM之垃圾收集器/2.png" alt="Alt text"></p>
+<h1 id="Parallel-Scavenge收集器"><a href="#Parallel-Scavenge收集器" class="headerlink" title="Parallel Scavenge收集器"></a>Parallel Scavenge收集器</h1><p>Parallel Scavenge收集器是一个新生代收集器，它也是使用复制算法的收集器，又是并行的多线程收集器，看上去和ParNew一样，但是Parallel Scanvenge更关注 系统的吞吐量 。</p>
+<p>吞吐量=运行用户代码的时间/(运行用户代码的时间+垃圾收集时间)<br>比如虚拟机总共运行了100分钟，垃圾收集时间用了1分钟，吞吐量=(100-1)/100=99%。<br>若吞吐量越大，意味着垃圾收集的时间越短，则用户代码可以充分利用CPU资源，尽快完成程序的运算任务。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:MaxGCPauseMillis控制最大的垃圾收集停顿时间，</span><br><span class="line">-XX:GCTimeRatio直接设置吞吐量的大小。</span><br></pre></td></tr></table></figure>
+<h1 id="Serial-Old收集器"><a href="#Serial-Old收集器" class="headerlink" title="Serial Old收集器"></a>Serial Old收集器</h1><p>Serial Old收集器是Serial收集器的老年代版本，也是一个单线程收集器，不同的是采用”标记-整理算法”，运行过程和Serial收集器一样。</p>
+<p><img src="/img/深入理解JVM之垃圾收集器/3.png" alt="Alt text"></p>
+<h1 id="Parallel-Old收集器"><a href="#Parallel-Old收集器" class="headerlink" title="Parallel Old收集器"></a>Parallel Old收集器</h1><p>Parallel Old收集器是Parallel Scavenge收集器的老年代版本，使用多线程和”标记-整理算法”进行垃圾回收。</p>
+<h1 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h1><p>CMS(Concurrent Mark Sweep)收集器是一种以获取 最短回收停顿时间 为目标的收集器。</p>
+<p>采用的是”标记-清除算法”,整个过程分为4步</p>
+<ol>
+<li>初始标记 CMS initial mark      标记GC Roots能关联到的对象 Stop The World–<br>-&gt;速度很快</li>
+<li>并发标记 CMS concurrent mark    进行GC Roots Tracing</li>
+<li>重新标记 CMS remark         修改并发标记因用户程序变动的内容 Stop The<br>World</li>
+<li>并发清除 CMS concurrent sweep</li>
+</ol>
+<p>由于整个过程中，并发标记和并发清除，收集器线程可以与用户线程一起工作，所以总体上来说，<strong>CMS收集器的内存回收过程是与用户线程一起并发地执行的</strong>。</p>
+<p><img src="/img/深入理解JVM之垃圾收集器/4.png" alt="Alt text"></p>
+<h1 id="G1收集器"><a href="#G1收集器" class="headerlink" title="G1收集器"></a>G1收集器</h1><p>G1收集器在JDK 7正式作为商用的收集器。<br>与前几个收集器相比，G1有以下特点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">并行与并发</span><br><span class="line">分代收集（仍然保留了分代的概念）</span><br><span class="line">空间整合（整体上属于“标记-整理”算法，不会导致空间碎片）</span><br><span class="line">可预测的停顿（比CMS更先进的地方在于能让使用者明确指定一个长度为M毫秒的时间片段内，消耗在垃圾收集</span><br><span class="line">上的时间不得超过N毫秒）</span><br><span class="line">G1收集器会先收集存活对象少的区域，也就是垃圾对象多的区域，这样可以有大量的空间可以释放出来，这就</span><br><span class="line">是Garbage First的由来</span><br></pre></td></tr></table></figure>
+<p>使用G1收集器时，Java堆的内存布局与就与其他收集器有很大差别，它将整个Java堆划分为多个大小相等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔离的了，它们都是一部分Region（不需要连续）的集合。</p>
+<p>工作过程：<br><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">初始标记（Initial Marking）   标记一下GC Roots能够关联的对象，并且修改TAMS的值，需要暂停用户线程</span><br><span class="line">并发标记（Concurrent Marking）  从GC Roots进行可达性分析，找出存活的对象，与用户线程并发执行</span><br><span class="line">最终标记（Final Marking）    修正在并发标记阶段因为用户程序的并发执行导致变动的数据，需暂停用户线程</span><br><span class="line">筛选回收（Live Data Counting and Evacuation） 对各个Region的回收价值和成本进行排序，根据用户所期望的GC停顿时间制定回收计划</span><br></pre></td></tr></table></figure></p>
+<h1 id="垃圾收集器分类"><a href="#垃圾收集器分类" class="headerlink" title="垃圾收集器分类"></a>垃圾收集器分类</h1><ul>
+<li>串行收集器-&gt;Serial和Serial Old</li>
+</ul>
+<p>只能有一个垃圾回收线程执行，用户线程暂停。 适用于内存比较小的嵌入式设备 。</p>
+<ul>
+<li>并行收集器[吞吐量优先]-&gt;Parallel Scanvenge、Parallel Old</li>
+</ul>
+<p>多条垃圾收集线程并行工作，但此时用户线程仍然处于等待状态。 适用于科学计算、后台处理等若交互场景 </p>
+<ul>
+<li>并发收集器[停顿时间优先]-&gt;CMS、G1</li>
+</ul>
+<p>用户线程和垃圾收集线程同时执行(但并不一定是并行的，可能是交替执行的)，垃圾收集线程在执行的时候不会停顿用户线程的运行。 适用于相对时间有要求的场景，比如Web 。</p>
+<p><strong>停顿时间越短就越适合需要和用户交互的程序，良好的响应速度能提升用户体验</strong>；<br><strong>高吞吐量则可以高效地利用CPU时间，尽快完成程序的运算任务，主要适合在后台运算而不需要太多交互的任务</strong></p>
+<h1 id="垃圾收集器的选择"><a href="#垃圾收集器的选择" class="headerlink" title="垃圾收集器的选择"></a>垃圾收集器的选择</h1><p>官网说明：<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/collectors.html#sthref28" target="_blank" rel="noopener">传送门</a></p>
+<ul>
+<li>优先调整堆的大小让服务器自己来选择</li>
+<li>如果内存小于100M，使用串行收集器</li>
+<li>如果是单核，并且没有停顿时间要求，使用串行或JVM自己选</li>
+<li>如果允许停顿时间超过1秒，选择并行或JVM自己选</li>
+<li>如果响应时间最重要，并且不能超过1秒，使用并发收集器</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/03/深入理解jvm之类加载过程/" rel="next" title="深入理解JVM之类加载过程">
+                <i class="fa fa-chevron-left"></i> 深入理解JVM之类加载过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/12/深入理解JVM之参数、命令和工具介绍/" rel="prev" title="深入理解JVM之参数、命令和工具介绍">
+                深入理解JVM之参数、命令和工具介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">95</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Serial收集器"><span class="nav-number">1.</span> <span class="nav-text">Serial收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ParNew收集器"><span class="nav-number">2.</span> <span class="nav-text">ParNew收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Parallel-Scavenge收集器"><span class="nav-number">3.</span> <span class="nav-text">Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Serial-Old收集器"><span class="nav-number">4.</span> <span class="nav-text">Serial Old收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Parallel-Old收集器"><span class="nav-number">5.</span> <span class="nav-text">Parallel Old收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CMS收集器"><span class="nav-number">6.</span> <span class="nav-text">CMS收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#G1收集器"><span class="nav-number">7.</span> <span class="nav-text">G1收集器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾收集器分类"><span class="nav-number">8.</span> <span class="nav-text">垃圾收集器分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾收集器的选择"><span class="nav-number">9.</span> <span class="nav-text">垃圾收集器的选择</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

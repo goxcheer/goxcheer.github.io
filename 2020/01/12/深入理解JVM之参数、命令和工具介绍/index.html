@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍一下jvm常见参数和监控命令，工具……">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解JVM之参数、命令和工具介绍">
+<meta property="og:url" content="http://yoursite.com/2020/01/12/深入理解JVM之参数、命令和工具介绍/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="介绍一下jvm常见参数和监控命令，工具……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/深入理解JVM之参数、命令和工具介绍/1.png">
+<meta property="og:updated_time" content="2020-03-07T08:01:50.314Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解JVM之参数、命令和工具介绍">
+<meta name="twitter:description" content="介绍一下jvm常见参数和监控命令，工具……">
+<meta name="twitter:image" content="http://yoursite.com/img/深入理解JVM之参数、命令和工具介绍/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/12/深入理解JVM之参数、命令和工具介绍/">
+
+
+
+
+
+  <title>深入理解JVM之参数、命令和工具介绍 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/12/深入理解JVM之参数、命令和工具介绍/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解JVM之参数、命令和工具介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-12T15:58:47+08:00">
+                2020-01-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>介绍一下jvm常见参数和监控命令，工具……</p>
+<a id="more"></a>
+<h1 id="JVM参数"><a href="#JVM参数" class="headerlink" title="JVM参数"></a>JVM参数</h1><h2 id="标准参数"><a href="#标准参数" class="headerlink" title="标准参数"></a>标准参数</h2><p>所有JDK版本通用参数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-version</span><br><span class="line">-help</span><br><span class="line">-server</span><br><span class="line">-cp</span><br></pre></td></tr></table></figure></p>
+<h2 id="非标准参数"><a href="#非标准参数" class="headerlink" title="非标准参数"></a>非标准参数</h2><p>非标准参数，也就是在JDK各个版本中可能会变动</p>
+<h3 id="x参数"><a href="#x参数" class="headerlink" title="-x参数"></a>-x参数</h3><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-Xint   解释执行(运行期解释字节码并执行)</span><br><span class="line">编译为机器码执行（将字节码编译为机器码并执行，这个编译过程发生在运行期，称为JIT编译）</span><br><span class="line">-Xcomp  第一次使用就编译成本地代码</span><br><span class="line">-Xmixed  混合模式，JVM自己来决定</span><br></pre></td></tr></table></figure>
+<p><img src="/img/深入理解JVM之参数、命令和工具介绍/1.png" alt="Alt text"></p>
+<h3 id="xx参数（使用最多）"><a href="#xx参数（使用最多）" class="headerlink" title="-xx参数（使用最多）"></a>-xx参数（使用最多）</h3><p>非标准化参数，相对不稳定，主要用于JVM调优和Debug</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a.Boolean类型</span><br><span class="line">格式：-XX:[+-]&lt;name&gt;      +或-表示启用或者禁用name属性</span><br><span class="line">比如：-XX:+UseConcMarkSweepGC  表示启用CMS类型的垃圾回收器</span><br><span class="line">-XX:+UseG1GC       表示启用G1类型的垃圾回收器</span><br><span class="line"></span><br><span class="line">b.非Boolean类型</span><br><span class="line">格式：-XX&lt;name&gt;=&lt;value&gt;表示name属性的值是value</span><br><span class="line">比如：-XX:MaxGCPauseMillis=<span class="number">500</span></span><br></pre></td></tr></table></figure>
+<h3 id="查看参数"><a href="#查看参数" class="headerlink" title="查看参数"></a>查看参数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintFlagsFinal -version &gt; flags.txt</span><br></pre></td></tr></table></figure>
+<p><strong>“=”表示默认值，”:=”表示被用户或JVM修改后的值</strong></p>
+<h2 id="设置参数的方式"><a href="#设置参数的方式" class="headerlink" title="设置参数的方式"></a>设置参数的方式</h2><ul>
+<li>开发工具中设置比如IDEA，eclipse</li>
+<li>运行jar包的时候:java -XX:+UseG1GC xxx.jar</li>
+<li>web容器比如tomcat，可以在脚本中的进行设置</li>
+<li>通过jinfo实时调整某个java进程的参数(参数只有被标记为manageable的flags可以被实时修改)</li>
+</ul>
+<h2 id="常用参数含义"><a href="#常用参数含义" class="headerlink" title="常用参数含义"></a>常用参数含义</h2><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-XX:CICompilerCount=3</td>
+<td>最大并行编译数</td>
+<td>如果设置大于1，虽然编译速度会提高，但是同样影响系统稳定性，会增加JVM崩溃的可能</td>
+</tr>
+<tr>
+<td>-XX:InitialHeapSize=100M</td>
+<td>初始化堆大小</td>
+<td>简写-Xms100M</td>
+</tr>
+<tr>
+<td>-XX:MaxHeapSize=100M</td>
+<td>最大堆大小</td>
+<td>简写-Xmx100M</td>
+</tr>
+<tr>
+<td>-XX:NewSize=20M</td>
+<td>设置年轻代的大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:MaxNewSize=50M</td>
+<td>年轻代最大大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:OldSize=50M</td>
+<td>设置老年代大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:MetaspaceSize=50M</td>
+<td>设置方法区大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize=50M</td>
+<td>方法区最大大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+UseParallelGC</td>
+<td>使用UseParallelGC</td>
+<td>新生代，吞吐量优先</td>
+</tr>
+<tr>
+<td>-XX:+UseParallelOldGC</td>
+<td>使用UseParallelOldGC</td>
+<td>老年代，吞吐量优先</td>
+</tr>
+<tr>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>使用CMS</td>
+<td>老年代，停顿时间优先</td>
+</tr>
+<tr>
+<td>-XX:+UseG1GC</td>
+<td>使用G1GC</td>
+<td>新生代，老年代，停顿时间优先</td>
+</tr>
+<tr>
+<td>-XX:NewRatio</td>
+<td>新老生代的比值</td>
+<td>比如-XX:Ratio=4，则表示新生代:老年代=1:4，也就是新生代占整个堆内存的1/5</td>
+</tr>
+<tr>
+<td>-XX:SurvivorRatio</td>
+<td>两个S区和Eden区的比值</td>
+<td>比如-XX:SurvivorRatio=8，也就是(S0+S1):Eden=2:8，也就是一个S占整个新生代的1/10</td>
+</tr>
+<tr>
+<td>-XX:+HeapDumpOnOutOfMemoryError</td>
+<td>启动堆内存溢出打印</td>
+<td>当JVM堆内存发生溢出时，也就是OOM，自动生成dump文件</td>
+</tr>
+<tr>
+<td>-XX:HeapDumpPath=heap.hprof</td>
+<td>指定堆内存溢出打印目录</td>
+<td>表示在当前目录生成一个heap.hprof文件</td>
+</tr>
+<tr>
+<td>XX:+PrintGCDetails <br>-XX:+PrintGCTimeStamps<br>Xloggc:$CATALINA_HOME/logs/gc.log</td>
+<td>打印出GC日志</td>
+<td>可以使用不同的垃圾收集器，对比查看GC情况</td>
+</tr>
+<tr>
+<td>-Xss128k</td>
+<td>设置每个线程的堆栈大小</td>
+<td>经验值是3000-5000最佳</td>
+</tr>
+<tr>
+<td>-XX:MaxTenuringThreshold=6</td>
+<td>提升年老代的最大临界值</td>
+<td>默认值为 15</td>
+</tr>
+<tr>
+<td>-XX:InitiatingHeapOccupancyPercent</td>
+<td>启动并发GC周期时堆内存使用占比</td>
+<td>G1之类的垃圾收集器用它来触发并发GC周期,基于整个堆的使用率,而不只是某一代内存的使用比. 值为 0 则表示”一直执行GC循环”. 默认值为 45.</td>
+</tr>
+<tr>
+<td>-XX:MaxGCPauseMillis=200ms</td>
+<td>G1最大停顿时间</td>
+<td>暂停时间不能太小，太小的话就会导致出现G1跟不上垃圾产生的速度。最终退化成Full GC。所以对这个参数的调优是一个持续的过程，逐步调整到最佳状态。</td>
+</tr>
+<tr>
+<td>-XX:ConcGCThreads=n</td>
+<td>并发垃圾收集器使用的线程数量</td>
+<td>默认值随JVM运行的平台不同而不同</td>
+</tr>
+<tr>
+<td>-XX:G1MixedGCLiveThresholdPercent=65</td>
+<td>混合垃圾回收周期中要包括的旧区域设置占用率阈值</td>
+<td>默认占用率为 65%</td>
+</tr>
+</tbody>
+</table>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="JPS"><a href="#JPS" class="headerlink" title="JPS"></a>JPS</h2><p>查看java进程。</p>
+<h2 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h2><p>实时查看和调整JVM配置参数。</p>
+<p><strong>查看</strong></p>
+<p>jinfo -flag name PID 查看某个java进程的name属性的值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag MaxHeapSize PID</span><br><span class="line">jinfo -flag UseG1GC PID</span><br></pre></td></tr></table></figure>
+<p><strong>修改</strong></p>
+<p>参数只有被标记为manageable的flags可以被实时修改<br>jinfo -flag [+|-] PID<br>jinfo -flag = PID</p>
+<h2 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h2><h3 id="查看虚拟机性能统计信息"><a href="#查看虚拟机性能统计信息" class="headerlink" title="查看虚拟机性能统计信息"></a>查看虚拟机性能统计信息</h3><h4 id="查看类装载信息"><a href="#查看类装载信息" class="headerlink" title="查看类装载信息"></a>查看类装载信息</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -<span class="class"><span class="keyword">class</span> <span class="title">PID</span> 1000 10   查看某个<span class="title">java</span>进程的类装载信息，每1000毫秒输出一次，共输出10次</span></span><br></pre></td></tr></table></figure>
+<h4 id="查看垃圾收集信息"><a href="#查看垃圾收集信息" class="headerlink" title="查看垃圾收集信息"></a>查看垃圾收集信息</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -gc PID <span class="number">1000</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+<h2 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h2><p>查看线程堆栈信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack PID</span><br></pre></td></tr></table></figure>
+<p>排查死锁案例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lock1 = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lock2 = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodA</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (lock1)&#123;</span><br><span class="line">            System.out.println(<span class="string">"成功获取lock1..."</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">"尝试去获取lock2..."</span>);</span><br><span class="line">            <span class="keyword">synchronized</span> (lock2)&#123;</span><br><span class="line">                System.out.println(<span class="string">"AAA"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodB</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (lock2)&#123;</span><br><span class="line">            System.out.println(<span class="string">"成功获取lock2..."</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock1)&#123;</span><br><span class="line">                System.out.println(<span class="string">"BBB"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        DeadLockDemo deadLockDemo = <span class="keyword">new</span> DeadLockDemo();</span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        executorService.execute(()-&gt;&#123;</span><br><span class="line">            deadLockDemo.methodA();</span><br><span class="line">        &#125;);</span><br><span class="line">        executorService.execute(()-&gt;&#123;</span><br><span class="line">            deadLockDemo.methodB();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Jmap"><a href="#Jmap" class="headerlink" title="Jmap"></a>Jmap</h2><p>打印出堆内存相关信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:+PrintFlagsFinal -Xms300M -Xmx300M</span><br><span class="line">jmap -heap PID</span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">using thread-local object allocation.</span><br><span class="line">Parallel GC with <span class="number">4</span> thread(s)</span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line">   MinHeapFreeRatio         = <span class="number">0</span></span><br><span class="line">   MaxHeapFreeRatio         = <span class="number">100</span></span><br><span class="line">   MaxHeapSize              = <span class="number">314572800</span> (<span class="number">300.0</span>MB)</span><br><span class="line">   NewSize                  = <span class="number">104857600</span> (<span class="number">100.0</span>MB)</span><br><span class="line">   MaxNewSize               = <span class="number">104857600</span> (<span class="number">100.0</span>MB)</span><br><span class="line">   OldSize                  = <span class="number">209715200</span> (<span class="number">200.0</span>MB)</span><br><span class="line">   NewRatio                 = <span class="number">2</span></span><br><span class="line">   SurvivorRatio            = <span class="number">8</span></span><br><span class="line">   MetaspaceSize            = <span class="number">21807104</span> (<span class="number">20.796875</span>MB)</span><br><span class="line">   CompressedClassSpaceSize = <span class="number">1073741824</span> (<span class="number">1024.0</span>MB)</span><br><span class="line">   MaxMetaspaceSize         = <span class="number">17592186044415</span> MB</span><br><span class="line">   G1HeapRegionSize         = <span class="number">0</span> (<span class="number">0.0</span>MB)</span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line">PS Young Generation</span><br><span class="line">Eden Space:</span><br><span class="line">   capacity = <span class="number">78643200</span> (<span class="number">75.0</span>MB)</span><br><span class="line">   used     = <span class="number">14157408</span> (<span class="number">13.501556396484375</span>MB)</span><br><span class="line">   free     = <span class="number">64485792</span> (<span class="number">61.498443603515625</span>MB)</span><br><span class="line">   <span class="number">18.0020751953125</span>% used</span><br><span class="line">From Space:</span><br><span class="line">   capacity = <span class="number">13107200</span> (<span class="number">12.5</span>MB)</span><br><span class="line">   used     = <span class="number">0</span> (<span class="number">0.0</span>MB)</span><br><span class="line">   free     = <span class="number">13107200</span> (<span class="number">12.5</span>MB)</span><br><span class="line">   <span class="number">0.0</span>% used</span><br><span class="line">To Space:</span><br><span class="line">   capacity = <span class="number">13107200</span> (<span class="number">12.5</span>MB)</span><br><span class="line">   used     = <span class="number">0</span> (<span class="number">0.0</span>MB)</span><br><span class="line">   free     = <span class="number">13107200</span> (<span class="number">12.5</span>MB)</span><br><span class="line">   <span class="number">0.0</span>% used</span><br><span class="line">PS Old Generation</span><br><span class="line">   capacity = <span class="number">209715200</span> (<span class="number">200.0</span>MB)</span><br><span class="line">   used     = <span class="number">0</span> (<span class="number">0.0</span>MB)</span><br><span class="line">   free     = <span class="number">209715200</span> (<span class="number">200.0</span>MB)</span><br><span class="line">   <span class="number">0.0</span>% used</span><br><span class="line"></span><br><span class="line"><span class="number">3576</span> interned Strings occupying <span class="number">290680</span> bytes.</span><br></pre></td></tr></table></figure>
+<p>dump出堆内存相关信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=heap.hprof PID</span><br></pre></td></tr></table></figure>
+<p>一般在开发中，JVM参数可以加上下面两句，这样内存溢出时，会自动dump出该文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=heap.hprof</span><br></pre></td></tr></table></figure>
+<h1 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h1><p>仅记录具体功能，操作不详细介绍。</p>
+<h2 id="jconsole"><a href="#jconsole" class="headerlink" title="jconsole"></a>jconsole</h2><p>JConsole工具是JDK自带的可视化监控工具。查看java应用程序的运行概况、监控堆信息、永久区使用情况、类加载情况等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">命令行中输入：jconsole</span><br></pre></td></tr></table></figure>
+<h2 id="jvisualvm"><a href="#jvisualvm" class="headerlink" title="jvisualvm"></a>jvisualvm</h2><p> 监控本地Java进程和远程服务器均可以</p>
+<p>可以监控本地的java进程的CPU，类，线程等</p>
+<h2 id="Arthas"><a href="#Arthas" class="headerlink" title="Arthas"></a>Arthas</h2><p>Arthas 是Alibaba开源的Java诊断工具，采用命令行交互模式，是排查jvm相关问题的利器。</p>
+<p>github ：<a href="https://github.com/alibaba/arthas" target="_blank" rel="noopener">https://github.com/alibaba/arthas</a></p>
+<h2 id="MAT"><a href="#MAT" class="headerlink" title="MAT"></a>MAT</h2><p>Java堆分析器，用于查找内存泄漏<br>Heap Dump，称为堆转储文件，是Java进程在某个时间内的快照。<br>它在触发快照的时候保存了很多信息：Java对象和类信息。<br>通常在写Heap Dump文件前会触发一次Full GC。<br>下载地址 ：<a href="https://www.eclipse.org/mat/downloads.php" target="_blank" rel="noopener">https://www.eclipse.org/mat/downloads.php</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/08/深入理解JVM之垃圾收集器/" rel="next" title="深入理解JVM之垃圾收集器">
+                <i class="fa fa-chevron-left"></i> 深入理解JVM之垃圾收集器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">95</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM参数"><span class="nav-number">1.</span> <span class="nav-text">JVM参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标准参数"><span class="nav-number">1.1.</span> <span class="nav-text">标准参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非标准参数"><span class="nav-number">1.2.</span> <span class="nav-text">非标准参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#x参数"><span class="nav-number">1.2.1.</span> <span class="nav-text">-x参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xx参数（使用最多）"><span class="nav-number">1.2.2.</span> <span class="nav-text">-xx参数（使用最多）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看参数"><span class="nav-number">1.2.3.</span> <span class="nav-text">查看参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置参数的方式"><span class="nav-number">1.3.</span> <span class="nav-text">设置参数的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用参数含义"><span class="nav-number">1.4.</span> <span class="nav-text">常用参数含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用命令"><span class="nav-number">2.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JPS"><span class="nav-number">2.1.</span> <span class="nav-text">JPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jinfo"><span class="nav-number">2.2.</span> <span class="nav-text">jinfo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jstat"><span class="nav-number">2.3.</span> <span class="nav-text">jstat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看虚拟机性能统计信息"><span class="nav-number">2.3.1.</span> <span class="nav-text">查看虚拟机性能统计信息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看类装载信息"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">查看类装载信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看垃圾收集信息"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">查看垃圾收集信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jstack"><span class="nav-number">2.4.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Jmap"><span class="nav-number">2.5.</span> <span class="nav-text">Jmap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用工具"><span class="nav-number">3.</span> <span class="nav-text">常用工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#jconsole"><span class="nav-number">3.1.</span> <span class="nav-text">jconsole</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvisualvm"><span class="nav-number">3.2.</span> <span class="nav-text">jvisualvm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Arthas"><span class="nav-number">3.3.</span> <span class="nav-text">Arthas</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAT"><span class="nav-number">3.4.</span> <span class="nav-text">MAT</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
