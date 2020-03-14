@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Redis,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Redis结合Lua脚本的使用，达到原子操作……">
+<meta name="keywords" content="Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis中Lua脚本的使用">
+<meta property="og:url" content="http://yoursite.com/2020/01/25/Redis中Lua脚本的使用/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Redis结合Lua脚本的使用，达到原子操作……">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-03-14T13:34:37.709Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis中Lua脚本的使用">
+<meta name="twitter:description" content="Redis结合Lua脚本的使用，达到原子操作……">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/25/Redis中Lua脚本的使用/">
+
+
+
+
+
+  <title>Redis中Lua脚本的使用 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/25/Redis中Lua脚本的使用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis中Lua脚本的使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-25T21:32:22+08:00">
+                2020-01-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/NoSQL/" itemprop="url" rel="index">
+                    <span itemprop="name">NoSQL</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Redis结合Lua脚本的使用，达到原子操作……<br><a id="more"></a><br>Redis命令的计算能力并不算很强大，使用Lua语言则可以在很大程度上弥补Redis的这个不足。在Redis中，执行Lua语言是原子性，也就是说Redis执行Lua的时候是不会被中断的，具备原子性，这个特性有助于Redis对并发数据一致性的支持。</p>
+<p>Lua是一个高效的轻量级脚本语言，用标准C语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能.</p>
+<h1 id="Lua-Linux安装"><a href="#Lua-Linux安装" class="headerlink" title="Lua Linux安装"></a>Lua Linux安装</h1><p>到官网下载lua的tar.gz的源码包,上传到服务器上.</p>
+<p>解压：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf lua-<span class="number">5.3</span>.<span class="number">0</span>.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>编译<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd lua-<span class="number">5.2</span>.<span class="number">0</span></span><br><span class="line">make linux</span><br><span class="line">make install</span><br></pre></td></tr></table></figure></p>
+<p>如果报错，说找不到readline/readline.h, 可以通过yum命令安装</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install readline-devel ncurses-devel</span><br></pre></td></tr></table></figure>
+<p>直接输入 lua命令即可进入lua的控制台.</p>
+<p><strong>Lua语法与基本使用参考</strong>：<a href="https://www.runoob.com/lua/lua-data-types.html" target="_blank" rel="noopener">传送门</a></p>
+<h1 id="Redis-Lua使用"><a href="#Redis-Lua使用" class="headerlink" title="Redis Lua使用"></a>Redis Lua使用</h1><p>Redis已经内置了Lua，可以直接通过Redis客户端执行Lua脚本。</p>
+<p>Redis支持两种方法运行脚本，一种是直接输入一些Lua语言的程序代码，另一种是将Lua语言编写成文件。</p>
+<h2 id="命令行脚本执行"><a href="#命令行脚本执行" class="headerlink" title="命令行脚本执行"></a>命令行脚本执行</h2><p>命令格式：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval lua-script key-num [key1 key2 key3 ....] [value1 value2 value3 ....]</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>eval代表执行Lua语言的命令。</li>
+<li>lua-script代表Lua语言脚本。</li>
+<li>key-num表示参数中有多少个key，需要注意的是Redis中key是从1开始的，如果没有key的参数，那么写0。</li>
+<li>[key1 key2 key3…]是key作为参数传递给Lua语言，也可以不填，但是需要和key-num的个数对应起来。</li>
+<li>[value1 value2 value3 …]这些参数传递给Lua语言，他们是可填可不填的。</li>
+<li>可以通过key和arg这两个参数向脚本中传递数据，他们的值可以在脚本中分别使用KEYS和ARGV 这两个类型的全局变量访问。</li>
+</ul>
+<p>linux进入redis-cli:<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">eval <span class="string">"redis.call('set',KEYS[1],ARGV[1])"</span> <span class="number">1</span> name age</span><br><span class="line"></span><br><span class="line">eval <span class="string">"return redis.call('get',KEYS[1])"</span> <span class="number">1</span> name</span><br><span class="line"></span><br><span class="line">eval <span class="string">"return redis.call(‘get’,’goxcheer’)"</span> <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="脚本文件执行"><a href="#脚本文件执行" class="headerlink" title="脚本文件执行"></a>脚本文件执行</h2><p>Lua脚本文件格式为name.lua</p>
+<p>例如我们创建一个脚本hello.lua<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim lua-script/hello.lua</span><br><span class="line"></span><br><span class="line"><span class="comment">#内容</span></span><br><span class="line">redis.call(<span class="string">'set'</span>,KEYS[<span class="number">1</span>],ARGV[<span class="number">1</span>])</span><br><span class="line">local name = redis.call(<span class="string">'get'</span>,<span class="string">'str'</span>)</span><br><span class="line">name = name .. <span class="string">'world'</span></span><br><span class="line"><span class="keyword">return</span> name</span><br></pre></td></tr></table></figure></p>
+<p>脚本遵循lua语法.</p>
+<p>执行脚本格式</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-cli –eval [lua脚本] [key…]空格,空格[args…]</span><br></pre></td></tr></table></figure>
+<p>上述脚本的执行方式为:<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-cli --eval lua-script/hello.lua str , hello</span><br></pre></td></tr></table></figure></p>
+<h2 id="EVALSHA命令"><a href="#EVALSHA命令" class="headerlink" title="EVALSHA命令"></a>EVALSHA命令</h2><p>通过eval执行lua脚本，脚本比较长的情况下，每次调用脚本都需要把整个脚本传给redis，比较占用带宽。为了解决这个问题，redis提供了<strong>EVALSHA</strong>命令允许开发者通过脚本内容的SHA1摘要来执行脚本。该命令的用法和EVAL一样，只不过是将脚本内容替换成脚本内容的SHA1摘要。</p>
+<ol>
+<li>Redis在执行EVAL命令时会计算脚本的SHA1摘要并记录在脚本缓存中</li>
+<li>执行EVALSHA命令时Redis会根据提供的摘要从脚本缓存中查找对应的脚本内容，如果找到了就执行脚本，否则返回“NOSCRIPT No matching script,Please use EVAL”</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">script load lua-script <span class="comment">#将脚本加入缓存的命令</span></span><br><span class="line"></span><br><span class="line">evalsha shastring keynum [key1 key2 key3....] [param1 <span class="keyword">param</span>2 <span class="keyword">param</span>3....] <span class="comment">#执行</span></span><br></pre></td></tr></table></figure>
+<p>实践例子：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT LOAD <span class="string">"return redis.call('get',KEYS[1])"</span></span><br><span class="line"></span><br><span class="line">fd758d1589d044dd850a6f05d52f2eefd27f033f</span><br><span class="line"></span><br><span class="line">EVALSHA fd758d1589d044dd850a6f05d52f2eefd27f033f <span class="number">1</span> name</span><br></pre></td></tr></table></figure></p>
+<p>所以Redis中执行Lua脚本可以优化为:</p>
+<p><strong>我们在调用eval命令之前，先执行evalsha命令，如果提示脚本不存在，则再调用eval命令</strong></p>
+<h2 id="脚本的原子性"><a href="#脚本的原子性" class="headerlink" title="脚本的原子性"></a>脚本的原子性</h2><p>redis的脚本执行是原子的，即脚本执行期间Redis不会执行其他命令。所有的命令必须等待脚本执行完以后才能执行。<br>为了防止某个脚本执行时间过程导致Redis无法提供服务。Redis提供了<strong>lua-time-limit</strong>参数限制脚本的最长运行时间。<strong>默认是5秒钟</strong>。<br>当脚本运行时间超过这个限制后，Redis将开始接受其他命令但不会执行（以确保脚本的原子性），而是返回<strong>BUSY</strong>的错误.</p>
+<p>举例操作：</p>
+<p>打开两个客户端窗口<br>在第一个窗口中执行lua脚本的死循环<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval <span class="string">"while true do end"</span> <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<p>在第二个窗口中运行另一个操作<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">get name</span><br><span class="line"><span class="comment">#返回</span></span><br><span class="line">(error) BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE</span><br></pre></td></tr></table></figure></p>
+<p>返回了Buzy.</p>
+<p>可以通过script kill命令终止正在执行的脚本.<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT KILL</span><br><span class="line"></span><br><span class="line"><span class="comment">#死循环返回</span></span><br><span class="line">(error) ERR Error running script (call to f_694a5fe1ddb97a4c6a1bf299d9537c7d3d0f84e7): @user_script:<span class="number">1</span>: Script killed by user with SCRIPT KILL... </span><br><span class="line">(<span class="number">269.59</span>s)</span><br></pre></td></tr></table></figure></p>
+<p>如果当前执行的lua脚本对redis的数据进行了修改，比如（set）操作，那么script kill命令没办法终止脚本的运行，因为要保证lua脚本的原子性。如果执行一部分终止了，就违背了这一个原则</p>
+<p><strong>在这种情况下，只能通过 shutdown nosave命令强行终止</strong></p>
+<p>同样我们一个窗口死循环，只是多进行了写操作。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval <span class="string">"redis.call('set','name','goxcheer')  while true do end"</span> <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<p>此时我们尝试SCRIPT KILL<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT KILL</span><br><span class="line"></span><br><span class="line">UNKILLABLE Sorry the script already executed write commands against the dataset. You can either wait the script termination or kill the server <span class="keyword">in</span> a hard way using the SHUTDOWN NOSAVE command.</span><br></pre></td></tr></table></figure></p>
+<p>此时我们只能执行<strong>shutdown nosave</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/22/Java接口和抽象类的区别/" rel="next" title="Java接口和抽象类的区别">
+                <i class="fa fa-chevron-left"></i> Java接口和抽象类的区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/03/分布式锁之Redis实现/" rel="prev" title="分布式锁之Redis实现">
+                分布式锁之Redis实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">100</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lua-Linux安装"><span class="nav-number">1.</span> <span class="nav-text">Lua Linux安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-Lua使用"><span class="nav-number">2.</span> <span class="nav-text">Redis Lua使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令行脚本执行"><span class="nav-number">2.1.</span> <span class="nav-text">命令行脚本执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本文件执行"><span class="nav-number">2.2.</span> <span class="nav-text">脚本文件执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EVALSHA命令"><span class="nav-number">2.3.</span> <span class="nav-text">EVALSHA命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本的原子性"><span class="nav-number">2.4.</span> <span class="nav-text">脚本的原子性</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
