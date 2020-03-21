@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="KMP,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="KMP算法学习以及简单实现……">
+<meta name="keywords" content="KMP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符串匹配之KMP算法">
+<meta property="og:url" content="http://yoursite.com/2020/02/21/字符串匹配之KMP算法/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="KMP算法学习以及简单实现……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/1.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/2.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/3.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/4.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/3.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/5.png">
+<meta property="og:image" content="http://yoursite.com/img/字符串匹配之KMP算法/6.png">
+<meta property="og:updated_time" content="2020-03-21T14:19:25.490Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="字符串匹配之KMP算法">
+<meta name="twitter:description" content="KMP算法学习以及简单实现……">
+<meta name="twitter:image" content="http://yoursite.com/img/字符串匹配之KMP算法/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/21/字符串匹配之KMP算法/">
+
+
+
+
+
+  <title>字符串匹配之KMP算法 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/21/字符串匹配之KMP算法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">字符串匹配之KMP算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-21T22:07:36+08:00">
+                2020-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/字符串匹配/" itemprop="url" rel="index">
+                    <span itemprop="name">字符串匹配</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>KMP算法学习以及简单实现……</p>
+<a id="more"></a>
+<p>写java的难免会每天跟字符串打交道，<strong>Knuth-Morris-Pratt</strong>算法（简称KMP）就是一个高效的字符串匹配算法。</p>
+<p>假设遇到这样一个场景，有一个字符串”BBC ABCDAB ABCDABCDABDE”，我想知道，里面是否包含另一个字符串”ABCDABD”？</p>
+<p>我们很容易想到的就是采用暴力求解的方式，从左到右依此遍历字符串。</p>
+<p><img src="/img/字符串匹配之KMP算法/1.png" alt="Alt text"></p>
+<p>字符串”BBC ABCDAB ABCDABCDABDE”的第一个字符与搜索词”ABCDABD”的第一个字符，进行比较。因为B与A不匹配，所以搜索词后移一位，重复上述操作。</p>
+<p><img src="/img/字符串匹配之KMP算法/2.png" alt="Alt text"></p>
+<p>就这样，直到字符串有一个字符，与搜索词的第一个字符相同为止，然后接着比较字符串的下一个字符与搜索词的下一个字符。</p>
+<p><img src="/img/字符串匹配之KMP算法/3.png" alt="Alt text"></p>
+<p>直到字符串有一个字符，与搜索词对应的字符不相同为止。</p>
+<p>紧接着暴力求解的方式就是从比较的下一个字符开始，重新开始上述的比较操作。</p>
+<p><img src="/img/字符串匹配之KMP算法/4.png" alt="Alt text"></p>
+<p>这样做虽然可行，但是效率很差。</p>
+<p>当空格与D不匹配时，你其实知道前面六个字符是”ABCDAB”。<strong>KMP算法的想法是，设法利用这个已知信息，不要把”搜索位置”移回已经比较过的位置，继续把它向后移，这样就提高了效率。其实也算是动态规划的一类，用空间来减小时间开销</strong>。</p>
+<p>我们可以构建一个搜索词的部分匹配表，”部分匹配值”就是”前缀”和”后缀”的最长的共有元素的长度。以”ABCDABD”为例。<br><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">－　"A"的前缀和后缀都为空集，共有元素的长度为0；</span><br><span class="line"></span><br><span class="line">－　"AB"的前缀为[A]，后缀为[B]，共有元素的长度为0；</span><br><span class="line"></span><br><span class="line">－　"ABC"的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；</span><br><span class="line"></span><br><span class="line">－　"ABCD"的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；</span><br><span class="line"></span><br><span class="line">－　"ABCDA"的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为"A"，长度为1；</span><br><span class="line"></span><br><span class="line">－　"ABCDAB"的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为"AB"，长度为2；</span><br><span class="line"></span><br><span class="line">－　"ABCDABD"的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>搜索词</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>A</th>
+<th>B</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>部分匹配值</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>其实看上去很复杂，也就是当前缀和后缀有共有元素的时候，这个共有元素就是可以在下次重头比较的时候直接跳过元素个数</strong>。</p>
+<p><img src="/img/字符串匹配之KMP算法/3.png" alt="Alt text"></p>
+<p>空格与D不匹配时，前面六个字符”ABCDAB”是匹配的。查表可知，最后一个匹配字符B对应的”部分匹配值”为2，因此按照下面的公式算出向后移动的位数：<br><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">移动位数 = 已匹配的字符数 - 对应的部分匹配值</span><br></pre></td></tr></table></figure></p>
+<p>因为 6 - 2 等于4，所以将搜索词向后移动4位。</p>
+<p><img src="/img/字符串匹配之KMP算法/5.png" alt="Alt text"><br>其实看图也很容易理解，AB就是部分匹配值，可以复用。</p>
+<p>因为空格与Ｃ不匹配，搜索词还要继续往后移。这时，已匹配的字符数为2（”AB”），对应的”部分匹配值”为0。所以，移动位数 = 2 - 0，结果为 2，于是将搜索词向后移2位。</p>
+<p><img src="/img/字符串匹配之KMP算法/6.png" alt="Alt text"></p>
+<p>直到最后整个字符完全匹配。</p>
+<h1 id="java实现"><a href="#java实现" class="headerlink" title="java实现"></a>java实现</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> str 字符串</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> searchWords 搜索词</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> 第一个匹配的下标索引</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String str, String searchWords)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (searchWords == <span class="keyword">null</span> || <span class="string">""</span>.equals(searchWords) )&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//构建一个部分匹配表</span></span><br><span class="line">       Map&lt;String, Integer&gt;partMatchMap = getPartMatchMap(searchWords);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">int</span> curIndex = <span class="number">0</span>, i = <span class="number">0</span> , strLen = str.length(), searchWordsLen = searchWords.length();</span><br><span class="line"></span><br><span class="line">       <span class="keyword">while</span> (i &lt; strLen &amp;&amp; strLen - i &gt;= searchWordsLen)&#123;</span><br><span class="line">           <span class="comment">//已经找到满足</span></span><br><span class="line">           <span class="keyword">if</span> (curIndex == searchWordsLen)&#123;</span><br><span class="line">               <span class="keyword">return</span> i;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">//当前字符串匹配</span></span><br><span class="line">           <span class="keyword">if</span> (str.charAt(i + curIndex) == searchWords.charAt(curIndex))&#123;</span><br><span class="line">               curIndex++;</span><br><span class="line">           &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">               <span class="comment">//当不匹配时，i需要移动</span></span><br><span class="line">               <span class="keyword">if</span> (curIndex == <span class="number">0</span>)&#123;</span><br><span class="line">                   i++;</span><br><span class="line">               &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                   String curStr = searchWords.substring(<span class="number">0</span>, curIndex);</span><br><span class="line">                   <span class="comment">//移动长度 = 已匹配的字符长度 - 部分匹配值</span></span><br><span class="line">                   <span class="keyword">int</span> remove = curStr.length() - partMatchMap.get(curStr);</span><br><span class="line">                   i += remove;</span><br><span class="line">                   curIndex = <span class="number">0</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 构建部分匹配表</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> searchWords</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> Map&lt;String, Integer&gt; <span class="title">getPartMatchMap</span><span class="params">(String searchWords)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> len = searchWords.length();</span><br><span class="line">       Map&lt;String,Integer&gt;map = <span class="keyword">new</span> HashMap&lt;&gt;(len);</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span> ; i &lt;= len ; i++)&#123;</span><br><span class="line">           String curStr = searchWords.substring(<span class="number">0</span>, i);</span><br><span class="line">           <span class="keyword">if</span> (curStr.length() == <span class="number">1</span>)&#123;</span><br><span class="line">               map.put(curStr, <span class="number">0</span>);</span><br><span class="line">           &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">               map.put(curStr, getPartMatchVal(curStr));</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> map;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> str</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> 字符串所有前缀和后缀的最长公共长度</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> Integer <span class="title">getPartMatchVal</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">       <span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">       arr:<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span> ; i &lt; str.length() ; i++)&#123;</span><br><span class="line">           <span class="keyword">while</span> (str.charAt(i + temp) == str.charAt(start))&#123;</span><br><span class="line">               start++;</span><br><span class="line">               temp++;</span><br><span class="line">               <span class="comment">//第一个满足条件的即为最长</span></span><br><span class="line">               <span class="keyword">if</span> (temp &gt;= str.length() - i)&#123;</span><br><span class="line">                   <span class="keyword">break</span> arr;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           start = <span class="number">0</span>;</span><br><span class="line">           temp = <span class="number">0</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> temp;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/KMP/" rel="tag"># KMP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/18/最长的回文子串/" rel="next" title="最长的回文子串">
+                <i class="fa fa-chevron-left"></i> 最长的回文子串
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">105</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#java实现"><span class="nav-number">1.</span> <span class="nav-text">java实现</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
