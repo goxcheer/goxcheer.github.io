@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="之前从源码分析的角度讲解过jdk7的实现，这篇从常考点讲解jdk8的核心知识……">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap常考原理总结">
+<meta property="og:url" content="http://yoursite.com/2020/02/28/HashMap常考原理总结/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="之前从源码分析的角度讲解过jdk7的实现，这篇从常考点讲解jdk8的核心知识……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/HashMap常考原理总结/1.png">
+<meta property="og:image" content="http://yoursite.com/img/HashMap常考原理总结/2.png">
+<meta property="og:image" content="http://yoursite.com/img/HashMap常考原理总结/3.png">
+<meta property="og:image" content="http://yoursite.com/img/HashMap常考原理总结/4.png">
+<meta property="og:updated_time" content="2020-04-26T02:04:46.452Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HashMap常考原理总结">
+<meta name="twitter:description" content="之前从源码分析的角度讲解过jdk7的实现，这篇从常考点讲解jdk8的核心知识……">
+<meta name="twitter:image" content="http://yoursite.com/img/HashMap常考原理总结/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/28/HashMap常考原理总结/">
+
+
+
+
+
+  <title>HashMap常考原理总结 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/28/HashMap常考原理总结/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HashMap常考原理总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-28T14:52:44+08:00">
+                2020-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/集合/" itemprop="url" rel="index">
+                    <span itemprop="name">集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前从源码分析的角度讲解过jdk7的实现，这篇从常考点讲解jdk8的核心知识……</p>
+<a id="more"></a>
+<h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><p>HashMap在java中的实现是采用冲突链表的方式，在jdk1.8中，实现是采用<code>数组+链表\红黑树</code>的实现。</p>
+<p><img src="/img/HashMap常考原理总结/1.png" alt="Alt text"></p>
+<h1 id="插入原理概述"><a href="#插入原理概述" class="headerlink" title="插入原理概述"></a>插入原理概述</h1><p><img src="/img/HashMap常考原理总结/2.png" alt="Alt text"></p>
+<ol>
+<li>首先对key进行<code>hash</code>，然后判断数组是否为空，为空则进行数组的初始化。</li>
+<li>通过<code>(n - 1) &amp; hash</code>的模运算计算应当存放在数组中的下标 index；</li>
+<li>查看table[index]下标处是否存在数据，如果不存在，就构造一个新的Node节点放在<br>table[index]中；如果存在节点，说明发生了hash冲突。此时就在链表或者红黑树中进行插入操作，若是存在此节点，则直接用新值替换旧值。</li>
+<li>如果不是树形节点，若链表长度大于8并且数组长度大于64，则转化为红黑树。</li>
+<li>插入完成之后判断当前节点数是否大于阈值，如果大于开始扩容为原数组的二倍。</li>
+</ol>
+<h1 id="HashMap设定初始容量"><a href="#HashMap设定初始容量" class="headerlink" title="HashMap设定初始容量"></a>HashMap设定初始容量</h1><p>HashMap默认大小为16，如果自己传入初始大小k，初始化大小为 大于k的 2的整数次方，例如如果传10，大小为16。</p>
+<p>指定初始化值的初始容量计算代码如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">tableSizeFor</span><span class="params">(<span class="keyword">int</span> cap)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = cap - <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">2</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">4</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">8</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">return</span> (n &lt; <span class="number">0</span>) ? <span class="number">1</span> : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>算法就是让初始二进制右移1，2，4，8，16位，分别与自己异或，把高位第一个为1的数通过不断右移，把高位为1的后面全变为1.(完全覆盖到32位整数)</p>
+<h1 id="Hash函数的设计"><a href="#Hash函数的设计" class="headerlink" title="Hash函数的设计"></a>Hash函数的设计</h1><p>源码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> h;</span><br><span class="line">       <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>hash函数通过key的hashcode是一个32位的整数，然后hashcode的高32位和低32位进行异或运算。</p>
+<p>这个也叫扰动函数，这么设计有二点原因：</p>
+<ol>
+<li>一定要尽可能降低hash碰撞，越分散越好；</li>
+<li>算法一定要尽可能高效，因为这是高频操作, 因此采用位运算；</li>
+</ol>
+<p><strong>为什么采用hashcode的高16位和低16位异或能降低hash碰撞？hash函数能不能直接用key的hashcode？</strong></p>
+<p>hashCode()函数调用的是key键值类型自带的哈希函数，返回int型散列值。int值范围为<strong>-2147483648~2147483647</strong>,前后加起来大概40亿的映射空间。问题是一个40亿长度的数组，内存是放不下的,所以需要压缩。</p>
+<p><strong>为什么HashMap的数组长度要取2的整数幂</strong></p>
+<p>因为这样（数组长度-1）正好相当于一个“低位掩码”。“与”操作的结果就是散列值的高位全部归零，只保留低位值，用来做数组下标访问。以初始长度16为例，16-1=15。2进制表示是00000000 00000000 00001111。和某散列值做“与”操作如下，结果就是截取了最低的四位值。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 10100101 11000100 00100101</span><br><span class="line">&amp; 00000000 00000000 00001111</span><br><span class="line">----------------------------------</span><br><span class="line">  00000000 00000000 00000101    //高位全部归零，只保留末四位</span><br></pre></td></tr></table></figure>
+<p>这时候问题就来了，这样就算我的散列值分布再松散，要是只取最后几位的话，碰撞也会很严重。</p>
+<p>这时候“扰动函数”的价值就体现出来了。</p>
+<p><img src="/img/HashMap常考原理总结/3.png" alt="Alt text"></p>
+<p>右位移16位，正好是32bit的一半，自己的高半区和低半区做异或，就是为了混合原始哈希码的高位和低位，以此来加大<strong>低位的随机性</strong>。</p>
+<h1 id="JDK1-8的优化"><a href="#JDK1-8的优化" class="headerlink" title="JDK1.8的优化"></a>JDK1.8的优化</h1><ol>
+<li>数组+链表改成了数组+链表或者红黑树</li>
+</ol>
+<p>原因： 防止发生hash冲突，链表长度过长，将时间复杂度由O(n)降为O(logn);</p>
+<ol start="2">
+<li>链表的插入方式从头插法改成了尾插法，简单说就是插入时，如果数组位置上已经有元素，1.7将新元素放到数组中，原始节点作为新节点的后继节点，1.8遍历链表，将元素放置到链表的最后； </li>
+</ol>
+<p>原因： jdk1.7采用头插法，在多线程环境下，假设在插入节点B的时候，A线程插入到尾端，但是B线程进行扩容操作并且重新Hash的时候，放在原数组下标处的头部，这样就会形成环。</p>
+<p><img src="/img/HashMap常考原理总结/4.png" alt="Alt text"></p>
+<ol start="3">
+<li>扩容的时候jdk7需要对原数组中的元素进行重新hash定位在新数组的位置，而jdk8直接简单判断位置不变或下标+原数组大小处。</li>
+</ol>
+<p>原因： 因为HashMap的扩容是将数组扩大为原来的2倍，在二进制中计算数组位置的掩码仅仅只是高位多了一个1。</p>
+<p>假设扩容前长度为16，二进制为0000 1111，扩容后为0001 1111.</p>
+<p>在计算（n-1）&amp;hash计算元素在数组的下标的时候，因为是&amp;运算，所以区别仅仅只是元素的hash在第5位是0还是1，也就是元素在新数组的位置要么为原数组下标处，要么多加一个16，即原数组长度。</p>
+<h1 id="HashMap不是线程安全的"><a href="#HashMap不是线程安全的" class="headerlink" title="HashMap不是线程安全的"></a>HashMap不是线程安全的</h1><p>在jdk8中会有数据覆盖的问题，比如当A线程插入数据的时候，判断index处的位置为空之后被挂起了，B线程往index处插入了值，A线程恢复之后继续插入，就把B线程插入的数据覆盖了。</p>
+<p>还有2个线程均在判断是否需要扩容的时候都需要，则会出现多次扩容的情况。</p>
+<p>解决： java中线程安全的<code>HashTable</code>、<code>Collections.synchronizedMap</code>、以及<code>ConcurrentHashMap</code>可以实现线程安全的Map。</p>
+<ol>
+<li>HashTable是直接在操作方法上加<code>synchronized</code>关键字，锁住整个数组，粒度比较大.</li>
+<li>Collections.synchronizedMap是使用Collections集合工具的内部类，通过传入Map封装出一个SynchronizedMap对象，内部定义了一个对象锁，方法内通过对象锁实现；</li>
+<li>ConcurrentHashMap在jdk1.7使用分段锁，降低了锁粒度，在jdk1.8直接对节点node进行cas+synchronized来实现原子操作。</li>
+</ol>
+<p><strong>有序的LinkedHashMap和TreeMap</strong></p>
+<p>LinkedHashMap内部维护了一个<strong>单链表</strong>，有头尾节点，同时LinkedHashMap节点Entry内部除了继承HashMap的Node属性，还有before 和 after用于标识前置节点和后置节点。可以实现按插入的顺序排序。</p>
+<p>TreeMap内部是通过红黑树来实现，默认是根据key的自然顺序排序的，当然我们可以对key或者value实现Comparator接口来自定义排序规则。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/21/字符串匹配之KMP算法/" rel="next" title="字符串匹配之KMP算法">
+                <i class="fa fa-chevron-left"></i> 字符串匹配之KMP算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">106</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入原理概述"><span class="nav-number">2.</span> <span class="nav-text">插入原理概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HashMap设定初始容量"><span class="nav-number">3.</span> <span class="nav-text">HashMap设定初始容量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash函数的设计"><span class="nav-number">4.</span> <span class="nav-text">Hash函数的设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JDK1-8的优化"><span class="nav-number">5.</span> <span class="nav-text">JDK1.8的优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HashMap不是线程安全的"><span class="nav-number">6.</span> <span class="nav-text">HashMap不是线程安全的</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
