@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="消息队列,RabbitMQ,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RabbitMQ简介。。。。。。">
+<meta name="keywords" content="消息队列,RabbitMQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ简介">
+<meta property="og:url" content="http://yoursite.com/2020/05/02/rabbitMQ简介/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="RabbitMQ简介。。。。。。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/rabbitMQ简介/1.png">
+<meta property="og:image" content="http://yoursite.com/img/rabbitMQ简介/2.png">
+<meta property="og:image" content="http://yoursite.com/img/rabbitMQ简介/3.png">
+<meta property="og:image" content="http://yoursite.com/img/rabbitMQ简介/4.png">
+<meta property="og:updated_time" content="2020-07-13T06:44:01.457Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ简介">
+<meta name="twitter:description" content="RabbitMQ简介。。。。。。">
+<meta name="twitter:image" content="http://yoursite.com/img/rabbitMQ简介/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/02/rabbitMQ简介/">
+
+
+
+
+
+  <title>RabbitMQ简介 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/02/rabbitMQ简介/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ简介</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-02T14:35:52+08:00">
+                2020-05-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/消息队列/" itemprop="url" rel="index">
+                    <span itemprop="name">消息队列</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/消息队列/RabbitMQ/" itemprop="url" rel="index">
+                    <span itemprop="name">RabbitMQ</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>RabbitMQ简介。。。。。。</p>
+<a id="more"></a>
+<h1 id="RabbitMQ简介"><a href="#RabbitMQ简介" class="headerlink" title="RabbitMQ简介"></a>RabbitMQ简介</h1><p>RabbitMQ是使用<strong>Erlang</strong>语言来编写的，并且RabbitMQ是基于AMQP协议的。Erlang语言在数据交互方面性能优秀，有着和原生Socket一样的延迟，这也是RabbitMQ高性能的原因所在。</p>
+<p>优势：</p>
+<ul>
+<li>开源、性能优秀，稳定性保障</li>
+<li>提供可靠性消息投递模式、返回模式</li>
+<li>与Spring AMQP完美整合，API丰富</li>
+<li>集群模式丰富，表达式配置，HA模式，镜像队列模型</li>
+</ul>
+<h1 id="AMQP协议"><a href="#AMQP协议" class="headerlink" title="AMQP协议"></a>AMQP协议</h1><p>AMQP协议是具有现代特征的二进制协议。是一个提供统一消息服务的应用层标准高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。</p>
+<p>AMQP协议中间的几个重要概念：</p>
+<ul>
+<li>Server：接收客户端的连接，实现AMQP实体服务。</li>
+<li>Connection：连接，应用程序与Server的网络连接，TCP连接。a</li>
+<li>Channel：信道，消息读写等操作在信道中进行。客户端可以建立多个信道，每个信道代表一个会话任务。</li>
+<li>Message：消息，应用程序和服务器之间传送的数据，消息可以非常简单，也可以很复杂。有Properties和Body组成。Properties为外包装，可以对消息进行修饰，比如消息的优先级、延迟等高级特性；Body就是消息体内容。</li>
+<li>Virtual Host：虚拟主机，用于逻辑隔离。一个虚拟主机里面可以有若干个Exchange和Queue，同一个虚拟主机里面不能有相同名称的Exchange或Queue。</li>
+<li>Exchange：交换器，接收消息，按照路由规则将消息路由到一个或者多个队列。如果路由不到，或者返回给生产者，或者直接丢弃。RabbitMQ常用的交换器常用类型有direct、topic、fanout、headers四种，后面详细介绍。</li>
+<li>Binding：绑定，交换器和消息队列之间的虚拟连接，绑定中可以包含一个或者多个RoutingKey。</li>
+<li>RoutingKey：路由键，生产者将消息发送给交换器的时候，会发送一个RoutingKey，用来指定路由规则，这样交换器就知道把消息发送到哪个队列。路由键通常为一个“.”分割的字符串，例如“com.rabbitmq”。</li>
+<li>Queue：消息队列，用来保存消息，供消费者消费。</li>
+</ul>
+<p>下面是AMQP协议的模型：<br><img src="/img/rabbitMQ简介/1.png" alt="Alt text"></p>
+<p>rabbitmq是基于AMQP协议实现的一个消息中间件，基本结构和AMQP很像。</p>
+<p><img src="/img/rabbitMQ简介/2.png" alt="Alt text"></p>
+<h1 id="常用交换机类型"><a href="#常用交换机类型" class="headerlink" title="常用交换机类型"></a>常用交换机类型</h1><p>RabbitMQ常用的交换器类型有<strong>direct、topic、fanout、headers</strong>四种。</p>
+<h2 id="Fanout-Exchange（广播式交换机）"><a href="#Fanout-Exchange（广播式交换机）" class="headerlink" title="Fanout Exchange（广播式交换机）"></a>Fanout Exchange（广播式交换机）</h2><p>这种模式类似于<strong>广播</strong>的方式，所有发送到Fanout Exchange交换机上的消息，都会被发送到绑定到该交换机上面的所有队列上，这样绑定到这些队列的消费者就可以接收到该消息。</p>
+<p><img src="/img/rabbitMQ简介/3.png" alt="Alt text"></p>
+<ul>
+<li>这种模式不需要指定Routing key路由键，<strong>一个交换机可以绑定多个队列queue,一个queue可同时与多个exchange交换机进行绑定</strong>；</li>
+<li>如果消息发送到交换机上，但是这个交换机上面没有绑定的队列，那么这些消息将会被丢弃；</li>
+</ul>
+<h2 id="Direct-Exchange（直连交换机）"><a href="#Direct-Exchange（直连交换机）" class="headerlink" title="Direct Exchange（直连交换机）"></a>Direct Exchange（直连交换机）</h2><p><img src="/img/rabbitMQ简介/4.png" alt="Alt text"></p>
+<ul>
+<li>任何发送到Direct Exchange的消息都会被转发到指定RouteKey中指定的队列Queue；</li>
+<li>生产者生产消息的时候需要执行Routing Key路由键；</li>
+<li>队列绑定交换机的时候需要指定Binding Key,只有<strong>路由键与绑定键</strong>相同的话，才能将消息发送到绑定这个队列的消费者；</li>
+<li>如果vhost中不存在RouteKey中指定的队列名，则该消息会被丢弃；</li>
+</ul>
+<h2 id="Topic-Exchange（通配符交换机）"><a href="#Topic-Exchange（通配符交换机）" class="headerlink" title="Topic Exchange（通配符交换机）"></a>Topic Exchange（通配符交换机）</h2><p>通配符和直连交换机很像，只是匹配规则更加灵活。</p>
+<ul>
+<li>任何发送到Topic Exchange的消息都会被转发到所有满足Route Key与Binding Key<strong>模糊匹配</strong>的队列Queue上；</li>
+<li>生产者发送消息的时候需要指定Route Key，同时绑定Exchange与Queue的时候也需要指定Binding Key；</li>
+<li><strong>‘’#” 表示0个或多个关键字，“*”表示匹配一个关键字</strong>；</li>
+<li>如果Exchange没有发现能够与RouteKey模糊匹配的队列Queue，则会抛弃此消息；</li>
+<li>如果Binding中的Routing key *，#都没有，则路由键跟绑定键相等的时候才转发消息，类似Direct Exchange；如果Binding中的Routing key为#或者#.#，则全部转发，类似Fanout Exchange；</li>
+</ul>
+<h2 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h2><p>该类型的交换器不依赖路由规则来路由消息，而是根据消息内容中的headers属性进行匹配。headers类型交换器性能差，在实际中并不常用。</p>
+<h2 id="Default-Exchange"><a href="#Default-Exchange" class="headerlink" title="Default Exchange"></a>Default Exchange</h2><p>RabbitMQ中还有一个默认交换机（Default Exchange）:</p>
+<p>默认的Exchange不能进行绑定操作；</p>
+<ul>
+<li>任何发送到默认交换机的消息都会被转发到路由键Routing key和队列queue名字相同的Queue中；</li>
+<li>如果vhost中不存在Routing key中指定的队列名，则该消息会被抛弃；</li>
+<li>该种方式类似于fanout exchange广播式交换机；</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/消息队列/" rel="tag"># 消息队列</a>
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/01/ThreadLocal原理/" rel="next" title="ThreadLocal原理">
+                <i class="fa fa-chevron-left"></i> ThreadLocal原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/03/RabbitMQ常用队列介绍/" rel="prev" title="RabbitMQ常用队列介绍">
+                RabbitMQ常用队列介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ简介"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AMQP协议"><span class="nav-number">2.</span> <span class="nav-text">AMQP协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用交换机类型"><span class="nav-number">3.</span> <span class="nav-text">常用交换机类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Fanout-Exchange（广播式交换机）"><span class="nav-number">3.1.</span> <span class="nav-text">Fanout Exchange（广播式交换机）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Direct-Exchange（直连交换机）"><span class="nav-number">3.2.</span> <span class="nav-text">Direct Exchange（直连交换机）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Topic-Exchange（通配符交换机）"><span class="nav-number">3.3.</span> <span class="nav-text">Topic Exchange（通配符交换机）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Headers"><span class="nav-number">3.4.</span> <span class="nav-text">Headers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Default-Exchange"><span class="nav-number">3.5.</span> <span class="nav-text">Default Exchange</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
