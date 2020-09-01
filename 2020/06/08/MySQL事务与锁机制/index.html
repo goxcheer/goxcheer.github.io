@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="关系型数据库,MySQL,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="之前介绍Spring的时候也讲过事务，其实是依赖于数据库事务的，这里再加深一下……">
+<meta name="keywords" content="关系型数据库,MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL事务与锁机制">
+<meta property="og:url" content="http://yoursite.com/2020/06/08/MySQL事务与锁机制/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="之前介绍Spring的时候也讲过事务，其实是依赖于数据库事务的，这里再加深一下……">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-09-01T13:47:04.788Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL事务与锁机制">
+<meta name="twitter:description" content="之前介绍Spring的时候也讲过事务，其实是依赖于数据库事务的，这里再加深一下……">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/08/MySQL事务与锁机制/">
+
+
+
+
+
+  <title>MySQL事务与锁机制 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/08/MySQL事务与锁机制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL事务与锁机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-08T21:45:18+08:00">
+                2020-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/关系型数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">关系型数据库</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/关系型数据库/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前介绍Spring的时候也讲过事务，其实是依赖于数据库事务的，这里再加深一下……</p>
+<a id="more"></a>
+<h1 id="数据库事务"><a href="#数据库事务" class="headerlink" title="数据库事务"></a>数据库事务</h1><h2 id="事务的定义"><a href="#事务的定义" class="headerlink" title="事务的定义"></a>事务的定义</h2><p>事务是数据库执行过程中的一个逻辑单位，由一个有限的数据库操作序列构成。</p>
+<h2 id="事务的四大特性"><a href="#事务的四大特性" class="headerlink" title="事务的四大特性"></a>事务的四大特性</h2><ul>
+<li><strong>原子性（Atomicity）</strong>：我们对数据库的一系列操作是一个原子的整体，不可分割，要么全部成功，要么全部失败。</li>
+<li><strong>一致性（Consistency）</strong>：数据库的完整性约束没有被破坏，事务执行的前后都是合法的数据状态。比如主键唯一，字段长度符合要求，数值类型大于0等等。</li>
+<li><strong>隔离性（Isolation）</strong>：有了事务之后，在数据库多个事务同时去操作一张表数据的时候，必然会产生一些并发和干扰的操作。所以隔离性的定义，就是多个事务透明，互相不干扰。</li>
+<li><strong>持久性（durability）</strong>： 我们对数据库的任意操作，增删改，只要事务提交成功，结果就是永久性的。</li>
+</ul>
+<h2 id="事务并发带来的问题"><a href="#事务并发带来的问题" class="headerlink" title="事务并发带来的问题"></a>事务并发带来的问题</h2><ul>
+<li><strong>脏读</strong>：二个事务，第一个事务对表的数据做了修改操作但没有提交，第二个事务能读取到这条并未提交的数据，即读脏了数据。</li>
+<li><strong>不可重复读</strong>：同样是两个事务，第一个事务对表进行修改操作，第二个事务只能读取到第一个事务提交的内容，这样没错。但是事务提交前后读取数据是不一致的，就是事务之间的先后顺序没有控制，这样就出现不可重复读。</li>
+<li><strong>幻读</strong>：第一个事务进行范围查询，读取若干条数据，第二个事务往数据库表插入一条数据，前面一个事务再次读取的时候发现数据多了一条，即幻读。</li>
+</ul>
+<h2 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h2><ul>
+<li><strong>Read Uncommitted（未提交读）</strong>：最低隔离级别，一个事务能读取到别的事务未提交的更新数据，很不安全，可能出现丢失更新、脏读、不可重复读、幻读；</li>
+<li><strong>Read Committed（已提交读）</strong>：一个事务只能读取其它事务已经提交的内容，它解决了脏读的问题，但是无法解决不可重复读。</li>
+<li><strong>Repeatable Read（可重复读）</strong>：它解决了不可重复读的问题，但是没有定义解决幻读的问题。</li>
+<li><strong>Serializable（串行化）</strong>： 所有事务都是串行执行，已经不存在并发操作。</li>
+</ul>
+<h2 id="事务并发隔离的两大实现方案"><a href="#事务并发隔离的两大实现方案" class="headerlink" title="事务并发隔离的两大实现方案"></a>事务并发隔离的两大实现方案</h2><h3 id="LBCC"><a href="#LBCC" class="headerlink" title="LBCC"></a>LBCC</h3><p>读取数据的时候，锁定操作的数据，不允许其它事务修改，这种方案是一种基于锁的并发控制（Lock Based Concurrency Control）</p>
+<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>在修改或者删除数据的时候，给它建立一个备份或者快照，后面来读取这个快照就可以了。<br>这种方案叫做多版本的并发控制 Multi Version Concurrency Control。</p>
+<p>当然MVCC是Innodb引擎才有的。Innodb为每行记录都实现了两个隐藏字段。</p>
+<ul>
+<li><strong>DB_TRX_ID</strong>: 插入或更新行的最后一个事务的事务ID，可以理解为创建版本号</li>
+<li><strong>DB_ROLL_PTR</strong>: 回滚指针（删除版本号，数据被删除或者记录为旧数据的事务ID）</li>
+</ul>
+<p>MVCC的实现就是基于这两个版本号，具体的细节其实可以很容易想到，即在sql操作的背后实际是有很多隐藏条件的。</p>
+<h1 id="Innodb锁类型"><a href="#Innodb锁类型" class="headerlink" title="Innodb锁类型"></a>Innodb锁类型</h1><h2 id="共享锁（Shared-Locks）"><a href="#共享锁（Shared-Locks）" class="headerlink" title="共享锁（Shared Locks）"></a>共享锁（Shared Locks）</h2><p>共享锁，也叫读锁，它是用来读取数据的。</p>
+<p>共享锁是一种行级锁，一个事务对某些行加了读锁，其它事务可以对这些行进行读操作，但不能进行更新操作。</p>
+<p>手工加读锁的操作：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ......lock <span class="keyword">in</span> <span class="keyword">share</span> <span class="keyword">mode</span></span><br></pre></td></tr></table></figure></p>
+<p>事务结束，锁就会自动释放。</p>
+<h2 id="排它锁（Exclusive-Locks）"><a href="#排它锁（Exclusive-Locks）" class="headerlink" title="排它锁（Exclusive Locks）"></a>排它锁（Exclusive Locks）</h2><p>排它锁，又叫写锁，是用来操作数据的。当一个事务获取了某行数据的读锁，其它事务无法再对该数据加共享锁和排它锁。排它锁也是行级锁。</p>
+<p>增删改，默认都会给数据加上一个排它锁。</p>
+<p>用For Update可以手工给一行数据加上一个排它锁。</p>
+<p>同样事务结束了，锁也是自动释放了。</p>
+<p>排它锁示例：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># transcation1</span></span><br><span class="line"><span class="keyword">begin</span>;</span><br><span class="line"><span class="keyword">update</span> t_user <span class="keyword">set</span> <span class="keyword">name</span> = <span class="string">'张三'</span> <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span>；</span><br><span class="line"></span><br><span class="line"><span class="comment"># transcation2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">begin</span>;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span> <span class="keyword">lock</span> <span class="keyword">in</span> <span class="keyword">share</span> <span class="keyword">mode</span>;  //blocked</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span> <span class="keyword">for</span> <span class="keyword">update</span>; //blocked</span><br><span class="line"></span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span>  //blocked</span><br></pre></td></tr></table></figure></p>
+<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>前面也说了，共享锁和排它锁都是基于行级锁的，意向锁的存在，就是在表级锁和行级锁建立关联，提升数据库的效率。</p>
+<p>当我们给表的一行数据加上共享锁之前，数据库会自动在这张表上建立意向共享锁。<br>当我们给表的一行数据加上排它锁之前，数据库也会自动在这张表上建立意向排它锁。</p>
+<p>为什么要这样呢？</p>
+<p>当一个事务给表的一行数据加上了共享锁，另一个事务想给整张表加上排它锁，此时它要一行数据的去判断其它事务有没有在表的数据加排它锁或者共享锁，这样效率会很低。</p>
+<p>而意向锁，就像一个标志一样，提升了锁的效率。</p>
+<h2 id="Innodb行锁的原理"><a href="#Innodb行锁的原理" class="headerlink" title="Innodb行锁的原理"></a>Innodb行锁的原理</h2><p>Innodb具体是走行锁还是表锁，具体得看表的索引，即sql条件中是否走索引。</p>
+<p>这里关系到Innodb索引的原理。<a href="https://blog.goxcheer.com/2019/11/19/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" target="_blank" rel="noopener">传送门</a></p>
+<p>我们可以用3个不同的表，没有索引，有主键索引，    有唯一索引来分别执行一些sql进行验证，具体的操作不记录，可以模拟。</p>
+<p>在Innodb引擎中，一张表是不可能没索引的。</p>
+<ol>
+<li>如果我们定义了主键，就会以主键作为聚集索引。</li>
+<li>如果没有定义主键，但定义了唯一索引，就会选择第一个不包含Null值的唯一索引作为主键索引。</li>
+<li>如果完全没有定义索引，则Innodb会选择内置的RowId作为隐藏的聚集索引。</li>
+</ol>
+<p><strong>所以当查询没有走索引，会进行全表扫描，因而把所有的聚集索引都锁住了，就相当于行锁。而查询命中索引的话，就会锁住相应的行锁。</strong></p>
+<p>理清上述的点，下面再来看一些特殊名词的锁。</p>
+<p>假设我们有一个表，记录id为1，3，5，7.</p>
+<h2 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h2><p>如果我们查询的时候是等值查询，精确到每一个记录，比如id=1，3，5，7，这时候使用的就是记录锁。</p>
+<h2 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h2><p>当我们查询的记录不存在，没有命中任何记录，无论是等值还是范围，都是使用间隙锁。</p>
+<p>比如id = 2 或者id &gt; 1 or id &lt; 3。</p>
+<p>因为间隙锁是不存在的记录，索引一般锁住的都是<strong>insert</strong>操作。</p>
+<h2 id="临键锁"><a href="#临键锁" class="headerlink" title="临键锁"></a>临键锁</h2><p>当我们使用范围查询，不仅仅命中了记录，还包含间隙，这种情况就是使用临键锁，它是mysql默认的行锁。相当于记录锁+间隙锁。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/关系型数据库/" rel="tag"># 关系型数据库</a>
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/MySQL日志之redo-log、undo-log和binlog/" rel="next" title="MySQL日志之redo log、undo log和binlog">
+                <i class="fa fa-chevron-left"></i> MySQL日志之redo log、undo log和binlog
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">116</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据库事务"><span class="nav-number">1.</span> <span class="nav-text">数据库事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#事务的定义"><span class="nav-number">1.1.</span> <span class="nav-text">事务的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务的四大特性"><span class="nav-number">1.2.</span> <span class="nav-text">事务的四大特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务并发带来的问题"><span class="nav-number">1.3.</span> <span class="nav-text">事务并发带来的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务隔离级别"><span class="nav-number">1.4.</span> <span class="nav-text">事务隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务并发隔离的两大实现方案"><span class="nav-number">1.5.</span> <span class="nav-text">事务并发隔离的两大实现方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LBCC"><span class="nav-number">1.5.1.</span> <span class="nav-text">LBCC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC"><span class="nav-number">1.5.2.</span> <span class="nav-text">MVCC</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Innodb锁类型"><span class="nav-number">2.</span> <span class="nav-text">Innodb锁类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#共享锁（Shared-Locks）"><span class="nav-number">2.1.</span> <span class="nav-text">共享锁（Shared Locks）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#排它锁（Exclusive-Locks）"><span class="nav-number">2.2.</span> <span class="nav-text">排它锁（Exclusive Locks）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#意向锁"><span class="nav-number">2.3.</span> <span class="nav-text">意向锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Innodb行锁的原理"><span class="nav-number">2.4.</span> <span class="nav-text">Innodb行锁的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#记录锁"><span class="nav-number">2.5.</span> <span class="nav-text">记录锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#间隙锁"><span class="nav-number">2.6.</span> <span class="nav-text">间隙锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#临键锁"><span class="nav-number">2.7.</span> <span class="nav-text">临键锁</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

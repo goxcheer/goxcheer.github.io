@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="关系型数据库,MySQL,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="MySQL三种日志的介绍，分别用在不同的场景……">
+<meta name="keywords" content="关系型数据库,MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL日志之redo log、undo log和binlog">
+<meta property="og:url" content="http://yoursite.com/2020/05/30/MySQL日志之redo-log、undo-log和binlog/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="MySQL三种日志的介绍，分别用在不同的场景……">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-08-21T08:43:33.474Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL日志之redo log、undo log和binlog">
+<meta name="twitter:description" content="MySQL三种日志的介绍，分别用在不同的场景……">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/30/MySQL日志之redo-log、undo-log和binlog/">
+
+
+
+
+
+  <title>MySQL日志之redo log、undo log和binlog | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/30/MySQL日志之redo-log、undo-log和binlog/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL日志之redo log、undo log和binlog</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-30T16:41:12+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/关系型数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">关系型数据库</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/关系型数据库/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MySQL三种日志的介绍，分别用在不同的场景……</p>
+<a id="more"></a>
+<h1 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h1><p>在介绍redo log之前，先来了解一下缓冲池的概念。</p>
+<h2 id="缓冲池（Buffer-Pool）"><a href="#缓冲池（Buffer-Pool）" class="headerlink" title="缓冲池（Buffer Pool）"></a>缓冲池（Buffer Pool）</h2><p>对于Innodb引擎来说，数据都是存储在磁盘上面的，存储引擎在操作数据的时候，必须先把数据从磁盘加载在内存中。</p>
+<p>磁盘的I/O相对与内存的操作来说是比较慢的，所以加载并不是需要多大的数据，就一次从磁盘加载多少，如果数据分散在磁盘的不同的地方，就会产生多次I/O操作。</p>
+<p>所以无论是操作系统，还是存储引擎，都有一个<strong>预读取</strong>的概念。每当一块数据被读取的时候，它周围的数据也会马上被读取到，这就叫<strong>局部性原理</strong>。</p>
+<blockquote>
+<p>Innodb引擎从磁盘读取到内存设定了一个单位，叫做页。操作系统也有页的概念，操作系统页的大小一般是4k，但Innodb引擎，最小单位默认是16kb。</p>
+</blockquote>
+<p>这样内存和磁盘交互就采用这种数据页的方式。</p>
+<p>Innodb引擎使用了缓存技术将读取到的页放在内存，下次读取到相同的页，直接读取。<br>这块缓冲区域就叫Buffer Pool。</p>
+<p>在修改数据的时候，先修改缓冲池数据页的数据，内存的数据页和磁盘不一样，这就是<strong>脏页</strong>。Innodb引擎后台专门有线程把Buffer Pool的数据写入到磁盘，这个动作叫做刷脏。</p>
+<h2 id="redo-log的基本概念"><a href="#redo-log的基本概念" class="headerlink" title="redo log的基本概念"></a>redo log的基本概念</h2><p>上面说的刷脏并不是实时性的，如果Buffer Pool里面的脏页还没有刷新到磁盘的时候，数据库宕机或者重启，这些数据就会丢失。</p>
+<p>而数据库基本特性的持久性就没法保证了，为了解决这个问题，Innodb把所有对页面的修改专门写入了一个日志文件。如果未同步到磁盘，数据库在启动的时候，从这个日志文件进行恢复操作。这个日志文件就是<strong>redo log</strong>.</p>
+<p>redo log的特点：</p>
+<ul>
+<li>是Innodb存储引擎的实现，不是所有引擎都有。</li>
+<li>redo log是物理日志，记录的是数据页做的具体修改。</li>
+<li>redo log的大小是固定的，当内容写满就会触发buffer pool到磁盘的同步。</li>
+</ul>
+<p><strong>写日志也是写到磁盘，为什么不直接写磁盘，而要多进行这一步？</strong></p>
+<p>如果我们是做修改操作，而数据是存储在不同的页的不同扇区，那么找到相应的数据就要等磁臂旋转到对应的页及对应的扇区，这整个过程随机IO，读取数据效率较慢。</p>
+<p>而我们写日志的过程是依次寻址的，是顺序IO的，效率较高。</p>
+<p>在保证内存数据的安全性情况下，可以延迟刷盘，提升系统的吞吐率。</p>
+<h1 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h1><p>undo log（撤销日志、回滚日志）记录了事务发生之前的状态，及对原子性的保证。</p>
+<p>undo log记录的是数据的逻辑变化，比如一条insert语句对应一条delete，一条update对应另外一条相反的update语句。</p>
+<h1 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h1><p>binlog以事件的形式记录了所有的DDL和DML语句，属于<strong>逻辑日志</strong>。<br>binlog是数据数据库Server层面的，与存储引擎无关，是以二进制文件的形式记录。</p>
+<p>应用场景：</p>
+<ul>
+<li>主从复制：在mysql采用主从搭建的情况下，Slave读取Master的binlog更新，然后执行。</li>
+<li>数据恢复：可以把binlog导出成sql语句，把操作重放，实现数据恢复。</li>
+</ul>
+<h2 id="binlog的日志格式"><a href="#binlog的日志格式" class="headerlink" title="binlog的日志格式"></a>binlog的日志格式</h2><p>binlog日志有三种格式，分别为<strong>STATMENT</strong>、<strong>ROW</strong>和<strong>MIXED</strong>。</p>
+<blockquote>
+<p>在 MySQL 5.7.7之前，默认的格式是STATEMENT，MySQL 5.7.7之后，默认值是ROW。日志格式通过binlog-format指定。</p>
+</blockquote>
+<p><strong>STATMENT</strong></p>
+<p>基于SQL语句的复制(statement-based replication, SBR)，每一条会修改数据的sql语句会记录到binlog中。</p>
+<ul>
+<li>优点：不需要记录每一行的变化，减少了binlog日志量，节约了IO, 从而提高了性能；</li>
+<li>缺点：在某些情况下会导致主从数据不一致，比如执行sysdate()、slepp()等。</li>
+</ul>
+<p><strong>ROW</strong></p>
+<p>基于行的复制(row-based replication, RBR)，不记录每条sql语句的上下文信息，仅需记录哪条数据被修改了。</p>
+<ul>
+<li>优点：不会出现某些特定情况下的存储过程、或function、或trigger的调用和触发无法被正确复制的问题；</li>
+<li>缺点：会产生大量的日志，尤其是alter table的时候会让日志暴涨</li>
+</ul>
+<p><strong>MIXED</strong></p>
+<p>基于STATMENT和ROW两种模式的混合复制(mixed-based replication, MBR)，一般的复制使用STATEMENT模式保存binlog，对于STATEMENT模式无法复制的操作使用ROW模式保存binlog.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/关系型数据库/" rel="tag"># 关系型数据库</a>
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/20/MYSQL存储引擎介绍/" rel="next" title="MySQL存储引擎介绍">
+                <i class="fa fa-chevron-left"></i> MySQL存储引擎介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/06/08/MySQL事务与锁机制/" rel="prev" title="MySQL事务与锁机制">
+                MySQL事务与锁机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">116</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redo-log"><span class="nav-number">1.</span> <span class="nav-text">redo log</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#缓冲池（Buffer-Pool）"><span class="nav-number">1.1.</span> <span class="nav-text">缓冲池（Buffer Pool）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log的基本概念"><span class="nav-number">1.2.</span> <span class="nav-text">redo log的基本概念</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undo-log"><span class="nav-number">2.</span> <span class="nav-text">undo log</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#binlog"><span class="nav-number">3.</span> <span class="nav-text">binlog</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#binlog的日志格式"><span class="nav-number">3.1.</span> <span class="nav-text">binlog的日志格式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
