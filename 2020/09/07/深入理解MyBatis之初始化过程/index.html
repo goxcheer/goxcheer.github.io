@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MyBatis,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="MyBatis初始化过程其实就是Configuration对象的初始化过程…..">
+<meta name="keywords" content="MyBatis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解MyBatis之初始化过程">
+<meta property="og:url" content="http://yoursite.com/2020/09/07/深入理解MyBatis之初始化过程/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="MyBatis初始化过程其实就是Configuration对象的初始化过程…..">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-12-06T13:34:57.418Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解MyBatis之初始化过程">
+<meta name="twitter:description" content="MyBatis初始化过程其实就是Configuration对象的初始化过程…..">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/07/深入理解MyBatis之初始化过程/">
+
+
+
+
+
+  <title>深入理解MyBatis之初始化过程 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/07/深入理解MyBatis之初始化过程/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解MyBatis之初始化过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-07T21:33:06+08:00">
+                2020-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/MyBatis/" itemprop="url" rel="index">
+                    <span itemprop="name">MyBatis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MyBatis初始化过程其实就是Configuration对象的初始化过程…..</p>
+<a id="more"></a>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>对于一些java的应用框架而言，在程序初始化的时候都会基于我们开发人员定义的配置文件来做一些初始化工作。之前介绍Spring源码的时候初始化过程Spring会通过dom4j解析<code>ApplicationContext.xml</code>等xml文件，生成很多相关的实体类以便上下文使用，相对来说会复杂一点。</p>
+<p>而MyBatis也一样，在初始化过程会去解析我们定义的<code>Mybatis-config.xml</code>文件，但是相对Spring来说却没那么复杂，因为类的关系完全是根据Xml的层级关系来的，下面会详细说明。</p>
+<p>当然，如果是基于注解的方式配置，可能解析过程会不一样，这里以xml为例来说明。</p>
+<h1 id="配置文件和类"><a href="#配置文件和类" class="headerlink" title="配置文件和类"></a>配置文件和类</h1><p>MyBatis初始化过程会对配置文件进行解析，配置文件中的层次如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">configuration</span><br><span class="line">----properties</span><br><span class="line">----settings</span><br><span class="line">----typeAliases</span><br><span class="line">----typeHandlers</span><br><span class="line">----objectFactory</span><br><span class="line">----plugins</span><br><span class="line">----environments</span><br><span class="line">--------environment</span><br><span class="line">------------transactionManager</span><br><span class="line">------------dataSource</span><br><span class="line">----mappers</span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<p>上述信息基于我们的配置，Mybatis会在初始化的时候会被加载到相关类中，下面再看看相关类。</p>
+<p>MyBatis采用建造者模式来解析配置，生成相关类：<br>先看看BaseBuilder。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseBuilder</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> Configuration configuration;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> TypeAliasRegistry typeAliasRegistry;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> TypeHandlerRegistry typeHandlerRegistry;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultSqlSessionFactory</span> <span class="keyword">implements</span> <span class="title">SqlSessionFactory</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Configuration configuration;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到我们基于Builder对象会解析为<code>Configuration</code>这个最为关键类，然后放在<br><code>DefaultSqlSessionFactory</code>中，供<code>SqlSession</code>来使用。</p>
+<p>我们再看看<code>Configuration</code>这个类，相关属性就比较多了，但是一些是很眼熟的，就是我们的配置，当然具体属性不止下面这点，只是展示部分来说明和配置对应关系。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Configuration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">protected</span> Environment environment;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">protected</span> Properties variables = <span class="keyword">new</span> Properties();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">protected</span> ObjectFactory objectFactory = <span class="keyword">new</span> DefaultObjectFactory();</span><br><span class="line">  <span class="keyword">protected</span> ObjectWrapperFactory objectWrapperFactory = <span class="keyword">new</span> DefaultObjectWrapperFactory();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> MapperRegistry mapperRegistry = <span class="keyword">new</span> MapperRegistry(<span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> InterceptorChain interceptorChain = <span class="keyword">new</span> InterceptorChain();</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> TypeHandlerRegistry typeHandlerRegistry = <span class="keyword">new</span> TypeHandlerRegistry();</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> TypeAliasRegistry typeAliasRegistry = <span class="keyword">new</span> TypeAliasRegistry();</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> LanguageDriverRegistry languageRegistry = <span class="keyword">new</span> LanguageDriverRegistry();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> Map&lt;String, MappedStatement&gt; mappedStatements = <span class="keyword">new</span> StrictMap&lt;MappedStatement&gt;(<span class="string">"Mapped Statements collection"</span>);</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> Map&lt;String, Cache&gt; caches = <span class="keyword">new</span> StrictMap&lt;Cache&gt;(<span class="string">"Caches collection"</span>);</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> Map&lt;String, ResultMap&gt; resultMaps = <span class="keyword">new</span> StrictMap&lt;ResultMap&gt;(<span class="string">"Result Maps collection"</span>);</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> Map&lt;String, ParameterMap&gt; parameterMaps = <span class="keyword">new</span> StrictMap&lt;ParameterMap&gt;(<span class="string">"Parameter Maps collection"</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>基本上是一个属性对应与一个具体的配置，其中我们可以看看<code>Enviroment</code>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Environment</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String id;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> TransactionFactory transactionFactory;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> DataSource dataSource;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到也是和配置对应的上的。</p>
+<p>也就是说MyBatis采用Configuration对象来作为配置信息的容器，相关具体配置都在类里面作为属性。当然，Configuration也保存其它的一些信息。</p>
+<p>所以初始化过程就是如何创建Configuration这个对象。</p>
+<h1 id="源码分析初始化过程"><a href="#源码分析初始化过程" class="headerlink" title="源码分析初始化过程"></a>源码分析初始化过程</h1><p>MyBatis官方给我们提供了这样一段示例来<code>SqlSessionFactory</code>对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String resource = <span class="string">"mybatis-config.xml"</span>;</span><br><span class="line">InputStream is = Resources.getResourceAsStream(resource);</span><br><span class="line">SqlSessionFactory factory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(is);</span><br></pre></td></tr></table></figure></p>
+<p>根据配置文件来创建<code>SqlSessionFactory</code>,从这里的build方法入手。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">build</span><span class="params">(InputStream inputStream, String environment, Properties properties)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      XMLConfigBuilder parser = <span class="keyword">new</span> XMLConfigBuilder(inputStream, environment, properties);</span><br><span class="line">      <span class="keyword">return</span> build(parser.parse());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> ExceptionFactory.wrapException(<span class="string">"Error building SqlSession."</span>, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      ErrorContext.instance().reset();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        inputStream.close();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="comment">// Intentionally ignore. Prefer previous error.</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>先创建<code>XMLConfigBuilder</code>对象</li>
+<li>然后执行<code>parse</code>解析</li>
+</ol>
+<p>在创建<code>XmlConfigBuiler</code>之前会先创建<code>XPathParser</code>对象。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">XMLConfigBuilder</span><span class="params">(InputStream inputStream, String environment, Properties props)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="keyword">new</span> XPathParser(inputStream, <span class="keyword">true</span>, props, <span class="keyword">new</span> XMLMapperEntityResolver()), environment, props);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">XPathParser</span><span class="params">(InputStream inputStream, <span class="keyword">boolean</span> validation, Properties variables, EntityResolver entityResolver)</span> </span>&#123;</span><br><span class="line">    commonConstructor(validation, variables, entityResolver);</span><br><span class="line">    <span class="keyword">this</span>.document = createDocument(<span class="keyword">new</span> InputSource(inputStream));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到这个类的作用是创建根据传入的<code>inputStream</code>解析Xml创建<code>document</code>对象。</p>
+<p>具体的解析过程在这里就不多展示，解析Xml是一个通用的处理。我们只需要再分析<code>document</code>后面的使用。</p>
+<p>下面再来看<code>XMLConfigBuilder</code>的解析方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Configuration <span class="title">parse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (parsed) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> BuilderException(<span class="string">"Each XMLConfigBuilder can only be used once."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    parsed = <span class="keyword">true</span>;</span><br><span class="line">    parseConfiguration(parser.evalNode(<span class="string">"/configuration"</span>));</span><br><span class="line">    <span class="keyword">return</span> configuration;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里具体调用parseConfiguration方法，这里的parser就是上面创建的<code>XPathParser</code>，包含document对象提供给我们使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">parseConfiguration</span><span class="params">(XNode root)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">//issue #117 read properties first</span></span><br><span class="line">      propertiesElement(root.evalNode(<span class="string">"properties"</span>));</span><br><span class="line">      Properties settings = settingsAsProperties(root.evalNode(<span class="string">"settings"</span>));</span><br><span class="line">      loadCustomVfs(settings);</span><br><span class="line">      typeAliasesElement(root.evalNode(<span class="string">"typeAliases"</span>));</span><br><span class="line">      pluginElement(root.evalNode(<span class="string">"plugins"</span>));</span><br><span class="line">      objectFactoryElement(root.evalNode(<span class="string">"objectFactory"</span>));</span><br><span class="line">      objectWrapperFactoryElement(root.evalNode(<span class="string">"objectWrapperFactory"</span>));</span><br><span class="line">      reflectorFactoryElement(root.evalNode(<span class="string">"reflectorFactory"</span>));</span><br><span class="line">      settingsElement(settings);</span><br><span class="line">      <span class="comment">// read it after objectFactory and objectWrapperFactory issue #631</span></span><br><span class="line">      environmentsElement(root.evalNode(<span class="string">"environments"</span>));</span><br><span class="line">      databaseIdProviderElement(root.evalNode(<span class="string">"databaseIdProvider"</span>));</span><br><span class="line">      typeHandlerElement(root.evalNode(<span class="string">"typeHandlers"</span>));</span><br><span class="line">      mapperElement(root.evalNode(<span class="string">"mappers"</span>));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> BuilderException(<span class="string">"Error parsing SQL Mapper Configuration. Cause: "</span> + e, e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>看到这里应该很清晰了，根据我们Xml的配置解析出来的document，去逐个解析对应的dom树的node，将相应的配置放在configuration上下文。</p>
+<p>最后创建SqlSessionFactory对象。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总结，其实MyBatis初始化过程就是解析配置文件初始化配置的过程，相对Spring初始化过程来说比较简单，源码层级也没那么深，容易看懂。</p>
+<p>整个过程可以抽象为：</p>
+<ol>
+<li>先解析Xml成document对象</li>
+<li>再将document的dom节点层层解析，与Xml中的具体配置对应</li>
+<li>将解析结果存放在configuration中供后续SqlSession使用。</li>
+<li>返回SqlSessionFactory对象</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/05/深入理解MyBatis缓存原理/" rel="next" title="深入理解MyBatis缓存原理">
+                <i class="fa fa-chevron-left"></i> 深入理解MyBatis缓存原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/09/20/MyBatis源码分析之Mapper对象创建与结果集封装/" rel="prev" title="MyBatis源码分析之Mapper对象创建与结果集封装">
+                MyBatis源码分析之Mapper对象创建与结果集封装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">127</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置文件和类"><span class="nav-number">2.</span> <span class="nav-text">配置文件和类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析初始化过程"><span class="nav-number">3.</span> <span class="nav-text">源码分析初始化过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
