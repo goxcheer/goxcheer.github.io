@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Nginx,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Nginx简介。。。。。。">
+<meta name="keywords" content="Nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx简介">
+<meta property="og:url" content="http://yoursite.com/2020/11/10/Nginx简介/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Nginx简介。。。。。。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/Nginx简介/1.png">
+<meta property="og:image" content="http://yoursite.com/img/Nginx简介/2.png">
+<meta property="og:updated_time" content="2021-04-16T13:53:40.116Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx简介">
+<meta name="twitter:description" content="Nginx简介。。。。。。">
+<meta name="twitter:image" content="http://yoursite.com/img/Nginx简介/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/11/10/Nginx简介/">
+
+
+
+
+
+  <title>Nginx简介 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/10/Nginx简介/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Nginx简介</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-11-10T21:47:15+08:00">
+                2020-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Nginx简介。。。。。。<br><a id="more"></a></p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Nginx是俄罗斯人编写的一款高性能的HTTP和反向代理服务器，在高连接并发的情况下，它能够支持高达50000个并发连接数的响应，但是内存、CPU等系统资源消耗却很低，运行很稳定。目前Nginx在国内很多大型企业都有应用，据最新统计，Nginx的市场占有率已经到33%左右了。而Apache的市场占有率虽然仍然是最高的，但是是呈下降趋势。而Nginx的势头很明显。选择Nginx的理由也很简单：第一，它可以支持5W高并发连接；第二，内存消耗少；第三，成本低，如果采用F5、NetScaler等硬件负载均衡设备的话，需要大几十万。而Nginx是开源的，可以免费使用并且能用于商业用途。</p>
+<h1 id="Nginx的作用"><a href="#Nginx的作用" class="headerlink" title="Nginx的作用"></a>Nginx的作用</h1><p>Nginx在一个系统的架构中，处在网关入口之前，主要有以下3个常见作用。</p>
+<h2 id="路由功能（代理）"><a href="#路由功能（代理）" class="headerlink" title="路由功能（代理）"></a>路由功能（代理）</h2><p>在当前微服务架构盛行的时代，一般核心的系统都会采用微服务的架构模式去开发和部署。</p>
+<p>例如一个电商系统，可能会拆分为用户服务，订单服务，商品服务等等，这些服务会单独部署在不同的服务器上，根据前端的请求路径，来分别路由到不同机器的不同服务上面去处理请求。</p>
+<p><img src="/img/Nginx简介/1.png" alt="Alt text"></p>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><p>当一个系统对并发有一定的要求的时候，一般将同一个应用采用集群部署的方法来分担请求的压力，这是一种横向拓展的思路。而同一个应用的请求具体由集群中的哪一台机器来处理，可以用Nginx来作为负载均衡的前置服务。</p>
+<p><img src="/img/Nginx简介/2.png" alt="Alt text"></p>
+<h2 id="静态资源服务器"><a href="#静态资源服务器" class="headerlink" title="静态资源服务器"></a>静态资源服务器</h2><p>作为一个服务器的基本功能，类似于Apache，可以作为静态资源服务器，将应用的静态资源单独部署，动静分离，提升应用的性能。</p>
+<h1 id="正向代理和反向代理"><a href="#正向代理和反向代理" class="headerlink" title="正向代理和反向代理"></a>正向代理和反向代理</h1><h2 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h2><p>当客户端无法直接访问目标服务器的时候（例如墙），可以通过一个正向的代理服务器去访问。</p>
+<p>正向代理是一个位于客户端和原始服务器(origin server)之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并<strong>指定目标(原始服务器)</strong>，然后代理向原始服务器转交请求并将获得的内容返回给客户端。客户端必须要进行一些特别的设置才能使用正向代理。</p>
+<h2 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h2><p>反向代理指用代理服务器来接受客户端请求，然后将请求转发到内网的服务器上处理，然后将处理结果通过代理服务器返回给前端，整个过程对于客户端来说是无感知的。</p>
+<h1 id="Nginx的安装"><a href="#Nginx的安装" class="headerlink" title="Nginx的安装"></a>Nginx的安装</h1><ol>
+<li>源码编译方式安装</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">安装make：yum -y install autoconf automake make</span><br><span class="line">安装g++: yum -y install gcc gcc-c++</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>安装nginx依赖库</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install pcre pcre-devel    </span><br><span class="line">yum -y install zlib zlib-devel</span><br><span class="line">yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>安装nginx</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget  http://nginx.org/download/nginx-<span class="number">1.9</span>.<span class="number">15</span>.tar.gz</span><br><span class="line">tar -zxvf nginx-<span class="number">1.9</span>.<span class="number">0</span>.tar.gz</span><br><span class="line">cd nginx-<span class="number">1.9</span>.<span class="number">0</span></span><br><span class="line">./configure   --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module   <span class="comment">#指定安装路径，安装https模块</span></span><br><span class="line">make &amp;&amp; make install  <span class="comment">#编译安装</span></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>启动停止命令</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./nginx -c nginx.conf的文件。如果不指定，默认为NGINX_HOME/conf/nginx.conf</span><br><span class="line">./nginx -s stop  停止，kill</span><br><span class="line">./nginx -s quit退出，安全退出，等待任务处理完毕再退出</span><br><span class="line">./nginx -s reload 重新加载nginx.conf</span><br></pre></td></tr></table></figure>
+<h1 id="Nginx的进程模型"><a href="#Nginx的进程模型" class="headerlink" title="Nginx的进程模型"></a>Nginx的进程模型</h1><p>Nginx在运行过程中，采用多进程工作，因而高性能且稳定。</p>
+<p>多进程指 一个 Master 进程、多个 Worker 进程。配置了缓存时还会有缓存加载器进程(cache loader)和缓存管理器进程(cache manager)等。</p>
+<p><strong>Master进程</strong></p>
+<ol>
+<li>读取并验正配置信息；</li>
+<li>创建、绑定及关闭套接字；</li>
+<li>启动、终止及维护worker进程的个数；</li>
+<li>无须中止服务而重新配置工作特性；</li>
+<li>重新打开日志文件；</li>
+</ol>
+<p><strong>Work进程</strong></p>
+<p>所有 Worker 进程都是平等的。实际处理：网络请求，由 Worker 进程处理。Worker 进程数量：在 nginx.conf 中配置，一般设置为核心数，充分利用 CPU 资源，同时，避免进程数量过多，避免进程竞争 CPU 资源，增加上下文切换的损耗。</p>
+<h1 id="配置文件结构"><a href="#配置文件结构" class="headerlink" title="配置文件结构"></a>配置文件结构</h1><h2 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h2><p>指定Nginx的worker进程运行用户以及用户组，默认由nobody账号运行。<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#user  nobody;</span></span><br></pre></td></tr></table></figure></p>
+<p>指定Nginx要开启的线程数，最大打开文件数限制<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">worker_processes </span> 1;  </span><br><span class="line"></span><br><span class="line"><span class="string">worker_rlimit_nofile </span><span class="string">100000；</span></span><br></pre></td></tr></table></figure></p>
+<p>用来定义全局错设日志文件的路径和日志名称。<br>日志输出级别有debug，info，notice，warn，error，crit 可供选择，其中debug输出日志 最为详细，面crit（严重）输出日志最少。默认是error<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br></pre></td></tr></table></figure></p>
+<p>  用来指定进程id的存储文件位置。<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br></pre></td></tr></table></figure></p>
+<p>event设定nginx的工作模式及连接数上限.<br>其中参数use用来指定nginx的工作模式（这里是epoll，epoll是多路复用IO(I/O Multiplexing)中的一种方式）,nginx支持的工作模式有select ,poll,kqueue,epoll,rtsig,/dev/poll。其中select和poll都是标准的工作模式，kqueue和epoll是高效的工作模式，对于linux系统，epoll是首选。</p>
+<p>worker_connection是设置nginx每个进程最大的连接数，默认是1024，所以nginx最大的连接数max_client=worker_processes * worker_connections。<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">events </span>&#123;</span><br><span class="line"><span class="string">use </span><span class="string">epoll;</span></span><br><span class="line"><span class="string">worker_connections </span> <span class="string">1024;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Http服务器相关属性"><a href="#Http服务器相关属性" class="headerlink" title="Http服务器相关属性"></a>Http服务器相关属性</h2><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">http </span>&#123;</span><br><span class="line">    <span class="string">include </span>      <span class="string">mime.</span><span class="string">types;</span>               主模块命令，对配置文件所包含文件的设定，减少主配置文件的复杂度，相当于把部分设置放在别的地方，然后在包含进来，保持主配置文件的简洁</span><br><span class="line">    <span class="string">default_type </span> <span class="string">application/</span><span class="string">octet-stream;</span> 默认文件类型，当文件类型未定义时候就使用这类设置的。</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '   指定nginx日志的格式</span></span><br><span class="line">    <span class="comment">#                  '$status $body_bytes_sent "$http_referer" '</span></span><br><span class="line">    <span class="comment">#                  '"$http_user_agent" "$http_x_forwarded_for"';</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line">    <span class="string">sendfile </span>       <span class="string">on;</span>   开启高效文件传输模式（<span class="string">zero </span><span class="string">copy </span>方式），避免内核缓冲区数据和用户缓冲区数据之间的拷贝。</span><br><span class="line">    <span class="comment">#tcp_nopush     on;  开启TCP_NOPUSH套接字（sendfile开启时有用）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#keepalive_timeout  0;   客户端连接超时时间</span></span><br><span class="line">    <span class="string">keepalive_timeout </span> <span class="string">65;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;             设置是否开启gzip模</span></span><br></pre></td></tr></table></figure>
+<h2 id="server段虚拟主机的配置"><a href="#server段虚拟主机的配置" class="headerlink" title="server段虚拟主机的配置"></a>server段虚拟主机的配置</h2><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">server </span>&#123;</span><br><span class="line">        <span class="string">listen </span>      <span class="string">80;</span>   虚拟主机的服务端口</span><br><span class="line">        <span class="string">server_name </span> <span class="string">localhost;</span>   用来指定<span class="string">ip或</span>者域名，多个域名用逗号分开</span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line">        <span class="string">location </span>/ &#123;        </span><br><span class="line">               <span class="comment">#地址匹配设置，支持正则匹配，也支持条件匹配，这里是默认请求地址，用户可以location命令对nginx进行动态和静态网页过滤处理</span></span><br><span class="line">            <span class="string">root </span>  <span class="string">html;</span>                   虚拟主机的网页根目录</span><br><span class="line">            <span class="string">index </span> <span class="string">index.</span><span class="string">html </span><span class="string">index.</span><span class="string">htm;</span>   默认访问首页文件</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">#error_page  404              /404.html;</span></span><br><span class="line">        <span class="comment"># redirect server error pages to the static page /50x.html        </span></span><br><span class="line">        <span class="string">error_page </span>  <span class="string">500 </span><span class="string">502 </span><span class="string">503 </span><span class="string">504 </span> /<span class="string">50x.</span><span class="string">html;</span></span><br><span class="line">        <span class="string">location </span>= /<span class="string">50x.</span><span class="string">html </span>&#123;</span><br><span class="line">            <span class="string">root </span>  <span class="string">html;</span></span><br><span class="line">        &#125;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Location语法规则"><a href="#Location语法规则" class="headerlink" title="Location语法规则"></a>Location语法规则</h1><p>语法规则： location [=|~|~*|^~] /uri/ {… }</p>
+<p>首先匹配 =，其次匹配^~,其次是按文件中顺序的正则匹配，最后是交给 /通用匹配。当有匹配成功时候，停止匹配，按当前匹配规则处理请求。</p>
+<h1 id="负载均衡-1"><a href="#负载均衡-1" class="headerlink" title="负载均衡"></a>负载均衡</h1><ol>
+<li><p>轮询</p>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">upstream </span><span class="string">nginx </span>&#123;</span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">4:8081;</span></span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">5:8081;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>权重</p>
+</li>
+</ol>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">upstream </span><span class="string">nginx </span>&#123;</span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">4:8081 </span><span class="string">weight=</span>2;</span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">5:8081 </span><span class="string">weight=</span>1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>ip hash</li>
+</ol>
+<p>每个请求按访问ip的hash结果分配，这样同一客户端的请求总是发往同一个后端服务器，可以解决session的问题。</p>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">upstream </span><span class="string">nginx </span>&#123;</span><br><span class="line"><span class="string">ip_hash;</span></span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">4:8081;</span></span><br><span class="line"><span class="string">server </span><span class="string">172.</span><span class="string">17.</span>0.<span class="string">5:8081;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/11/05/Redis内存淘汰机制与过期策略/" rel="next" title="Redis内存淘汰机制与过期策略">
+                <i class="fa fa-chevron-left"></i> Redis内存淘汰机制与过期策略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">132</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx的作用"><span class="nav-number">2.</span> <span class="nav-text">Nginx的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由功能（代理）"><span class="nav-number">2.1.</span> <span class="nav-text">路由功能（代理）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡"><span class="nav-number">2.2.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态资源服务器"><span class="nav-number">2.3.</span> <span class="nav-text">静态资源服务器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正向代理和反向代理"><span class="nav-number">3.</span> <span class="nav-text">正向代理和反向代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#正向代理"><span class="nav-number">3.1.</span> <span class="nav-text">正向代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向代理"><span class="nav-number">3.2.</span> <span class="nav-text">反向代理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx的安装"><span class="nav-number">4.</span> <span class="nav-text">Nginx的安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx的进程模型"><span class="nav-number">5.</span> <span class="nav-text">Nginx的进程模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置文件结构"><span class="nav-number">6.</span> <span class="nav-text">配置文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#全局配置"><span class="nav-number">6.1.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Http服务器相关属性"><span class="nav-number">6.2.</span> <span class="nav-text">Http服务器相关属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#server段虚拟主机的配置"><span class="nav-number">6.3.</span> <span class="nav-text">server段虚拟主机的配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Location语法规则"><span class="nav-number">7.</span> <span class="nav-text">Location语法规则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#负载均衡-1"><span class="nav-number">8.</span> <span class="nav-text">负载均衡</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

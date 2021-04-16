@@ -89,7 +89,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/img/解决linux配置静态ip之后无法上网的问题/1.png">
 <meta property="og:image" content="http://yoursite.com/img/解决linux配置静态ip之后无法上网的问题/2.png">
-<meta property="og:updated_time" content="2020-03-02T07:30:04.000Z">
+<meta property="og:updated_time" content="2021-04-05T02:09:21.704Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解决Linux配置静态ip之后无法上网的问题">
 <meta name="twitter:description" content="最近在玩linux集群的时候将机器ip修改为静态了，但是修改为静态之后发现一个比较尴尬的问题就是虚拟机没法上网了……">
@@ -353,7 +353,7 @@
 <p>为了能够使用静态IP，这里不要勾选”使用本地DHCP服务将IP分配给虚拟机“这个选项。然后是配置子网ip，子网IP与宿主机的ip一定不能处在同一地址范围里，否则就算虚拟机能上网，网络既慢，还不稳定。比如我的主机ip是192.168.2.210，所以我的虚拟机配置为192.168.x.0的时候x只要不设置成2就OK了。</p>
 <p>然后我们在这个界面点击NAT设置。<br><img src="/img/解决linux配置静态ip之后无法上网的问题/2.png" alt="Alt text"><br>我们会发现NAT模式下，宿主机会为我们的虚拟机分配一个子网网关ip。<br>比如我的就是192.168.11.2</p>
 <h1 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h1><p>编辑我们虚拟机的网络配置文件:<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysconfig/network-scripts/ifcfg-ens33</span><br></pre></td></tr></table></figure></p>
-<p>修改为如下：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=yes</span><br><span class="line">IPV6_AUTOCONF=yes</span><br><span class="line">IPV6_DEFROUTE=yes</span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line">NAME=ens33</span><br><span class="line">UUID=<span class="number">059</span>b29b9-<span class="number">140</span>f-<span class="number">4230</span>-<span class="number">9</span>dd4-<span class="number">5566585</span>b3cb3</span><br><span class="line">DEVICE=ens33</span><br><span class="line">ONBOOT=yes <span class="comment">#开启虚拟机网卡</span></span><br><span class="line">IPADDR=<span class="number">192.168</span>.<span class="number">2.231</span>  //静态ip</span><br><span class="line">GATEWAY=<span class="number">192.168</span>.<span class="number">11.2</span>  //上面我们获取的网关</span><br><span class="line">NETMASK=<span class="number">255.255</span>.<span class="number">255.0</span> </span><br><span class="line">DNS1=<span class="number">192.168</span>.<span class="number">2.1</span> //填写你所在网络可用的dns即可</span><br><span class="line">DNS2=<span class="number">8.8</span>.<span class="number">8.8</span></span><br></pre></td></tr></table></figure></p>
+<p>修改为如下：<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=yes</span><br><span class="line">IPV6_AUTOCONF=yes</span><br><span class="line">IPV6_DEFROUTE=yes</span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line">NAME=ens33</span><br><span class="line">UUID=<span class="number">059</span>b29b9-<span class="number">140</span>f-<span class="number">4230</span>-<span class="number">9</span>dd4-<span class="number">5566585</span>b3cb3</span><br><span class="line">DEVICE=ens33</span><br><span class="line">ONBOOT=yes <span class="comment">#开启虚拟机网卡</span></span><br><span class="line">IPADDR=<span class="number">192.168</span>.<span class="number">11.231</span>  //静态ip，和分配的子网前<span class="number">3</span>位一致</span><br><span class="line">GATEWAY=<span class="number">192.168</span>.<span class="number">11.2</span>  //上面我们获取的网关</span><br><span class="line">NETMASK=<span class="number">255.255</span>.<span class="number">255.0</span> </span><br><span class="line">DNS1=<span class="number">8.8</span>.<span class="number">8.8</span></span><br></pre></td></tr></table></figure></p>
 <h1 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h1><p>配置好配置文件之后，重启网络服务</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure>
 <p>然后我们ping baidu.com，发现可以ping的通。</p>
@@ -477,7 +477,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-count">132</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -488,7 +488,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">55</span>
+                  <span class="site-state-item-count">56</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -499,7 +499,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-count">83</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
