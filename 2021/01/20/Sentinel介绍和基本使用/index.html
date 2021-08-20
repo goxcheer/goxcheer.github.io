@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="SpringCloud,Sentinel,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Sentinel介绍和基本入门使用">
+<meta name="keywords" content="SpringCloud,Sentinel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sentinel介绍和基本使用">
+<meta property="og:url" content="http://yoursite.com/2021/01/20/Sentinel介绍和基本使用/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Sentinel介绍和基本入门使用">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/Sentinel介绍和基本使用/1.png">
+<meta property="og:updated_time" content="2021-08-15T09:12:31.966Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sentinel介绍和基本使用">
+<meta name="twitter:description" content="Sentinel介绍和基本入门使用">
+<meta name="twitter:image" content="http://yoursite.com/img/Sentinel介绍和基本使用/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/01/20/Sentinel介绍和基本使用/">
+
+
+
+
+
+  <title>Sentinel介绍和基本使用 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/20/Sentinel介绍和基本使用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Sentinel介绍和基本使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-01-20T17:07:42+08:00">
+                2021-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringCloud/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringCloud</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringCloud/Sentinel/" itemprop="url" rel="index">
+                    <span itemprop="name">Sentinel</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Sentinel介绍和基本入门使用</p>
+<a id="more"></a>
+<h1 id="Sentinel介绍"><a href="#Sentinel介绍" class="headerlink" title="Sentinel介绍"></a>Sentinel介绍</h1><p>随着微服务的流行，服务与服务之间的治理以及稳定性，变得尤为重要。Sentinel 是面向分布式服务架构的流量控制组件，主要以流量为切入点，从<strong>流量控制</strong>、<strong>熔断降级</strong>、<strong>系统自适应保护</strong>等多个维度来帮助您保障微服务的稳定性。</p>
+<h2 id="Sentinel的基本概念"><a href="#Sentinel的基本概念" class="headerlink" title="Sentinel的基本概念"></a>Sentinel的基本概念</h2><h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>资源是 Sentinel 的关键概念。它可以是 Java 应用程序中的任何内容，例如，由应用程序提供的服务，或由应用程序调用的其它应用提供的服务，甚至可以是一段代码。</p>
+<p>只要通过 Sentinel API 定义的代码，就是资源，能够被 Sentinel 保护起来。大部分情况下，可以使用<strong>方法签名，URL，甚至服务名称</strong>作为资源名来标示资源。</p>
+<h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>围绕资源的实时状态设定的规则，可以包括流量控制规则、熔断降级规则以及系统保护规则。所有规则可以动态实时调整。</p>
+<h2 id="Sentinel的功能与设计理念"><a href="#Sentinel的功能与设计理念" class="headerlink" title="Sentinel的功能与设计理念"></a>Sentinel的功能与设计理念</h2><h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><p>任意时间的请求是随机不可控的，而系统的处理能力是有限的，需要根据系统的处理能力对流量进行控制，Sentinel就是起到这样一个作用。</p>
+<p>流量控制的角度：</p>
+<ul>
+<li>资源的调用关系，例如资源的调用链路，资源和资源之间的关系；</li>
+<li>运行指标，例如 QPS、线程池、系统负载等；</li>
+<li>控制的效果，例如直接限流、冷启动、排队等</li>
+</ul>
+<h3 id="熔断降级"><a href="#熔断降级" class="headerlink" title="熔断降级"></a>熔断降级</h3><p>由于微服务调用链路比较复杂，如果某个链路的资源出现不稳定，导致请求堆积，最终可能造成服务雪崩。出现这种情形，就需要对这个资源的调用进行限制，并让请求快速失败，避免影响到其它的资源。</p>
+<p>在限制手段上，<strong>Hystrix </strong>通过线程池的方式，来对依赖(在我们的概念中对应资源)进行了隔离。这样做的好处是资源和资源之间做到了最彻底的隔离。缺点是除了增加了线程切换的成本，还需要预先给各个资源做线程池大小的分配。</p>
+<p>而Sentinel则采用两种手段：</p>
+<ul>
+<li>通过并发线程数进行限制</li>
+</ul>
+<p>Sentinel 通过限制资源<strong>并发线程的数量</strong>，来减少不稳定资源对其它资源的影响。这样不但没有线程切换的损耗，也不需要您预先分配线程池的大小。当某个资源出现不稳定的情况下，例如响应时间变长，对资源的直接影响就是会造成线程数的逐步堆积。当线程数在特定资源上堆积到一定的数量之后，对该资源的新请求就会被拒绝。堆积的线程完成任务后才开始继续接收请求。</p>
+<ul>
+<li>通过相应时间对资源进行降级</li>
+</ul>
+<p>除了对并发线程数进行控制以外，Sentinel 还可以通过响应时间来快速降级不稳定的资源。当依赖的资源出现响应时间过长后，所有对该资源的访问都会被直接拒绝，直到过了指定的时间窗口之后才重新恢复。</p>
+<h3 id="系统负载保护"><a href="#系统负载保护" class="headerlink" title="系统负载保护"></a>系统负载保护</h3><p>当系统负载较高的时候，如果还持续让请求进入，可能会导致系统崩溃，无法响应。在集群环境下，网络负载均衡会把本应这台机器承载的流量转发到其它的机器上去。如果这个时候其它的机器也处在一个边缘状态的时候，这个增加的流量就会导致这台机器也崩溃，最后导致整个集群不可用。</p>
+<p>针对这个情况，Sentinel 提供了对应的保护机制，让系统的入口流量和系统的负载达到一个平衡，保证系统在能力范围之内处理最多的请求。</p>
+<h1 id="Sentinel基本应用"><a href="#Sentinel基本应用" class="headerlink" title="Sentinel基本应用"></a>Sentinel基本应用</h1><p>Sentinel的使用可以分为两个部分：</p>
+<ul>
+<li>核心库（Java 客户端）：不依赖任何框架/库，能够运行于 Java 7 及以上的版本的运行时环境，同时对 Dubbo / Spring Cloud 等框架也有较好的支持。</li>
+<li>控制台（Dashboard）：Dashboard 主要负责管理推送规则、监控、管理机器信息等。</li>
+</ul>
+<h2 id="Demo实现限流"><a href="#Demo实现限流" class="headerlink" title="Demo实现限流"></a>Demo实现限流</h2><h3 id="1-引入Sentinel依赖"><a href="#1-引入Sentinel依赖" class="headerlink" title="1.引入Sentinel依赖"></a>1.引入Sentinel依赖</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;sentinel-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.8.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2-定义资源"><a href="#2-定义资源" class="headerlink" title="2.定义资源"></a>2.定义资源</h3><p>资源 是 Sentinel 中的核心概念之一，最常用的资源其实就是Java中的一个方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">      <span class="comment">//配置限流规则</span></span><br><span class="line">      initFlowRules();</span><br><span class="line"></span><br><span class="line">      <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">          <span class="keyword">try</span> (Entry entry = SphU.entry(<span class="string">"HelloWorld"</span>)) &#123;</span><br><span class="line">              <span class="comment">// 被保护的逻辑</span></span><br><span class="line">              System.out.println(<span class="string">"hello world"</span>);</span><br><span class="line">          &#125; <span class="keyword">catch</span> (BlockException ex) &#123;</span><br><span class="line">              <span class="comment">// 处理被流控的逻辑</span></span><br><span class="line">              System.out.println(<span class="string">"blocked!"</span>);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-定义规则"><a href="#3-定义规则" class="headerlink" title="3.定义规则"></a>3.定义规则</h3><p>限流的规则实体是FlowRule，可以定义一些常规的限流规则参数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initFlowRules</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       List&lt;FlowRule&gt; rules = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">       FlowRule rule = <span class="keyword">new</span> FlowRule();</span><br><span class="line">       <span class="comment">//设定限流的资源</span></span><br><span class="line">       rule.setResource(<span class="string">"HelloWorld"</span>);</span><br><span class="line">       <span class="comment">//基于QPS限流</span></span><br><span class="line">       rule.setGrade(RuleConstant.FLOW_GRADE_QPS);</span><br><span class="line">       <span class="comment">// Set limit QPS to 20.</span></span><br><span class="line">       rule.setCount(<span class="number">20</span>);</span><br><span class="line">       rules.add(rule);</span><br><span class="line">       FlowRuleManager.loadRules(rules);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-运行"><a href="#4-运行" class="headerlink" title="4. 运行"></a>4. 运行</h3><p>完成上述3个步骤之后，就可以运行Main方法。<br>我们可以在日志 ~/logs/csp/${appName}-metrics.log.xxx 里看到下面的输出:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">|--timestamp-|------date time----|--resource-|p |block|s |e|rt</span><br><span class="line"><span class="number">1629002239000</span>|<span class="number">2021</span>-<span class="number">08</span>-<span class="number">15</span> <span class="number">12</span>:<span class="number">37</span>:<span class="number">19</span>|HelloWorld|<span class="number">20</span>|<span class="number">46070</span>|<span class="number">20</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span></span><br><span class="line"><span class="number">1629002240000</span>|<span class="number">2021</span>-<span class="number">08</span>-<span class="number">15</span> <span class="number">12</span>:<span class="number">37</span>:<span class="number">20</span>|HelloWorld|<span class="number">20</span>|<span class="number">82276</span>|<span class="number">20</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span></span><br><span class="line"><span class="number">1629002241000</span>|<span class="number">2021</span>-<span class="number">08</span>-<span class="number">15</span> <span class="number">12</span>:<span class="number">37</span>:<span class="number">21</span>|HelloWorld|<span class="number">20</span>|<span class="number">125061</span>|<span class="number">20</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span></span><br><span class="line">com-goxcheer-sentinel-Demo01-metrics.log.2021-<span class="number">08</span>-<span class="number">15</span> (END)</span><br></pre></td></tr></table></figure></p>
+<p>其中 p 代表通过的请求, block 代表被阻止的请求, s 代表成功执行完成的请求个数, e 代表用户自定义的异常, rt 代表平均响应时长。</p>
+<p>可以看到，这个程序每秒稳定输出 “hello world” 20 次，和规则中预先设定的阈值是一样的。</p>
+<h3 id="注解支持"><a href="#注解支持" class="headerlink" title="注解支持"></a>注解支持</h3><p>Sentinel提供注解支持模块，来定义资源，类似代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SentinelResource</span>(<span class="string">"HelloWorld"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">helloWorld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 资源中的逻辑</span></span><br><span class="line">    System.out.println(<span class="string">"hello world"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意注解支持模块需要配合 Spring AOP 或者 AspectJ 一起使用。</p>
+<p>Sentinel熔断降级和流量控制实现方式很类似，只需要将核心规则FlowRule改成<br>DegradeRule并添加到规则管理器。</p>
+<h2 id="引入Dashboard控制台"><a href="#引入Dashboard控制台" class="headerlink" title="引入Dashboard控制台"></a>引入Dashboard控制台</h2><p>Sentinel 开源控制台支持实时监控和规则管理。接入控制台的步骤如下：</p>
+<ol>
+<li>下载控制台 jar 包并在本地启动。 （<a href="https://github.com/alibaba/Sentinel/releases" target="_blank" rel="noopener">控制台jar包链接下载</a>）</li>
+<li>客户端接入控制台</li>
+</ol>
+<p>引入接入控制台依赖Jar</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;sentinel-transport-simple-http&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.8.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>启动时加入 JVM 参数 -Dcsp.sentinel.dashboard.server=consoleIp:port 指定控制台地址和端口。</p>
+<p>启动Jar包的命令：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Dserver.port=<span class="number">8080</span> -Dcsp.sentinel.dashboard.server=localhost:<span class="number">8080</span> -Dproject.name=sentinel-dashboard -jar sentinel-dashboard-<span class="number">1.8</span>.2.jar</span><br></pre></td></tr></table></figure></p>
+<p>然后也启动之前的Demo，查看控制台，可以看到Demo01已经介入DashBoard，并且可以展示流量通过和拒绝数。</p>
+<p><img src="/img/Sentinel介绍和基本使用/1.png" alt="Alt text"></p>
+<p>至此，Sentinel介绍和入门Hello World已经完成，其实上述所有采自Sentinel官方文档，但是记录笔记也算是记录学习的过程吧，个人觉得有必要。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringCloud/" rel="tag"># SpringCloud</a>
+          
+            <a href="/tags/Sentinel/" rel="tag"># Sentinel</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/14/常用的4种限流算法/" rel="next" title="常用的4种限流算法">
+                <i class="fa fa-chevron-left"></i> 常用的4种限流算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/05/Sentinel工作原理及使用规则/" rel="prev" title="Sentinel工作原理及使用规则">
+                Sentinel工作原理及使用规则 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">136</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">58</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Sentinel介绍"><span class="nav-number">1.</span> <span class="nav-text">Sentinel介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel的基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">Sentinel的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#资源"><span class="nav-number">1.1.1.</span> <span class="nav-text">资源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#规则"><span class="nav-number">1.2.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel的功能与设计理念"><span class="nav-number">1.3.</span> <span class="nav-text">Sentinel的功能与设计理念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#流量控制"><span class="nav-number">1.3.1.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#熔断降级"><span class="nav-number">1.3.2.</span> <span class="nav-text">熔断降级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统负载保护"><span class="nav-number">1.3.3.</span> <span class="nav-text">系统负载保护</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sentinel基本应用"><span class="nav-number">2.</span> <span class="nav-text">Sentinel基本应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Demo实现限流"><span class="nav-number">2.1.</span> <span class="nav-text">Demo实现限流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-引入Sentinel依赖"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.引入Sentinel依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定义资源"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.定义资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-定义规则"><span class="nav-number">2.1.3.</span> <span class="nav-text">3.定义规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-运行"><span class="nav-number">2.1.4.</span> <span class="nav-text">4. 运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解支持"><span class="nav-number">2.1.5.</span> <span class="nav-text">注解支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引入Dashboard控制台"><span class="nav-number">2.2.</span> <span class="nav-text">引入Dashboard控制台</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
