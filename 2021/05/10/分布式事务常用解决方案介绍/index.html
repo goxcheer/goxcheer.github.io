@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分布式事务,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍分布式事务常用解决方案">
+<meta name="keywords" content="分布式事务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务常用解决方案介绍">
+<meta property="og:url" content="http://yoursite.com/2021/05/10/分布式事务常用解决方案介绍/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="介绍分布式事务常用解决方案">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/1.png">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/2.png">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/3.png">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/4.png">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/5.png">
+<meta property="og:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/7.png">
+<meta property="og:updated_time" content="2021-08-28T05:03:05.539Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式事务常用解决方案介绍">
+<meta name="twitter:description" content="介绍分布式事务常用解决方案">
+<meta name="twitter:image" content="http://yoursite.com/img/分布式事务常用解决方案介绍/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/05/10/分布式事务常用解决方案介绍/">
+
+
+
+
+
+  <title>分布式事务常用解决方案介绍 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">goxcheer个人小栈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一叶知秋意，一树识菩提</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/10/分布式事务常用解决方案介绍/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分布式事务常用解决方案介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-05-10T12:42:44+08:00">
+                2021-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式事务/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式事务</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>介绍分布式事务常用解决方案</p>
+<a id="more"></a>
+<h1 id="OverView"><a href="#OverView" class="headerlink" title="OverView"></a>OverView</h1><p>早期的单体应用时代，所有的应用程序都是一个war包，依赖同一个Spring容器操作同一个数据库的多个表，这时候，依赖同一个本地的事务管理器即可实现事务管理的功能。</p>
+<p>但是如今，微服务应用已是主流，大数据引发的性能瓶颈导致我们不得不拆库分表。<br>这时候，多个微服务之间，多个数据库之间，已不是一个事务管理器即可搞定事务管理功能。</p>
+<p>假设我们有一个订单服务，库存服务，对应一个订单库，一个库存库，如果用户下单成功，库存扣减失败，这样就会出现库存超卖问题，这种场景如何保证数据一致性，就是分布式事务需要解决的问题。</p>
+<p>所以分布式事务问题，其实就是分布式环境下，数据一致性的问题。</p>
+<h1 id="分布式事务理论协议"><a href="#分布式事务理论协议" class="headerlink" title="分布式事务理论协议"></a>分布式事务理论协议</h1><h2 id="X-Open-XA协议"><a href="#X-Open-XA协议" class="headerlink" title="X/Open XA协议"></a>X/Open XA协议</h2><p>X/Open DTP（X/Open Distributed Transaction Processing Reference Model）是X/Open这个组织定义的一套分布式事务标准。X/OPen DTP中包含以下3种角色。</p>
+<ul>
+<li>AP： Application， 表示应用程序。</li>
+<li>RM：Resource Manager，表示资源管理器，比如数据库。</li>
+<li>TM： Transaction Manager， 表示事务管理器，一般指事务协调者，负责协调和管理事务，提供AP编程接口或管理RM。比如Spring中的Transaction Manager。</li>
+</ul>
+<p>下图是展示这三者的协同关系。</p>
+<p><img src="/img/分布式事务常用解决方案介绍/1.png" alt="Alt text"></p>
+<p>大致实现步骤如下：</p>
+<ol>
+<li>配置全局TM，定义多个RM并把RM注册到TM。</li>
+<li>AP从TM管理的RM中获取连接。</li>
+<li>AP向TM发起一个全局的事务，生成一个全局的事务ID（XID），XID会通知各个RM。</li>
+<li>AP通过RM获取的连接操作RM完成数据操作，每次将操作结果和XID传给RM。</li>
+<li>AP结束全局事务，根据各个事务的执行结果，执行事务提交或者回滚操作。</li>
+</ol>
+<p>其实步骤和本地事务的基本相同，只是这里是全局的TM来管理各个RM的事务。</p>
+<p>这里TM和RM之间的事务，就是基于XA（XA Specification）来完成的，目前Oracle，Mysql，DB2都实现了XA接口。</p>
+<h2 id="两阶段提交协议"><a href="#两阶段提交协议" class="headerlink" title="两阶段提交协议"></a>两阶段提交协议</h2><p>当一个事务跨越多个节点时，为了保持事务的 ACID 特性，需要引入一个作为协调者的组件来统一掌控所有节点(称作参与者)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交(比如将更新后的数据写入磁盘等等)。</p>
+<p>上述说的XA协议实际就是采用两阶段提交方式，第一阶段是事务的准备阶段，第二阶段是事务的提交或者回滚阶段，这两个阶段都是由事务管理器TM发起。</p>
+<p>二阶段提交协议过程如下图：</p>
+<p><img src="/img/分布式事务常用解决方案介绍/2.png" alt="Alt text"></p>
+<p>准备投票阶段：</p>
+<ul>
+<li>协调者向所有参与者询问是否可以执行提交操作，并开始等待各参与者的响应。</li>
+<li>参与者执行事务操作，如果执行成功就返回 Yes 响应，如果执行失败就返回 No 响应。</li>
+<li>如果协调者接受参与者响应超时，也会认为执行事务操作失败。</li>
+</ul>
+<p>提交或回滚阶段：</p>
+<ul>
+<li>如果第一阶段汇总所有参与者都返回 Yes 响应，协调者向所有参与者发出提交请求，所有参与者提交事务。</li>
+<li>如果第一阶段中有一个或者多个参与者返回 No 响应，协调者向所有参与者发出回滚请求，所有参与者进行回滚操作。</li>
+</ul>
+<h3 id="二阶段协议的优缺点"><a href="#二阶段协议的优缺点" class="headerlink" title="二阶段协议的优缺点"></a>二阶段协议的优缺点</h3><p>二阶段协议的优点在于逻辑较为简单，尽量保证了数据的强一致性。</p>
+<p>二阶段提交的缺点：</p>
+<ul>
+<li>单点故障： 由于协调者的重要性，一旦协调者发生故障，参与者会一直阻塞，尤其是在第二阶段，协调者发生故障，那么所有的参与者都处于锁定事务资源的状态中，而无法继续完成事务操作。</li>
+<li>所有的节点参与者（RM）都是事务阻塞型的，每一次指令过程都会锁定资源，必须要有明确的响应才可以进行下一步操作。</li>
+<li>数据不一致： 第二阶段提交过程，当协调者向参与者发送提交事务请求之后，发生了局部网络异常或者在发送提交事务请求过程中协调者发生了故障，这会导致只有一部分参与者接收到了提交事务请求。</li>
+</ul>
+<h2 id="三阶段提交协议"><a href="#三阶段提交协议" class="headerlink" title="三阶段提交协议"></a>三阶段提交协议</h2><p>三阶段提交协议是两阶段协议的一个改进版，它利用超时机制解决了同步阻塞的问题。</p>
+<p>三阶段具体描述如下：</p>
+<ul>
+<li>CanCommit（询问阶段）：事务协调者向参与者发送事务执行请求，询问是否可以完成指令，参与者只需要响应是或者否，不需要做真正的事务操作，并且会有相应的超时中止机制。</li>
+<li>PreCommit（准备阶段）：事务协调者会根据询问阶段参与者反馈的结果决定是否继续执行请求，如果可以执行，则事务协调者向所有参与者发送执行事务的请求；如果询问阶段任一参与者返回不能执行操作，则中断事务。这一阶段参与者只是执行事务而不提交事务。</li>
+<li>DoCommit（提交阶段）：这个阶段也会存在两种结果，如果所有的参与者在准备阶段都成功执行，则事务协调者会向所有的参与者发送提交事务的指令；否则，发送中止命令中断会滚事务。</li>
+</ul>
+<p>整体的过程如下图所示：</p>
+<p><img src="/img/分布式事务常用解决方案介绍/3.png" alt="Alt text"></p>
+<p>三阶段提交相较于二阶段新增了一个CanCommit阶段，用于询问所有参与者是否可以执行事务操作并响应，可以预先无法执行而中止后续操作的行为。</p>
+<p>在准备阶段之后，事务协调者和参与者均引入超时机制，一旦超时，事务协调者和参与者会继续提交事务，并认为成功，因为事务默认成功的概率还是比较大的。</p>
+<p>所以三阶段提交还是会出现事务不一致的情形，只能尽可能的保证事务一致性。</p>
+<h1 id="分布式事务的常用解决方案"><a href="#分布式事务的常用解决方案" class="headerlink" title="分布式事务的常用解决方案"></a>分布式事务的常用解决方案</h1><h2 id="强一致性的分布式事务解决方案"><a href="#强一致性的分布式事务解决方案" class="headerlink" title="强一致性的分布式事务解决方案"></a>强一致性的分布式事务解决方案</h2><p>强一致性的方案适用于单体架构多数据源这种场景，还是以电商的订单库和库存库为例，<br>一般先操作订单库，不提交事务，再操作库存库，也不提交事务，二个事务都操作成功，事务管理器再一起发起指令提交事务，否则回滚事务。</p>
+<p>这种就是之前介绍的XA规范，目前Java语言的实现就是JTA（Java Transaction Manager）。<br>JTA 的特点：</p>
+<ul>
+<li>基于两阶段提交，有可能会出现数据不一致的情况</li>
+<li>事务时间过长，阻塞</li>
+<li>性能低，吞吐量低</li>
+</ul>
+<p>实现可以使用基于 JTA 实现的 Jar 包 Atomikos 。</p>
+<h2 id="最终一致性分布式事务解决方案"><a href="#最终一致性分布式事务解决方案" class="headerlink" title="最终一致性分布式事务解决方案"></a>最终一致性分布式事务解决方案</h2><p>但是目前互联网公司肯定都是微服务架构，不可能说使用这种基于Jar包级别的事务控制方案，不同的服务调用不同的数据源，所以一般目前主流的分布式事务方案都是不使用强一致性，而是基于<strong>柔性事务模型来实现事务的最终一致性</strong>。</p>
+<h3 id="TCC补偿性分布式事务"><a href="#TCC补偿性分布式事务" class="headerlink" title="TCC补偿性分布式事务"></a>TCC补偿性分布式事务</h3><p>TCC是<code>Try-Confirm-Cancel</code>的简称，它的思想是将一个完整的业务拆分为如下三个步骤。</p>
+<ul>
+<li>Try：对业务系统做检测或对资源做预留</li>
+<li>Confirm：对业务系统做确认提交，操作Try阶段预留的资源</li>
+<li>Cancel：取消执行，释放Try阶段预留的资源</li>
+</ul>
+<p>TCC其实是一种两阶段提交的思想，第一阶段通过Try进行准备预留资源，对数据做准备校验，第二阶段Confirm/Cancel进行确认或回滚。只不过每一阶段都是业务服务级别维度的，而不是数据库事务维度的。</p>
+<p>下面以一个容易理解的电商业务场景举例TCC分布式事务的实现。</p>
+<p>假设现在有一个电商系统，里面有一个支付订单的场景。</p>
+<p><img src="/img/分布式事务常用解决方案介绍/4.png" alt="Alt text"></p>
+<p>对一个订单支付之后，我们需要做下面的步骤：</p>
+<ul>
+<li>更改订单的状态为“已支付”</li>
+<li>扣减商品库存</li>
+<li>给会员增加积分</li>
+<li>创建销售出库单通知仓库发货</li>
+</ul>
+<p>这几个步骤，[1] 订单服务-修改订单状态，[2] 库存服务-扣减库存，[3] 积分服务-增加积分，[4] 仓储服务-创建销售出库单。整体是一个完整事务，要么一起成功，要么一起失败。</p>
+<p>举个例子，用户下单成功，购买2笔，库存扣减操作数据库异常，导致扣减失败，这样库存没有减少，在双11或者大促场景，会造成库存超卖。</p>
+<p>所以说，我们有必要使用 TCC 分布式事务机制来保证各个服务形成一个整体性的事务。</p>
+<p>比如说库存服务要是扣减库存失败了，那么订单服务就得撤销那个修改订单状态的操作，然后得停止执行增加积分和通知出库两个操作，如下图。</p>
+<p><img src="/img/分布式事务常用解决方案介绍/5.png" alt="Alt text"></p>
+<h4 id="落地TCC分布式事务"><a href="#落地TCC分布式事务" class="headerlink" title="落地TCC分布式事务"></a>落地TCC分布式事务</h4><h5 id="TCC实现阶段一：Try"><a href="#TCC实现阶段一：Try" class="headerlink" title="TCC实现阶段一：Try"></a>TCC实现阶段一：Try</h5><p>首先看一个订单服务的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 库存服务</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> InventoryService inventoryService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 积分服务</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CreditService creditService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仓储服务</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WmsService wmsService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 对这个订单完成支付</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//对本地的的订单数据库修改订单状态为"已支付"</span></span><br><span class="line">        orderDAO.updateStatus(OrderStatus.PAYED);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用库存服务扣减库存</span></span><br><span class="line">        inventoryService.reduceStock();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用积分服务增加积分</span></span><br><span class="line">        creditService.addCredit();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用仓储服务通知发货</span></span><br><span class="line">        wmsService.saleDelivery();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们对这个订单服务修改点儿代码。<br>首先，上面那个订单服务先把自己的状态修改为：<code>OrderStatus.UPDATING</code>,即将订单状态首先改为修改中，而不是直接改为成功。</p>
+<p>然后呢，库存服务直接提供的那个 <code>reduceStock()</code>接口里，不直接扣减库存，而是先冻结掉库存，比如库存数量是100，下单2，新增一个冻结库存字段，修改为2，对外提供可用库存是100-2=98.</p>
+<p>积分服务也是同理，别直接给用户增加会员积分。你可以先在积分表里的一个预增加积分字段加入积分，比如用户积分是1000，预增加积分字段是20，客户实际积分还是1000。</p>
+<p>仓储服务的 <code>saleDelivery()</code> 接口也是同理啊，你可以先创建一个销售出库单，但是这个销售出库单的状态是“INIT”，没有任何实际意义。</p>
+<p>总结上述过程，如果你要实现一个 TCC 分布式事务，首先你的业务的主流程以及各个接口提供的业务含义，<strong>不是说直接完成那个业务操作，而是完成一个 Try 的操作</strong>。</p>
+<p>这个操作，一般都是<strong>锁定某个资源</strong>，设置一个预备类的状态，冻结部分数据，等等，大概都是这类操作。</p>
+<h5 id="实现阶段二：Confirm"><a href="#实现阶段二：Confirm" class="headerlink" title="实现阶段二：Confirm"></a>实现阶段二：Confirm</h5><p>这种情况是比较理想，各个服务Try阶段都成功了，就可以执行Confirm确认过程。</p>
+<p>比如上述过程，Confirm做如下操作。</p>
+<ol>
+<li>订单服务，正式把订单的状态设置为“已支付”。</li>
+<li>库存服务，将之前冻结库存字段-2，订单库存实际-2，正式完成库存的扣减。</li>
+<li>积分服务，将预增加字段的 10 个积分扣掉，然后加入实际的会员积分字段中。</li>
+<li>仓储服务，将销售出库单状态设置为创建成功。</li>
+</ol>
+<p>整个过程如下图：</p>
+<h5 id="TCC实现阶段三：Cancel"><a href="#TCC实现阶段三：Cancel" class="headerlink" title="TCC实现阶段三：Cancel"></a>TCC实现阶段三：Cancel</h5><p>如果在Try阶段，某一个服务过程执行异常了，TCC会对整个Try阶段进行回滚操作，即Cancel阶段。</p>
+<ol>
+<li>订单服务，将订单的状态设置为“CANCELED”，也就是这个订单的状态是已取消。</li>
+<li>库存服务，冻结库存-2。</li>
+<li>积分服务，将预增加积分字段扣减掉。</li>
+<li>仓储服务，将销售出库单状态修改为“CANCELED”设置为已取消。</li>
+</ol>
+<p>当然，整个TCC事务的实现我们不可能全都自己手动去写，目前有一些开源的实现可以参考，比如ByteTCC，TCC-transcation，Seata。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>TCC分布式事务需要将原本一个接口改造为三个接口，Try-Confirm-Cancel，主要是为了应用某些异常场景。</p>
+<ul>
+<li>某个服务的数据库宕机了。</li>
+<li>某个服务自己挂了。</li>
+<li>那个服务的 Redis、Elasticsearch、MQ 等基础设施故障了。</li>
+<li>某些资源不足了，比如说库存不够这些。</li>
+</ul>
+<p>先Try一下，检测及预留资源，成功了再执行Confirm确认阶段，并且TCC的思想也是默认Try成功之后，Confirm大概率成功。</p>
+<p>当然<strong>如果Confirm阶段仍然出现了异常，TCC 事务框架都是要记录一些分布式事务的活动日志</strong>的，可以在磁盘上的日志文件里记录，也可以在数据库里记录。保存下来分布式事务运行的各个阶段和状态，这样便于后续异常处理，比如重试之类的。</p>
+<h3 id="基于可靠性消息的最终一致性方案"><a href="#基于可靠性消息的最终一致性方案" class="headerlink" title="基于可靠性消息的最终一致性方案"></a>基于可靠性消息的最终一致性方案</h3><p>对于常见的微服务系统，大部分接口调用是同步的，也就是一个服务直接调用另外一个服务的接口。</p>
+<p>这个时候，用 TCC 分布式事务方案来保证各个接口的调用，要么一起成功，要么一起回滚，是比较合适的。</p>
+<p>但是很多时候，服务之间的调用是异步完成的，比如会通过消息中间件发送MQ消息提供服务。针对这种基于 MQ 的异步调用，TCC则不太适用，下面介绍另一种基于可靠性消息的方案。</p>
+<h4 id="可靠消息方案的核心流程"><a href="#可靠消息方案的核心流程" class="headerlink" title="可靠消息方案的核心流程"></a>可靠消息方案的核心流程</h4><p>基于消息的服务一般涉及上下游系统，我们可以在中间封装一层可靠消息的服务。</p>
+<h5 id="上游服务投递消息"><a href="#上游服务投递消息" class="headerlink" title="上游服务投递消息"></a>上游服务投递消息</h5><p>首先，上游系统需要通知可靠消息服务，自己需要投递一条事务消息给下游系统，可靠消息服务在数据库中记录这条消息，状态为待确认。</p>
+<p>然后，上游系统执行自己本地的业务逻辑，根据执行的结果，调用可靠消息服务，决定是确认这条消息（可以发送）或者不发送。</p>
+<p>如果是确认消息，更新消息状态表，并可靠消息服务向MQ发送这条消息，为已发送；<br>如果是取消发送，可靠消息服务直接将数据库消息表置为失效。</p>
+<p><strong>当然，这里可靠消息服务，必须保证更新消息状态表和发送消息的事务一致性，如果更新消息表失败了，则不发送消息，如果发送消息失败了，则回滚消息状态表的更新</strong>。</p>
+<h5 id="下游服务接收消息"><a href="#下游服务接收消息" class="headerlink" title="下游服务接收消息"></a>下游服务接收消息</h5><p>下游服务一直等着从 MQ 消费消息好了，如果消费到了消息，那么就操作自己本地数据库。如果操作成功了，就反过来通知可靠消息服务，说自己处理成功了，然后可靠消息服务就会把消息的状态设置为“已完成”。</p>
+<h5 id="如何保证上游服务对消息的100-可靠投递"><a href="#如何保证上游服务对消息的100-可靠投递" class="headerlink" title="如何保证上游服务对消息的100%可靠投递"></a>如何保证上游服务对消息的100%可靠投递</h5><p>如果上游服务给可靠消息服务发送待确认消息的过程出错了，那没关系，上游服务可以感知到调用异常的，就不用执行下面的流程了，这是没问题的。</p>
+<p>如果上游服务操作完本地数据库之后，通知可靠消息服务确认消息或者删除消息的时候，出现了问题。在这些情况下，那条消息在可靠消息服务的数据库里的状态会一直是“待确认”。</p>
+<p>所以可靠消息服务还得具备一个后台定时反查机制，不停的检查各个消息的状态。</p>
+<p>如果一直是“待确认”状态，就认为这个消息出了点什么问题。此时的话，就可以回调上游服务提供的一个接口，如果执行成功，则可靠消息服务将消息状态修改为“已发送”，同时投递消息到 MQ；没执行成功，那么可靠消息服务将数据库中的消息删除即可。</p>
+<h5 id="如果保证下游服务对消息的-100-可靠接收"><a href="#如果保证下游服务对消息的-100-可靠接收" class="headerlink" title="如果保证下游服务对消息的 100% 可靠接收"></a>如果保证下游服务对消息的 100% 可靠接收</h5><p>其实同样需要可靠消息服务里开发一个后台线程，不断的检查消息状态。</p>
+<p>如果消息状态一直是“已发送”，始终没有变成“已完成”，那么就说明下游服务始终没有处理成功。</p>
+<p>此时可靠消息服务就可以再次尝试重新投递消息到 MQ，让下游服务来再次处理。</p>
+<p>只要下游服务的接口逻辑<strong>实现幂等性</strong>，保证多次处理一个消息，不会插入重复数据即可。</p>
+<p>上述核心流程完全依赖可靠消息服务的各种自检机制来确保。</p>
+<ul>
+<li>如果上游服务的数据库操作没成功，下游服务是不会收到任何通知。</li>
+<li>如果上游服务的数据库操作成功了，可靠消息服务死活都会确保将一个调用消息投递给下游服务，而且一定会确保下游服务务必成功处理这条消息。</li>
+</ul>
+<p>通过这套机制，保证了基于 MQ 的异步调用/通知的服务间的分布式事务保障。其实阿里开源的 RocketMQ，就实现了可靠消息服务的所有功能，核心思想跟上面类似。<br>只不过 RocketMQ 为了保证高并发、高可用、高性能，做了较为复杂的架构实现，非常的优秀。</p>
+<p>RocketMQ支持事务消息，具体的流程如图：</p>
+<p><img src="/img/分布式事务常用解决方案介绍/7.png" alt="Alt text"></p>
+<ul>
+<li>生产者预发送一条消息到消息队列上，消息队列只是记录这条消息，此时消费者无法消费这条消息。</li>
+<li>生产者执行具体的业务逻辑，业务执行失败，不执行后续；生产者执行成功，则发送一条确认Commit消息给消息队列；</li>
+<li>消息队列服务器收到生产者的Commit之后，则将消息投递给消费者，消费者可以消费。如果消息队列服务器一直没有收到生产者的确认，则会有定时反查机制确认是Commit还是删除消息。</li>
+<li>消费者消费完消息之后将消息签收确认信息发送给消费队列，如果一直没收到消费者的确认，会定时重复投递消息，所以消费者需要做幂等控制。</li>
+</ul>
+<p>这种MQ事务机制可以保证事务的最终一致性。</p>
+<h3 id="最大努力通知"><a href="#最大努力通知" class="headerlink" title="最大努力通知"></a>最大努力通知</h3><p>最大努力通知和基于可靠性消息的方案很类似，也是一种柔性事务的解决方案，比较适用于数据一致性不高的场景。</p>
+<p>基于可靠性消息的侧重点在于事务控制主要在生产者消息队列之间，投递可靠性消息。</p>
+<p>而最大努力通知是让消费者来确认消息，比如支付宝支付通知结果。</p>
+<p>站在商户的角度来说，</p>
+<ul>
+<li>商户异步调用支付宝的支付接口</li>
+<li>支付宝处理支付之后，发送消息给商户，等待商户确认。</li>
+<li>如果商户一直没有确认消息，则支付宝端会不断重新通知商户支付的结果，一直到最大通知次数。</li>
+</ul>
+<p>当然这种支付场景，肯定是会保证幂等性机制的。</p>
+<h1 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h1><p>分布式事务主要是分两种，一种是TCC的基于接口的事务，这种时效性比较高；而另一种是基于消息的异步柔性事务；</p>
+<p>这两种分布式事务的解决肯定无法满足100%的事务一致性，但基本都是以事务最终一致性作为思想设计的，<br>某些情况可能出现异常可能需要后续系统之间进行核对或者人工线下处理。</p>
+<p>分布式事务不一定适合各自系统的设计或者业务场景，具体用不用还得仔细评估，但是这种思想是值得学习的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/分布式事务/" rel="tag"># 分布式事务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/20/深入理解Java集合之PriorityQueue/" rel="next" title="深入理解Java集合之PriorityQueue">
+                <i class="fa fa-chevron-left"></i> 深入理解Java集合之PriorityQueue
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">goxcheer</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">137</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OverView"><span class="nav-number">1.</span> <span class="nav-text">OverView</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分布式事务理论协议"><span class="nav-number">2.</span> <span class="nav-text">分布式事务理论协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#X-Open-XA协议"><span class="nav-number">2.1.</span> <span class="nav-text">X/Open XA协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两阶段提交协议"><span class="nav-number">2.2.</span> <span class="nav-text">两阶段提交协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二阶段协议的优缺点"><span class="nav-number">2.2.1.</span> <span class="nav-text">二阶段协议的优缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三阶段提交协议"><span class="nav-number">2.3.</span> <span class="nav-text">三阶段提交协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分布式事务的常用解决方案"><span class="nav-number">3.</span> <span class="nav-text">分布式事务的常用解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#强一致性的分布式事务解决方案"><span class="nav-number">3.1.</span> <span class="nav-text">强一致性的分布式事务解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终一致性分布式事务解决方案"><span class="nav-number">3.2.</span> <span class="nav-text">最终一致性分布式事务解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCC补偿性分布式事务"><span class="nav-number">3.2.1.</span> <span class="nav-text">TCC补偿性分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#落地TCC分布式事务"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">落地TCC分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#TCC实现阶段一：Try"><span class="nav-number">3.2.1.1.1.</span> <span class="nav-text">TCC实现阶段一：Try</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现阶段二：Confirm"><span class="nav-number">3.2.1.1.2.</span> <span class="nav-text">实现阶段二：Confirm</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCC实现阶段三：Cancel"><span class="nav-number">3.2.1.1.3.</span> <span class="nav-text">TCC实现阶段三：Cancel</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于可靠性消息的最终一致性方案"><span class="nav-number">3.2.2.</span> <span class="nav-text">基于可靠性消息的最终一致性方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#可靠消息方案的核心流程"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">可靠消息方案的核心流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#上游服务投递消息"><span class="nav-number">3.2.2.1.1.</span> <span class="nav-text">上游服务投递消息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#下游服务接收消息"><span class="nav-number">3.2.2.1.2.</span> <span class="nav-text">下游服务接收消息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何保证上游服务对消息的100-可靠投递"><span class="nav-number">3.2.2.1.3.</span> <span class="nav-text">如何保证上游服务对消息的100%可靠投递</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果保证下游服务对消息的-100-可靠接收"><span class="nav-number">3.2.2.1.4.</span> <span class="nav-text">如果保证下游服务对消息的 100% 可靠接收</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大努力通知"><span class="nav-number">3.2.3.</span> <span class="nav-text">最大努力通知</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结-1"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017-2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
