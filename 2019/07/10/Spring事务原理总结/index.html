@@ -136,6 +136,9 @@
 
 
 
+  <!--pjax：防止跳转页面音乐暂停-->
+
+<script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
@@ -578,6 +581,20 @@
   <aside id="sidebar" class="sidebar">
     
     <div class="sidebar-inner">
+
+      <!-- require APlayer -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+
+<!-- require MetingJS-->
+
+<script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script>
+
+<!--网易云-->
+
+<meting-js server="netease" id="7186717215" type="playlist" mini="true" fixed="true" list-folded="true" autoplay="true" volume="0.5" theme="#FADFA3" order="random" loop="all" preload="auto" mutex="true"></meting-js>
 
       
 
