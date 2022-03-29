@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://yoursite.com/img/Spring循环依赖的解决/2.png">
 <meta property="og:image" content="http://yoursite.com/img/Spring循环依赖的解决/3.png">
 <meta property="og:image" content="http://yoursite.com/img/Spring循环依赖的解决/4.png">
-<meta property="og:updated_time" content="2022-03-29T00:01:47.710Z">
+<meta property="og:updated_time" content="2022-03-29T00:09:30.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring循环依赖的解决">
 <meta name="twitter:description" content="更细节的层次去再次熟悉Spring的循环依赖……">
@@ -282,7 +282,7 @@
 <p><strong>注意这里假设A实现了AOP，因为循环依赖，A是提前执行了BeanPostProcessor的代理类，即提前进行了AOP</strong>。</p>
 <p>看到这里，循环依赖好像是解决了，但是有一个问题，就是二级缓存的作用好像没体现出来？<br>那假如我们还有一个对象C，C和A也循环依赖了呢？<br>假设我们不把A的对象从三级缓存移动到二级缓存，那C在依赖A的时候，也会调用ObjectFactory这个函数接口的方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">singletonObject = singletonFactory.getObject();</span><br></pre></td></tr></table></figure></p>
 <p>那不是又AOP了一次吗？两次AOP生成的代理对象就不一致了～<br>所以到这里就明白了，二级缓存是为了解决类似于AOP这种代理导致函数式接口，即singletonFactory.getObject()每次返回不是原始对象，而是一个新的对象这种场景，保证了单例对象的唯一性。</p>
-<p>下面假设有3个类，A，B，C，A分别依赖于B，C，B依赖于A，C依赖于A，下图展示了依赖注入的整个流程：<br><img src="/img/Spring循环依赖的解决/4.png" alt="Alt text"></p>
+<p>下面假设有3个类，A，B，C，A分别依赖于B，C，B依赖于A，C依赖于A，<strong>并且A实现了AOP</strong>。下图展示了依赖注入的整个流程：<br><img src="/img/Spring循环依赖的解决/4.png" alt="Alt text"></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>如果你对Spring bean的整个生命周期比较了解，那么循环依赖的理解只是需要去画画图，看看源码，其实不难，唯一就是二级缓存这里，来解决多个Bean互相依赖，并且其中有Bean实现了AOP这种特殊场景。</p>
 
     </div>
