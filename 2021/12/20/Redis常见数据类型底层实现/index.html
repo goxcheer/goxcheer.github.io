@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+
+
+  <meta name="description" content="Redis常见数据结构低层实现……">
+<meta name="keywords" content="Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis常见数据类型底层实现">
+<meta property="og:url" content="http://yoursite.com/2021/12/20/Redis常见数据类型底层实现/index.html">
+<meta property="og:site_name" content="goxcheer个人小栈">
+<meta property="og:description" content="Redis常见数据结构低层实现……">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/img/Redis常见数据类型底层实现/1.png">
+<meta property="og:image" content="http://yoursite.com/img/Redis常见数据类型底层实现/2.png">
+<meta property="og:image" content="http://yoursite.com/img/Redis常见数据类型底层实现/3.png">
+<meta property="og:updated_time" content="2022-04-17T04:52:18.088Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis常见数据类型底层实现">
+<meta name="twitter:description" content="Redis常见数据结构低层实现……">
+<meta name="twitter:image" content="http://yoursite.com/img/Redis常见数据类型底层实现/1.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/12/20/Redis常见数据类型底层实现/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'default'
+  };
+</script>
+
+  <title>Redis常见数据类型底层实现 | goxcheer个人小栈</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">goxcheer个人小栈</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一叶知秋意，一树识菩提</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/20/Redis常见数据类型底层实现/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="goxcheer">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="goxcheer个人小栈">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis常见数据类型底层实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-20 12:47:48" itemprop="dateCreated datePublished" datetime="2021-12-20T12:47:48+08:00">2021-12-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Redis常见数据结构低层实现……</p>
+<a id="more"></a>
+<h1 id="String"><a href="#String" class="headerlink" title="String"></a>String</h1><p>Redis是由C语言实现的，C语言原本是没有字符串类型的，字符串是通过char类型的数组来表示, 没有保存字符串的长度，如果需要获取长度，需要遍历字符串，这样时间复杂度为O（n），而且字符串的结束是以<code>\0</code>这样一个特殊的字符来标识，如果Redis中的Key或value中本身就存在这样的字符，会丢失部分字符。</p>
+<p>Redis自己实现了一个字符串，叫SDS（Simple Dynamic String），简单动态字符串。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Struct sdshdr &#123;</span><br><span class="line"><span class="comment">//已使用长度</span></span><br><span class="line"><span class="keyword">int</span> len;</span><br><span class="line"><span class="comment">//剩余空间的长度</span></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line"><span class="comment">//字符数组</span></span><br><span class="line"><span class="keyword">char</span> buf[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>优势：</p>
+<ol>
+<li>SDS保存了字符串的当前长度，这样获取字符串长度时间复杂度为O（1）；另外，在获取字符的时候根据长度去获取，避免了C原来通过<code>\0</code>来获取的弊端。</li>
+<li>SDS在存入字符串的时候，会预先开辟一段空间备用，在存入的数据小于1M的时候，默认会开辟当前大小两倍的空间，在超过了1M之后，每次内存不够会开辟1M的空间，这样避免了C原生的数组的方式可能会产生的缓冲区溢出。</li>
+<li>动态预先扩容机制，减小频繁的空间开辟。</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>这里可以看到，低版本len和free都用int数据类型来表示，int占4个字节32位，当字符串很小的时候，其实本不需要开辟这么大空间，所以在高版本的Redis的数据结构中，有很多的优化是根据当前数据的大小来选择不同的数据类型来表示成员变量，减小内存空间的开销。</p>
+</blockquote>
+</blockquote>
+<h1 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h1><p>Redis Hash数据结构的底层实现和Java中的HashMap很类似，也是采用数据+链表的方式（冲突链表法）解决Hash冲突，但Redis把这种数据结构命名为字典Dict。<br>字典定义：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span> &#123;</span></span><br><span class="line">  dictEntry ** table;                <span class="comment">//哈希表数组</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> size;            <span class="comment">//哈希表大小</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask <span class="comment">//哈希表大小掩码，用于计算索引值 总是等于 size - 1</span></span><br><span class="line">  <span class="keyword">unsigned</span> logn used;          <span class="comment">//该哈希表已有节点的数量</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Hash实体：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span>&#123;</span></span><br><span class="line">  <span class="keyword">void</span> *key;  <span class="comment">//键</span></span><br><span class="line">  <span class="keyword">union</span> &#123;      <span class="comment">//不同键对饮的值得类型可能不同，使用union来处理这个问题</span></span><br><span class="line">    <span class="keyword">void</span> *val;</span><br><span class="line">    uint64_tu64;</span><br><span class="line">    int64_ts64;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>整体的数据结构参考此图：<br><img src="/img/Redis常见数据类型底层实现/1.png" alt="Alt text"></p>
+<p>熟悉JAVA的HashMap的话，这个就不必多介绍了。</p>
+<h2 id="ReHash"><a href="#ReHash" class="headerlink" title="ReHash"></a>ReHash</h2><p>当我们对字典不断进行操作（存入，删除元素）的时候，哈希表保存的元素也会不断的增大或者减小，为了使负载因子（当前存入的元素/哈希表的容量）维持在一个比较合理的范围，Redis会对哈希表进行ReHash操作。</p>
+<p>其实ReHash操作就是一个扩容和缩容的过程。</p>
+<ul>
+<li>扩容： 将哈希表扩大到原来的2倍。</li>
+<li>缩容： 将哈希表减小为原来的一半。</li>
+</ul>
+<p>步骤：</p>
+<ol>
+<li>重新创建一个新的字典ht[1],新的字典的大小取决于是扩容还是缩容。</li>
+<li>将保存在原哈希表的数据通过reHash算法重新定位到ht[1]的位置，插入到ht[1]</li>
+<li>当ht[0]中所有的元素都进行了reHash操作之后，删除原来的ht[0]，原来ht[0]的引用指向ht[1]的地址，新建一个空白的ht[1]。</li>
+</ol>
+<p>reHash的时机：<br>扩容：</p>
+<ul>
+<li>程序没有执行BGSAVE命令或者BGREWRITEAOF(AOF重写)命令，并且哈希表的负载因子大于等于1</li>
+<li>如果程序正在执行BGSAVE或者BGREWRITEAOF(AOF重写)命令并且哈希表的负载因子大于等于5。在执行上述命令的时候，Redis会fork一个子进程进行相应的操作，为了减小在这种情况下reHash发生的可能，所以将负载因子提高。<br>缩容：</li>
+<li>负载因子小于0.1进行收缩</li>
+</ul>
+<h2 id="渐进式ReHash"><a href="#渐进式ReHash" class="headerlink" title="渐进式ReHash"></a>渐进式ReHash</h2><p>Redis本身就是基于内存的操作，如果当前Redis本身就存在大量的数据，在内存中直接一次进行ReHash操作会很占内存和CPU资源，甚至有可能导致Redis服务不可用，所以采用了渐进式ReHash这种方式。</p>
+<p>渐进式ReHash不是一次执行所有的数据的ReHash操作，也是一种懒操作的思想。<br>ReHash的过程不会阻止用户线程的CRUD操作，而是同时在两个字典上进行。插入操作在Dict[1]上进行，删除操作会优先在Dict[0]上操作，更新操作先删除Dict[0]<br>,再将新的数据插入Dict[1]，即保证dict[0]只减不增，知道dict[0]<br>所有元素完成rehash操作。</p>
+<blockquote>
+<blockquote>
+<p>Redis Hash为了提升性能，在元素比较小的时候会使用ZipList，后面会详细介绍ZipList。</p>
+</blockquote>
+</blockquote>
+<h1 id="List"><a href="#List" class="headerlink" title="List"></a>List</h1><p>Redis list数据结构底层在3.2版本之前采用的是ZipList或LinkedList，优先使用ZipList，当ZipList不满足的时候，更换为LinkedList；而在3.2版本之后，Redis采用了QuickList，结合了ZipList和LinkedList。</p>
+<p>使用ZipList的条件：</p>
+<ul>
+<li>列表对象保存的所有字符串元素的长度小于64字节</li>
+<li>列表对象保存的元素数量小于512个</li>
+</ul>
+<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><p>ZipList叫压缩列表，故名思义，这种数据结构是用来节省内存的。ZipList本身实现可以有序，也可以无序，例如，用在list的时候是无序的，用在SortedSet的时候就是有序的。</p>
+<p><strong>ZipList采用的是一系列特殊编码的连续内存块，一个ZipList在头部包含一些整体的信息，剩下的部分包含多个节点</strong>。</p>
+<p>ZipList整体结构如下：<br><img src="/img/Redis常见数据类型底层实现/2.png" alt="Alt text"></p>
+<p><strong>zlbytes</strong>：32位无符号整数，表示ziplist的整体长度（字节)。在对ziplist重新分配内存或者计算zlend的位置时有用。<br><strong>zltail</strong>：32位无符号整数，最后一个节点距离头部的偏移量，通过该偏移量程序无需遍历整个ziplist即可确定尾节点的地址，在反向遍历ziplist或者pop尾部节点的时候很有用。<br><strong>zllen</strong>：16位无符号整数，ziplist的节点（entry）个数。当小于值小于65535时，该值时准确的，等于65535（16位的最大值）时，需要遍历整个链表才能得到真实节点数量。<br><strong>entry</strong>：ziplist中的数据节点，长度不固定，自己的长度保存在每一个entry节点内部。<br><strong>zlend</strong>：8位无符号整数固定值为0xFF，用于标记ziplist的结尾。</p>
+<h3 id="entry的结构"><a href="#entry的结构" class="headerlink" title="entry的结构"></a>entry的结构</h3><p>ziplist的entry用于存储<strong>正数或者字符串（字节数组）</strong>，且每个节点的长度都是不一样的，因此节点的长度只能由这个节点自己来保存，Redis的ziplist中，entry由三部分构成：</p>
+<p><strong>previous_entry_length</strong>：8bit或者40bit，用于记录上一个节点的长度（字节），为了方便反向遍历ziplist。<br><strong>encoding</strong>：当前节点数据的编码规则，即data属性的数据类型以及长度。<br><strong>content</strong>：当前节点的值，可以是数字或字符串（字节数组）。</p>
+<h2 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h2><p>当list不再满足使用ZipList来做存储的时候，则会使用LinkedList来存储，是一个双端链表。<br>LinkedList是一个很通用的数据结构，Java，C都有实现，就不做多的介绍了。</p>
+<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>Redis3.2及其之后则采用quicklist结构代替ziplist和linkedlist。</p>
+<p>ziplist存储在一段连续的内存上，所以存储和查找效率很高，顺序IO访问。但是，它不利于修改操作，插入和删除操作需要频繁的申请和释放内存。特别是当ziplist长度很长的时候，一次realloc可能会导致大批量的数据拷贝，适用于存储整数和短字符串。</p>
+<p>双向链表linkedlist便于在表的两端进行push和pop操作，在插入节点上复杂度很低，但是它的内存开销比较大。首先，它在每个节点上除了要保存数据之外，还要额外保存两个prev 和 next指针（64 位操作系统占用 8 个字节）；其次，双向链表的各个节点是单独的内存块，地址不连续，随机IO访问，节点多了容易产生内存碎片，影响内存管理效率。</p>
+<p><strong>QuickList综合了两者的优点</strong>：</p>
+<p>quickList将 linkedList 按段切分，每一段使用 zipList 来紧凑存储，多个 zipList 之间使用双向指针串接起来。</p>
+<p>首先quickList就是一个标准的双向链表的配置，有head 和tail节点，每个节点是一个quicklistNode节点，包含prev和next指针，内部还包含一个ziplist，使用ziplist来保存数据，而ziplist实际上含有多个entry节点，保存着数据。相当与一个quicklistNode节点保存的是一片数据，而不再是一个数据。</p>
+<p>quickList将二者的优点结合起来，在宏观上是一个双向链表结构，插入、删除quicklistNode节点的成本很低，不需要移动其他节点的位置，而在微观上，每一个quicklistNode节点又是一个个的ziplist，内部包含多个数据，ziplist内存连续，减少了内存碎片，同时由于每一个ziplist不是很大（大小可以配置），因此插入和删除操作不会进行大量的数据移动。</p>
+<h2 id="ZSet"><a href="#ZSet" class="headerlink" title="ZSet"></a>ZSet</h2><p>Redis的Set底层数据结构是采用IntSet或者HashTable来存储，IntSet实际上也是在数据比较小的时候Redis的一种优化，节省内存，使用IntSet的条件：</p>
+<ul>
+<li>集合对象保存的所有元素都是整数值</li>
+<li>集合对象保存的元素数量不超过512个</li>
+</ul>
+<p>IntSet底层的数据结构其实就是一个数组，由于集合元素不超过512个，所以在遍历性能上也算可观。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">IntSet</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span> encoding;</span><br><span class="line">	<span class="keyword">uint32_t</span> length;</span><br><span class="line">	<span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125; IntSet;</span><br></pre></td></tr></table></figure></p>
+<p>当不满足用IntSet来存储的时候，Redis就会使用HashTable， key存储的是实际的元素值，来达到去重的目的，这个和java中的HashSet思想是一致的。</p>
+<h2 id="SortedSet"><a href="#SortedSet" class="headerlink" title="SortedSet"></a>SortedSet</h2><p>Redis SortedSet也是采用两种数据结构来存储，ZipList和SkipList。</p>
+<p>只有同时满足如下条件是,使用的是ziplist,其他时候则是使用skiplist</p>
+<ul>
+<li>有序集合保存的元素数量小于128个</li>
+<li>有序集合保存的所有元素的长度小于64字节</li>
+</ul>
+<h3 id="跳跃表-skiplist"><a href="#跳跃表-skiplist" class="headerlink" title="跳跃表(skiplist)"></a>跳跃表(skiplist)</h3><p>一个普通的单链表查询一个元素的时间复杂度为O(N)，即便该单链表是有序的。使用跳跃表（SkipList）是来解决查找问题的，它是一种有序的数据结构，不属于平衡树结构，也不属于Hash结构，它通过在每个节点维持多个指向其他节点的指针，而达到快速访问节点的目的。</p>
+<p>跳跃表是一种基于有序链表的扩展,简称跳表.跳表会维护多个索引链表和原链表.性质如下：</p>
+<ul>
+<li>多层链表结构，每一层都是一个有序链表</li>
+<li>最底层的链表包含所有元素和关键字，越往上层，关键字越少。</li>
+<li>跳跃表的查找次数近似于层数，时间复杂度为O(logn)，插入、删除也为 O(logn)</li>
+<li>跳跃表是一种随机化的数据结构(通过抛硬币来决定层数)</li>
+</ul>
+<p>数据结构如图：</p>
+<p><img src="/img/Redis常见数据类型底层实现/3.png" alt="Alt text"></p>
+<p>这里解释一下抛硬币。当我们新增一个元素的时候，最先将其新增到Level1层中，但是否这个关键字需要添加到Level2及以上，Redis采用的是抛硬币的方式，通过概率事件来决定，具有随机性。</p>
+<p>所以跳跃表节点的删除和添加都是不可预测的，很难保证跳表的索引是始终均匀的，抛硬币的方式可以让大体上是趋于均匀的。</p>
+<p><strong>通过这种方式查找类似于一种二分查找的思想，具有和平衡二叉树一样的时间复杂度，然后在新增和删除元素的时候，不需要像树一样做一些调整工作，只需要维护链表节点的引用即可</strong>。</p>
+<p>跳跃表的实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* ZSETs use a specialized version of Skiplists */</span></span><br><span class="line">typedef struct zskiplistNode &#123;</span><br><span class="line">    <span class="comment">// 成员对象 （robj *obj;）</span></span><br><span class="line">    sds ele;</span><br><span class="line">    <span class="comment">// 分值</span></span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">    <span class="comment">// 后退指针</span></span><br><span class="line">    struct zskiplistNode *backward;</span><br><span class="line">    <span class="comment">// 层</span></span><br><span class="line">    struct zskiplistLevel &#123;</span><br><span class="line">        <span class="comment">// 前进指针</span></span><br><span class="line">        struct zskiplistNode *forward;</span><br><span class="line">        <span class="comment">// 跨度</span></span><br><span class="line">        <span class="comment">// 跨度实际上是用来计算元素排名(rank)的，在查找某个节点的过程中，将沿途访过的所有层的跨度累积起来，得到的结果就是目标节点在跳跃表中的排位</span></span><br><span class="line">        unsigned <span class="keyword">long</span> span;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br><span class="line"></span><br><span class="line">typedef struct zskiplist &#123;</span><br><span class="line">    <span class="comment">// 表头节点和表尾节点</span></span><br><span class="line">    struct zskiplistNode *header, *tail;</span><br><span class="line">    <span class="comment">// 表中节点的数量</span></span><br><span class="line">    unsigned <span class="keyword">long</span> length;</span><br><span class="line">    <span class="comment">// 表中层数最大的节点的层数</span></span><br><span class="line">    <span class="keyword">int</span> level;</span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure></p>
+<p>zskiplistNode结构：<br><strong>level数组（层）</strong>：每次创建一个新的跳表节点都会根据幂次定律(抛硬币)计算出level数组的大小，也就是次层的高度，每一层带有两个属性-前进指针和跨度，前进指针用于访问表尾方向的其他指针；跨度用于记录当前节点与前进指针所指节点的距离（指向的为NULL，阔度为0）<br><strong>backward（后退指针）</strong>：指向当前节点的前一个节点<br><strong>score（分值）</strong>：用来排序，如果分值相同看成员变量在字典序大小排序<br><strong>obj或ele</strong>：成员对象是一个指针，指向一个字符串对象，里面保存着一个sds；在跳表中各个节点的成员对象必须唯一，分值可以相同</p>
+<p>zskiplist结构：</p>
+<ul>
+<li>header、tail表头节点和表尾节点</li>
+<li>length表示节点的数量</li>
+<li>level表示层数最大的节点的层数</li>
+</ul>
+<h1 id="BitMap"><a href="#BitMap" class="headerlink" title="BitMap"></a>BitMap</h1><p>BitMap没有使用在Redis的五种基本数据类型里面，但是在某些特定的场合，BitMap有它的作用。</p>
+<p>比如某些亿级用户的场景，我们需要记录用户一年内登陆或者签到的次数有多少天，如果每一天是否签到我们都用一个字符串类型去存储，这样会浪费大量的内存空间，而Redis本身内存就是很廉价的，这时候我们可以使用BitMap。</p>
+<p>位图（bitmap）同样属于 string 数据类型。Redis 中一个字符串类型的值最多能存储 512 MB 的内容，每个字符串由多个字节组成，每个字节又由 8 个 Bit 位组成。位图结构正是使用“位”来实现存储的，它通过将比特位设置为 0 或 1来达到数据存取的目的，这大大增加了 value 存储数量，它存储上限为2^32。</p>
+<p>比如“1010010101”这样一个Bit字符，就可以描述用户10天的签到情况。<br>相比于直接使用字符串而言，位图中的每一条记录仅占用一个 bit 位，从而大大降低了内存空间使用率。</p>
+<p>Redis 的位数组是自动扩展的，如果设置了某个偏移位置超出了现有的内容范围，位数组就会自动扩充。</p>
+<p>其实Java里面也有BitMap的使用场景，比如布隆过滤器。</p>
+<p>可以去对比研究一下。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Redis的不同数据类型结合它的数据特性有很多种不同的实现，但是每一种实现中都有很多的算法技巧在里面，利用算法+数据结构的结合来实现了Redis这么一个高性能的数据库；Redis内存是廉价的，所以在数据结构的实现过程中，根据数据量的大小Redis做了很多的优化，比如在数据量很小的时候使用ZipList，字符串key在开辟空间的时候，长度会优化为32，64，128等等。</p>
+<p>另外学习可以类比，比如Redis的实现其实很多在Java中也有。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/05/缓存雪崩、穿透、击穿介绍/" rel="prev" title="缓存雪崩、穿透、击穿介绍">
+      <i class="fa fa-chevron-left"></i> 缓存雪崩、穿透、击穿介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/10/在二叉树中找到两个节点的最近公共祖先/" rel="next" title="在二叉树中找到两个节点的最近公共祖先">
+      在二叉树中找到两个节点的最近公共祖先 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+    <!-- require APlayer -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+
+<!-- require MetingJS-->
+
+<script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script>
+
+<!--网易云-->
+
+<meting-js
+server="netease"
+id="7186717215"
+type="playlist"
+mini="true"
+fixed="true"
+list-folded="true"
+autoplay="true"
+volume="0.5"
+theme="#FADFA3"
+order="random"
+loop="all"
+preload="auto"
+mutex="true"></meting-js>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#String"><span class="nav-number">1.</span> <span class="nav-text">String</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash"><span class="nav-number">2.</span> <span class="nav-text">Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReHash"><span class="nav-number">2.1.</span> <span class="nav-text">ReHash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#渐进式ReHash"><span class="nav-number">2.2.</span> <span class="nav-text">渐进式ReHash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#List"><span class="nav-number">3.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ZipList"><span class="nav-number">3.1.</span> <span class="nav-text">ZipList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#entry的结构"><span class="nav-number">3.1.1.</span> <span class="nav-text">entry的结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedList"><span class="nav-number">3.2.</span> <span class="nav-text">LinkedList</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QuickList"><span class="nav-number">3.3.</span> <span class="nav-text">QuickList</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZSet"><span class="nav-number">3.4.</span> <span class="nav-text">ZSet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SortedSet"><span class="nav-number">3.5.</span> <span class="nav-text">SortedSet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#跳跃表-skiplist"><span class="nav-number">3.5.1.</span> <span class="nav-text">跳跃表(skiplist)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BitMap"><span class="nav-number">4.</span> <span class="nav-text">BitMap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">goxcheer</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">goxcheer</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
